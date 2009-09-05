@@ -22,5 +22,9 @@
 
 [IntegerType (rank = 2, width = 8)]
 public struct sbyte {
+	public string to_string () {
+		long l = (long) this;
+		return l.to_string ();
+	}
 }
 

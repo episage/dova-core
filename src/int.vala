@@ -22,5 +22,9 @@
 
 [IntegerType (rank = 6, width = 32)]
 public struct int {
+	public string to_string () {
+		long l = (long) this;
+		return l.to_string ();
+	}
 }
 

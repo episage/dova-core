@@ -22,5 +22,9 @@
 
 [IntegerType (rank = 3, width = 8, signed = false)]
 public struct byte {
+	public string to_string () {
+		ulong l = (ulong) this;
+		return l.to_string ();
+	}
 }
 

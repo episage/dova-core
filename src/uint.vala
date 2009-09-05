@@ -22,5 +22,9 @@
 
 [IntegerType (rank = 7, width = 32, signed = false)]
 public struct uint {
+	public string to_string () {
+		ulong l = (ulong) this;
+		return l.to_string ();
+	}
 }
 

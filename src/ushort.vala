@@ -22,5 +22,9 @@
 
 [IntegerType (rank = 5, width = 16, signed = false)]
 public struct ushort {
+	public string to_string () {
+		ulong l = (ulong) this;
+		return l.to_string ();
+	}
 }
 
