@@ -5,6 +5,7 @@ lib_LTLIBRARIES = \
 	$(NULL)
 
 libdova_core_la_SOURCES = \
+	array.vala \
 	bool.vala \
 	byte.vala \
 	char.vala \
