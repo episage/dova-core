@@ -85,15 +85,14 @@ public struct Dova.DateTime {
 	}
 
 	static string format_number (int number, int digits) {
-		string s = number.to_string ();
-		while (s.length < digits) {
-			s = "0" + s;
+		result = number.to_string ();
+		while (result.length < digits) {
+			result = "0" + result;
 		}
-		return s;
 	}
 
 	public string to_string () {
-		string result = date.to_string () + "T" + time_of_day.to_string ();
+		result = date.to_string () + "T" + time_of_day.to_string ();
 		int offset = (int) (offset.ticks / 10000000 / 60);
 		if (offset == 0) {
 			result += "Z";
@@ -107,7 +106,6 @@ public struct Dova.DateTime {
 			result += format_number (offset / 60, 2);
 			result += format_number (offset % 60, 2);
 		}
-		return result;
 	}
 }
 

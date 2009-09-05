@@ -41,12 +41,11 @@ public class string : Dova.Value {
 		get {
 			byte* p = data;
 			byte* end = p + size;
-			int result = 0;
+			result = 0;
 			while (p < end) {
 				result++;
 				p += utf8_skip_data[*p];
 			}
-			return result;
 		}
 	}
 
@@ -70,9 +69,8 @@ public class string : Dova.Value {
 	}
 
 	public byte[] get_utf8_bytes () {
-		var result = new byte[this.size];
+		result = new byte[this.size];
 		Posix.memcpy (((Array<byte>) result).data, this.data, this.size);
-		return result;
 	}
 
 	internal static string create (int size) {
@@ -84,11 +82,10 @@ public class string : Dova.Value {
 
 	// maybe better public static string concat (params List<string> strings)
 	public string concat (string other) {
-		string str = create (this.size + other.size);
-		byte* p = (byte*) str.data;
+		result = create (this.size + other.size);
+		byte* p = (byte*) result.data;
 		Posix.memcpy (p, this.data, this.size);
 		Posix.memcpy (p + this.size, other.data, other.size);
-		return str;
 	}
 
 	public bool contains (string value) {

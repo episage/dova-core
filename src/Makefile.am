@@ -6,6 +6,7 @@ lib_LTLIBRARIES = \
 
 libdova_core_la_SOURCES = \
 	array.vala \
+	arraylist.vala \
 	bool.vala \
 	byte.vala \
 	char.vala \
@@ -18,6 +19,9 @@ libdova_core_la_SOURCES = \
 	duration.vala \
 	float.vala \
 	int.vala \
+	iterable.vala \
+	iterator.vala \
+	list.vala \
 	long.vala \
 	object.vala \
 	sbyte.vala \

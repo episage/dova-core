@@ -41,7 +41,7 @@ public class Dova.TextReader : Object {
 	// real implementation should use buffered stream
 	// and not allocate new strings on each new byte
 	public string? read_line () {
-		string result = "";
+		result = "";
 		byte[] buffer = new byte[1];
 		while (this.stream.read (buffer, 0, 1) > 0) {
 			if (*((byte*) ((Array<byte>) buffer).data) == '\n') {
@@ -51,7 +51,7 @@ public class Dova.TextReader : Object {
 			tmp.data[0] = *((byte*) ((Array<byte>) buffer).data);
 			result += tmp;
 		}
-		return result;
+		return;
 	}
 }
 

@@ -45,9 +45,9 @@ public class Dova.Object {
 	}
 
 	public static Object? alloc (Type type) {
-		Object obj = (Object) Posix.calloc (1, type.object_size);
-		obj.type = type;
-		return obj;
+		result = (Object) Posix.calloc (1, type.object_size);
+		result.type = type;
+		return;
 	}
 
 	public static void* ref (void* object) {
@@ -100,7 +100,7 @@ public class Dova.Type {
 		int index = this.n_interfaces;
 
 		this.n_interfaces++;
-		this.interfaces = Posix.realloc (this.interfaces, this.n_interfaces);
+		this.interfaces = Posix.realloc (this.interfaces, this.n_interfaces * (int) sizeof (Interface));
 
 		// sort interface implementations by interface type pointer
 		// to allow binary search when using interface

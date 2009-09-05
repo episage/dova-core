@@ -99,6 +99,6 @@ namespace Posix {
 		public int tm_isdst;
 	}
 	[CCode (cheader_filename = "time.h")]
-	public tm* localtime_r (time_t* timep, tm* result);
+	public tm* localtime_r (time_t* timep, tm* res);
 }
 

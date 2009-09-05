@@ -58,11 +58,11 @@ public struct Dova.TimeOfDay {
 	}
 
 	static string format_number (int number, int digits) {
-		string s = number.to_string ();
-		while (s.length < digits) {
-			s = "0" + s;
+		result = number.to_string ();
+		while (result.length < digits) {
+			result = "0" + result;
 		}
-		return s;
+		return;
 	}
 
 	public string to_string () {

@@ -104,15 +104,15 @@ public struct ulong {
 			}
 		}
 
-		string str = string.create (length);
-		byte* p = (byte*) str.data + length - 1;
+		result = string.create (length);
+		byte* p = (byte*) result.data + length - 1;
 
 		do {
 			*p-- = (int) '0' + val % 10;
 			val /= 10;
 		} while (val > 0);
 
-		return str;
+		return;
 	}
 }
 
