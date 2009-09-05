@@ -8,8 +8,12 @@ libdova_core_la_SOURCES = \
 	bool.vala \
 	byte.vala \
 	char.vala \
+	date.vala \
+	datetime.vala \
+	dayofweek.vala \
 	decimal.vala \
 	double.vala \
+	duration.vala \
 	float.vala \
 	int.vala \
 	long.vala \
@@ -17,6 +21,8 @@ libdova_core_la_SOURCES = \
 	sbyte.vala \
 	short.vala \
 	string.vala \
+	time.vala \
+	timeofday.vala \
 	uint.vala \
 	ulong.vala \
 	ushort.vala \

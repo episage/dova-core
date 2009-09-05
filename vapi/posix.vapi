@@ -22,11 +22,6 @@
 
 [CCode (cprefix = "", lower_case_cprefix = "")]
 namespace Posix {
-	[CCode (cheader_filename = "sys/types.h", default_value = "0UL")]
-	[IntegerType (rank = 9)]
-	public struct size_t {
-	}
-
 	[CCode (cheader_filename = "stdlib.h")]
 	public void* calloc (size_t nelem, size_t elsize);
 	[CCode (cheader_filename = "stdlib.h")]
@@ -47,8 +42,39 @@ namespace Posix {
 	[CCode (cheader_filename = "string.h")]
 	public void* strstr (void* haystack, void* needle);
 
+	[CCode (cheader_filename = "sys/time.h")]
+	public int gettimeofday (out timeval tv, void* tz = null);
+	[CCode (cname = "struct timeval", cheader_filename = "sys/time.h")]
+	public struct timeval {
+		public time_t tv_sec;
+		public suseconds_t tv_usec;
+	}
+	[CCode (cheader_filename = "sys/time.h")]
+	[IntegerType (rank = 8)]
+	public struct suseconds_t {
+	}
+
 	[CCode (cheader_filename = "sys/types.h", default_value = "0UL")]
 	[IntegerType (rank = 9)]
 	public struct size_t {
 	}
+
+	[CCode (cheader_filename = "time.h")]
+	[IntegerType (rank = 8)]
+	public struct time_t {
+	}
+	[CCode (cname = "struct tm", cheader_filename = "time.h")]
+	public struct tm {
+		public int tm_sec;
+		public int tm_min;
+		public int tm_hour;
+		public int tm_mday;
+		public int tm_mon;
+		public int tm_year;
+		public int tm_wday;
+		public int tm_yday;
+		public int tm_isdst;
+	}
+	[CCode (cheader_filename = "time.h")]
+	public tm* localtime_r (time_t* timep, tm* result);
 }
