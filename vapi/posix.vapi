@@ -22,6 +22,12 @@
 
 [CCode (cprefix = "", lower_case_cprefix = "")]
 namespace Posix {
+	[CCode (cheader_filename = "assert.h")]
+	public void assert (bool expression);
+
+	[CCode (cheader_filename = "stdio.h")]
+	public int printf (string format, ...);
+
 	[CCode (cheader_filename = "stdlib.h")]
 	public void* calloc (size_t nelem, size_t elsize);
 	[CCode (cheader_filename = "stdlib.h")]
@@ -42,6 +48,17 @@ namespace Posix {
 	[CCode (cheader_filename = "string.h")]
 	public void* strstr (void* haystack, void* needle);
 
+	[CCode (cheader_filename = "fcntl.h")]
+	public int open (char* path, int oflag);
+	[CCode (cheader_filename = "unistd.h")]
+	public int close (int fd);
+	[CCode (cheader_filename = "unistd.h")]
+	public ssize_t read (int fd, void* buf, size_t count);
+	[CCode (cheader_filename = "unistd.h")]
+	public ssize_t write (int fd, void* buf, size_t count);
+	[CCode (cheader_filename = "fcntl.h")]
+	public const int O_WRONLY;
+
 	[CCode (cheader_filename = "sys/time.h")]
 	public int gettimeofday (out timeval tv, void* tz = null);
 	[CCode (cname = "struct timeval", cheader_filename = "sys/time.h")]
@@ -59,10 +76,16 @@ namespace Posix {
 	public struct size_t {
 	}
 
+	[CCode (cheader_filename = "sys/types.h", default_value = "0L")]
+	[IntegerType (rank = 9)]
+	public struct ssize_t {
+	}
+
 	[CCode (cheader_filename = "time.h")]
 	[IntegerType (rank = 8)]
 	public struct time_t {
 	}
+
 	[CCode (cname = "struct tm", cheader_filename = "time.h")]
 	public struct tm {
 		public int tm_sec;
@@ -78,3 +101,4 @@ namespace Posix {
 	[CCode (cheader_filename = "time.h")]
 	public tm* localtime_r (time_t* timep, tm* result);
 }
+

@@ -21,7 +21,10 @@ libdova_core_la_SOURCES = \
 	object.vala \
 	sbyte.vala \
 	short.vala \
+	stream.vala \
 	string.vala \
+	textreader.vala \
+	textwriter.vala \
 	time.vala \
 	timeofday.vala \
 	uint.vala \

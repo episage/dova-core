@@ -69,6 +69,12 @@ public class string : Dova.Value {
 		}
 	}
 
+	public byte[] get_utf8_bytes () {
+		var result = new byte[this.size];
+		Posix.memcpy (((Array<byte>) result).data, this.data, this.size);
+		return result;
+	}
+
 	internal static string create (int size) {
 		string* str = Posix.calloc (1, (int) sizeof (int) * 2 + size + 1);
 		str->ref_count = 1;
@@ -83,6 +89,27 @@ public class string : Dova.Value {
 		Posix.memcpy (p, this.data, this.size);
 		Posix.memcpy (p + this.size, other.data, other.size);
 		return str;
+	}
+
+	public bool contains (string value) {
+		return (Posix.strstr (this.data, value.data) != null);
+	}
+
+	public static int compare (string? s1, string? s2) {
+		if (s1 == null) {
+			if (s2 == null) {
+				return 0;
+			} else {
+				return -1;
+			}
+		} else if (s2 == null) {
+			return 1;
+		}
+		return Posix.strcmp (s1.data, s2.data);
+	}
+
+	public int collate (string other) {
+		return Posix.strcoll (this.data, other.data);
 	}
 }
 
