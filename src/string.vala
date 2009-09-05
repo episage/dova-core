@@ -68,5 +68,21 @@ public class string : Dova.Value {
 			Posix.free (this);
 		}
 	}
+
+	internal static string create (int size) {
+		string* str = Posix.calloc (1, (int) sizeof (int) * 2 + size + 1);
+		str->ref_count = 1;
+		str->size = size;
+		return (owned) str;
+	}
+
+	// maybe better public static string concat (params List<string> strings)
+	public string concat (string other) {
+		string str = create (this.size + other.size);
+		byte* p = (byte*) str.data;
+		Posix.memcpy (p, this.data, this.size);
+		Posix.memcpy (p + this.size, other.data, other.size);
+		return str;
+	}
 }
 

@@ -35,4 +35,20 @@ namespace Posix {
 	public void* malloc (size_t size);
 	[CCode (cheader_filename = "stdlib.h")]
 	public void* realloc (void* ptr, size_t size);
+
+	[CCode (cheader_filename = "string.h")]
+	public void* memcpy (void* dest, void* src, size_t n);
+	[CCode (cheader_filename = "string.h")]
+	public void* memset (void* s, int c, size_t n);
+	[CCode (cheader_filename = "string.h")]
+	public int strcmp (void* s1, void* s2);
+	[CCode (cheader_filename = "string.h")]
+	public int strcoll (void* s1, void* s2);
+	[CCode (cheader_filename = "string.h")]
+	public void* strstr (void* haystack, void* needle);
+
+	[CCode (cheader_filename = "sys/types.h", default_value = "0UL")]
+	[IntegerType (rank = 9)]
+	public struct size_t {
+	}
 }
