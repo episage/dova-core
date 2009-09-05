@@ -13,6 +13,7 @@ libdova_core_la_SOURCES = \
 	datetime.vala \
 	dayofweek.vala \
 	decimal.vala \
+	delegate.vala \
 	double.vala \
 	duration.vala \
 	float.vala \
