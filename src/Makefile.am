@@ -8,6 +8,7 @@ libdova_core_la_SOURCES = \
 	bool.vala \
 	byte.vala \
 	char.vala \
+	decimal.vala \
 	double.vala \
 	float.vala \
 	int.vala \
