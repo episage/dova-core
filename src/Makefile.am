@@ -18,6 +18,7 @@ libdova_core_la_SOURCES = \
 	double.vala \
 	duration.vala \
 	float.vala \
+	hashmap.vala \
 	int.vala \
 	iterable.vala \
 	iterator.vala \

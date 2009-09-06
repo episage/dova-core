@@ -22,6 +22,14 @@
 
 [IntegerType (rank = 6, width = 32)]
 public struct int {
+	public bool equal (int other) {
+		return (this == other);
+	}
+
+	public int hash () {
+		return this;
+	}
+
 	public string to_string () {
 		long l = (long) this;
 		return l.to_string ();

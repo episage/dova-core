@@ -64,7 +64,7 @@ public class Dova.Object {
 	}
 }
 
-public class Dova.Type {
+public abstract class Dova.Type {
 	public Type? base_type { get; set; }
 	public string name { get; set; }
 	public int object_size { get; set; }
@@ -80,7 +80,7 @@ public class Dova.Type {
 		public void* vtable;
 	}
 
-	public Type (Type? base_type) {
+	protected Type (Type? base_type) {
 		this.base_type = base_type;
 	}
 
