@@ -22,5 +22,36 @@
 
 [CCode (cprefix = "", lower_case_cprefix = "")]
 namespace Linux {
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public struct epoll_data_t {
+		public void* ptr;
+		public int fd;
+		public uint u32;
+		public ulong u64;
+	}
+
+	[CCode (cname = "struct epoll_event", cheader_filename = "sys/epoll.h")]
+	public struct epoll_event {
+		public uint events;
+		public epoll_data_t data;
+	}
+
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public const int EPOLL_CLOEXEC;
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public const int EPOLL_CTL_ADD;
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public const int EPOLL_CTL_MOD;
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public const int EPOLL_CTL_DEL;
+
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public int epoll_create1 (int flags);
+
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public int epoll_ctl (int epfd, int op, int fd, epoll_event* event);
+
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public int epoll_wait (int epfd, epoll_event* events, int maxevents, int timeout);
 }
 

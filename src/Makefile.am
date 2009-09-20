@@ -21,6 +21,7 @@ libdova_core_la_SOURCES = \
 	dynamiclist.vala \
 	dynamicmap.vala \
 	dynamicobject.vala \
+	eventcontext.vala \
 	float.vala \
 	hashmap.vala \
 	int.vala \
@@ -49,7 +50,7 @@ dovainclude_HEADERS = \
 	dova-core.h \
 	$(NULL)
 
-libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix -H dova-core.h --vapi dova-core-0.1.vapi
+libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux -H dova-core.h --vapi dova-core-0.1.vapi
 
 vapidir = $(datadir)/vala/vapi
 
