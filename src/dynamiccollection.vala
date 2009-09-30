@@ -1,4 +1,4 @@
-/* iterable.vala
+/* dynamiccollection.vala
  *
  * Copyright (C) 2009  Jürg Billeter
  *
@@ -20,7 +20,16 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public interface Dova.Iterable<T> {
+public abstract class Dova.DynamicCollection<T> : /*Iterable<T>,*/ DynamicObject {
+	protected DynamicCollection () {
+	}
+
 	public abstract Iterator<T> iterator ();
+
+	public abstract bool add (T element);
+	public abstract void clear ();
+	public abstract bool contains (T element);
+	public abstract bool remove (T element);
+	public abstract int size { get; }
 }
 

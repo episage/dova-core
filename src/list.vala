@@ -23,12 +23,59 @@
 /**
  * Immutable list.
  */
-public class Dova.List<T> : Object, Iterable<T> {
+public class Dova.List<T> : /*Value*/Object, Iterable<T> {
+	T[] _elements;
 	public int length { get; private set; }
-	// should be inline allocated
-	public void* data { get; private set; }
 
-	public Iterator<T> iterator () {
-		result = null;
+	public List (int length, T elements[]) /*: _elements (elements.length)*/ {
+		_elements = new T[length];
+		this.length = length;
+		for (int i = 0; i < length; i++) {
+			_elements[i] = elements[i];
+		}
+	}
+
+	List.clear (int length) /*: length*/ {
+		_elements = new T[length];
+		this.length = length;
+	}
+
+	public T get (int index) {
+		result = _elements[index];
+	}
+
+	public List<T> concat (List<T> list2) {
+		result = new List<T>.clear (this.length + list2.length);
+		for (int i = 0; i < this.length; i++) {
+			result._elements[i] = this[i];
+		}
+		for (int i = 0; i < list2.length; i++) {
+			result._elements[this.length + i] = list2[i];
+		}
+	}
+
+	public Dova.Iterator<T> iterator () {
+		result = new Iterator<T> (this);
+	}
+
+	class Iterator<T> : Dova.Iterator<T> {
+		List<T> list;
+		int index;
+
+		public Iterator (List<T> list) {
+			this.list = list;
+			this.index = -1;
+		}
+
+		public override bool next () {
+			if (index < list.length) {
+				index++;
+			}
+			return (index < list.length);
+		}
+
+		public override T get () {
+			result = list.get (index);
+		}
 	}
 }

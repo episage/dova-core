@@ -28,14 +28,6 @@ namespace Debug {
         }
 }
 
-public abstract class Dova.DynamicList<T> : Collection<T> {
-	protected DynamicList () {
-		base ();
-	}
-	public abstract T get (int index);
-	public abstract void set (int index, T element);
-}
-
 public class Dova.ArrayList<T> : DynamicList<T> {
 	T[] _elements;
 	int _size;
@@ -91,7 +83,7 @@ public class Dova.ArrayList<T> : DynamicList<T> {
 	void set_capacity (int value) {
 		assert (value >= _size);
 
-		Array.resize (ref _elements, typeof (T), value);
+		Array.resize<T> (ref _elements, value);
 	}
 
 
@@ -127,18 +119,5 @@ public class Dova.ArrayList<T> : DynamicList<T> {
 			result = list.get (index);
 		}
 	}
-}
-
-public abstract class Dova.Collection<T> : Iterable<T> {
-	protected Collection () {
-	}
-
-	public abstract Iterator<T> iterator ();
-
-	public abstract bool add (T element);
-	public abstract void clear ();
-	public abstract bool contains (T element);
-	public abstract bool remove (T element);
-	public abstract int size { get; }
 }
 

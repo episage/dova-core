@@ -17,6 +17,10 @@ libdova_core_la_SOURCES = \
 	delegate.vala \
 	double.vala \
 	duration.vala \
+	dynamiccollection.vala \
+	dynamiclist.vala \
+	dynamicmap.vala \
+	dynamicobject.vala \
 	float.vala \
 	hashmap.vala \
 	int.vala \

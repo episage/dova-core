@@ -36,13 +36,37 @@ public class Dova.Array<T> : Object, Iterable<T> {
 		this.length = length;
 	}
 
-	// FIXME element_size should not be necessary
-	public static void resize<T> (ref T[] array, Type element_type, int new_length) {
+	public static void resize<T> (ref T[] array, int new_length) {
 		int old_length = ((Array) array).length;
-		((Array) array).data = Posix.realloc (((Array) array).data, element_type.value_size * new_length);
+		((Array) array).data = Posix.realloc (((Array) array).data, typeof (T).value_size * new_length);
 		((Array) array).length = new_length;
 		if (new_length > old_length) {
-			Posix.memset (((byte*) ((Array) array).data) + element_type.value_size * old_length, 0, element_type.value_size * (new_length - old_length));
+			Posix.memset (((byte*) ((Array) array).data) + typeof (T).value_size * old_length, 0, typeof (T).value_size * (new_length - old_length));
+		}
+	}
+
+	public Dova.Iterator<T> iterator () {
+		return new Iterator<T> ((T[]) this);
+	}
+
+	class Iterator<T> : Dova.Iterator<T> {
+		T[] array;
+		int index;
+
+		public Iterator (T[] array) {
+			this.array = array;
+			this.index = -1;
+		}
+
+		public override bool next () {
+			if (index < array.length) {
+				index++;
+			}
+			return (index < array.length);
+		}
+
+		public override T get () {
+			result = array[index];
 		}
 	}
 }

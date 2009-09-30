@@ -1,4 +1,4 @@
-/* iterable.vala
+/* dynamicmap.vala
  *
  * Copyright (C) 2009  Jürg Billeter
  *
@@ -20,7 +20,9 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public interface Dova.Iterable<T> {
-	public abstract Iterator<T> iterator ();
+public abstract class Dova.DynamicMap<K,V> : DynamicObject {
+	public abstract V get (K key);
+	public abstract void set (K key, V value);
+	// public signal void changed ();
 }
 

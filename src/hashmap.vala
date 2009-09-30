@@ -20,11 +20,6 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public abstract class Dova.DynamicMap<K,V> {
-	public abstract V get (K key);
-	public abstract void set (K key, V value);
-}
-
 public class Dova.HashMap<K,V> : DynamicMap<K,V> {
 	int size;
 	int mod;

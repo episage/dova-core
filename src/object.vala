@@ -143,5 +143,7 @@ public abstract class Dova.Type {
 			return null;
 		}
 	}
+
+	public extern void value_copy (void* dest, int dest_index, void* src, int src_index);
 }
 
