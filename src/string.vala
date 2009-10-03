@@ -80,7 +80,12 @@ public class string : Dova.Value {
 		return (owned) str;
 	}
 
-	// maybe better public static string concat (params List<string> strings)
+	public static string create_from_cstring (byte* cstring) {
+		result = create ((int) Posix.strlen (cstring));
+		Posix.memcpy (result.data, cstring, result.size);
+	}
+
+	// maybe better public static string concat (List<string> strings)
 	public string concat (string other) {
 		result = create (this.size + other.size);
 		byte* p = (byte*) result.data;
@@ -107,6 +112,35 @@ public class string : Dova.Value {
 
 	public int collate (string other) {
 		return Posix.strcoll (this.data, other.data);
+	}
+
+	public bool starts_with (string value) {
+		if (this.size < value.size) {
+			return false;
+		}
+		result = (Posix.strncmp (this.data, value.data, value.size) == 0);
+	}
+
+	public List<string> split (string delimiter) {
+		result = [];
+		byte* p = data;
+
+		byte* next;
+		while ((next = Posix.strstr (p, delimiter.data)) != null) {
+			string s = create ((int) (next - p));
+			Posix.memcpy (s.data, p, s.size);
+			result += [s];
+
+			p += s.size + delimiter.size;
+		}
+
+		string s = create ((int) ((byte*) data + size - p));
+		Posix.memcpy (s.data, p, s.size);
+		result += [s];
+	}
+
+	public new string to_string () {
+		return this;
 	}
 }
 

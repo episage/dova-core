@@ -47,6 +47,10 @@ namespace Posix {
 	public int strcoll (void* s1, void* s2);
 	[CCode (cheader_filename = "string.h")]
 	public void* strstr (void* haystack, void* needle);
+	[CCode (cheader_filename = "string.h")]
+	public size_t strlen (char* s);
+	[CCode (cheader_filename = "string.h")]
+	public int strncmp (void* s1, void* s2, size_t n);
 
 	[CCode (cheader_filename = "fcntl.h")]
 	public int open (char* path, int oflag);
