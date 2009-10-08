@@ -22,7 +22,7 @@
 
 public class Dova.Object {
 	public Type type;
-	int ref_count;
+	volatile AtomicInt ref_count;
 
 	public virtual void finalize () {
 	}
@@ -44,20 +44,19 @@ public class Dova.Object {
 		return this.type.is_subtype_of (type);
 	}
 
-	public static Object? alloc (Type type) {
-		result = (Object) Posix.calloc (1, type.object_size);
-		result.type = type;
-		return;
+	public static Object* alloc (Type type) {
+		result = Posix.calloc (1, type.object_size);
+		result->type = type;
+		result->ref_count = 1;
 	}
 
 	public static void* ref (void* object) {
-		((Object*) object)->ref_count++;
+		AtomicInt.fetch_and_add (ref ((Object*) object)->ref_count, 1);
 		return object;
 	}
 	
 	public static void unref (void* object) {
-		((Object*) object)->ref_count--;
-		if ((((Object*) object)->ref_count) == 0) {
+		if (AtomicInt.fetch_and_sub (ref ((Object*) object)->ref_count, 1) == 1) {
 			((Object*) object)->finalize ();
 			Posix.free (object);
 		}

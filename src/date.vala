@@ -101,8 +101,8 @@ public struct Dova.Date {
 		}
 	}
 
-	const byte days_in_month[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-	const byte days_in_month_in_leapyear[] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	const byte days_in_month[] = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+	const byte days_in_month_in_leapyear[] = [ 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
 
 	public Date (int year, int month, int day) {
 		// total days up to beginning of year

@@ -31,7 +31,7 @@ public class Dova.HashMap<K,V> : DynamicMap<K,V> {
 	K[] keys;
 	V[] values;
 
-	const int prime_mod[] = {
+	const int prime_mod[] = [
 		1,          // for 1 << 0
 		2,
 		3,
@@ -64,7 +64,7 @@ public class Dova.HashMap<K,V> : DynamicMap<K,V> {
 		536870909,
 		1073741789,
 		2147483647  // for 1 << 31
-	};
+	];
 
 	public HashMap () {
 		set_shift (3);

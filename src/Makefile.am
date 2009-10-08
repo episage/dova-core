@@ -7,6 +7,7 @@ lib_LTLIBRARIES = \
 libdova_core_la_SOURCES = \
 	array.vala \
 	arraylist.vala \
+	atomic-gcc.vala \
 	bool.vala \
 	byte.vala \
 	char.vala \
@@ -50,7 +51,7 @@ dovainclude_HEADERS = \
 	dova-core.h \
 	$(NULL)
 
-libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux -H dova-core.h --vapi dova-core-0.1.vapi
+libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux --pkg gcc -H dova-core.h --vapi dova-core-0.1.vapi
 
 vapidir = $(datadir)/vala/vapi
 
