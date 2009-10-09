@@ -37,6 +37,7 @@ libdova_core_la_SOURCES = \
 	string.vala \
 	textreader.vala \
 	textwriter.vala \
+	thread.vala \
 	time.vala \
 	timeofday.vala \
 	uint.vala \

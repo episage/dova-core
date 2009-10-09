@@ -22,8 +22,37 @@
 
 [CCode (cprefix = "", lower_case_cprefix = "")]
 namespace Posix {
+	[IntegerType (rank = 9)]
+	public struct long {
+	}
+
 	[CCode (cheader_filename = "assert.h")]
 	public void assert (bool expression);
+
+	[CCode (cheader_filename = "pthread.h")]
+	public struct pthread_t {
+	}
+	[CCode (cheader_filename = "pthread.h")]
+	public struct pthread_attr_t {
+	}
+	[CCode (cheader_filename = "pthread.h")]
+	public struct pthread_mutex_t {
+	}
+	[CCode (cheader_filename = "pthread.h")]
+	public struct pthread_mutexattr_t {
+	}
+
+	[CCode (cheader_filename = "pthread.h")]
+	public int pthread_create (pthread_t* thread, pthread_attr_t* attr, void* start_routine, void* arg);
+	[CCode (cheader_filename = "pthread.h")]
+	public int pthread_mutex_init (pthread_mutex_t* mutex, pthread_mutexattr_t* attr);
+	[CCode (cheader_filename = "pthread.h")]
+	public int pthread_mutex_lock (pthread_mutex_t* mutex);
+	[CCode (cheader_filename = "pthread.h")]
+	public int pthread_mutex_unlock (pthread_mutex_t* mutex);
+
+	[CCode (cheader_filename = "sched.h")]
+	public int sched_yield ();
 
 	[CCode (cheader_filename = "stdio.h")]
 	public int printf (string format, ...);
@@ -89,6 +118,15 @@ namespace Posix {
 	[IntegerType (rank = 8)]
 	public struct time_t {
 	}
+
+	[CCode (cname = "struct timespec", cheader_filename = "time.h")]
+	public struct timespec {
+		time_t tv_sec;
+		long tv_nsec;
+	}
+
+	[CCode (cheader_filename = "time.h")]
+	public int nanosleep (timespec* req, timespec* rem);
 
 	[CCode (cname = "struct tm", cheader_filename = "time.h")]
 	public struct tm {

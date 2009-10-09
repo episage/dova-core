@@ -8,5 +8,5 @@ datadir=@datadir@
 Name: dova-core
 Description: The Dova Core library
 Version: @VERSION@
-Libs: -L${libdir} -ldova-core
-Cflags: -I${includedir}/dova-core-0.1
+Libs: -L${libdir} -ldova-core -pthread
+Cflags: -I${includedir}/dova-core-0.1 -pthread
