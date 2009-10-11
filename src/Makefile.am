@@ -41,6 +41,7 @@ libdova_core_la_SOURCES = \
 	thread.vala \
 	time.vala \
 	timeofday.vala \
+	tuple.vala \
 	uint.vala \
 	ulong.vala \
 	ushort.vala \
