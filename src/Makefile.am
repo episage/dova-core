@@ -30,9 +30,11 @@ libdova_core_la_SOURCES = \
 	iterator.vala \
 	list.vala \
 	long.vala \
+	map.vala \
 	module.vala \
 	object.vala \
 	sbyte.vala \
+	set.vala \
 	short.vala \
 	stream.vala \
 	string.vala \

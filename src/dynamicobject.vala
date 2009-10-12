@@ -57,7 +57,7 @@ public abstract class Dova.DynamicTime : DynamicObject {
 }
 
 public abstract class Dova.DynamicDateTime : DynamicObject {
-	public abstract DynamicDateTime get ();
+	public abstract DateTime get ();
 	public abstract void set (DateTime value);
 	// public signal void changed ();
 }
