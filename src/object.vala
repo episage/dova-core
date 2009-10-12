@@ -63,9 +63,13 @@ public class Dova.Object {
 	}
 }
 
+// maybe add override (string name, void* method) method to avoid the extra _override helper functions
+// performance shouldn't be critical on type creation
 public abstract class Dova.Type {
 	public Type? base_type { get; set; }
+	public Type? generic_type { get; set; }
 	public string name { get; set; }
+	public Type? next_type { get; set; }
 	public int object_size { get; set; }
 	public int type_size { get; set; }
 	// sizeof (void *) for pointer based types
@@ -83,12 +87,29 @@ public abstract class Dova.Type {
 		this.base_type = base_type;
 	}
 
+	public new static void alloc (Type base_type, int object_size, int type_size, out Type* result, out int object_offset, out int type_offset) {
+		result = Posix.calloc (1, base_type.type_size + type_size);
+		result->type = typeof (Type);
+		result->base_type = base_type;
+		object_offset = base_type.object_size;
+		result->object_size = base_type.object_size + object_size;
+		type_offset = base_type.type_size;
+		result->type_size = base_type.type_size + type_size;
+	}
+
+	public void insert_type (Type type) {
+		type.next_type = next_type;
+		next_type = type;
+	}
+
 	public bool is_subtype_of (Type type) {
 		if (this == type) {
 			return true;
 		} else if (base_type != null && base_type.is_subtype_of (type)) {
 			return true;
 		} else if (get_interface (type) != null) {
+			return true;
+		} else if (generic_type != null && this == generic_type) {
 			return true;
 		} else {
 			return false;
