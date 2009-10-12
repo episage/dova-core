@@ -32,9 +32,14 @@ public class Dova.ArrayList<T> : DynamicList<T> {
 	T[] _elements;
 	int _size;
 
-	public ArrayList () {
+	public ArrayList (List<T>? list = null) {
 		base ();
 		_elements = new T[4];
+		if (list != null) {
+			foreach (var element in list) {
+				add (element);
+			}
+		}
 	}
 
 	public override int size {
