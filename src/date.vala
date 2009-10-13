@@ -22,18 +22,17 @@
 
 /**
  * Single day.
+ *
+ * Measured in julian days since epoch (January 1, 0001).
  */
-public struct Dova.Date {
-	// julian days since epoch (january 1, 0001)
-	public int days;
-
+public struct Dova.Date : int {
 	const int DAYS_PER_400_YEARS = 146097;
 	const int DAYS_PER_100_YEARS = 36524;
 	const int DAYS_PER_4_YEARS = 1461;
 	const int DAYS_PER_YEAR = 365;
 
 	void get_year_month_day (out int year, out int month, out int day) {
-		int days = this.days;
+		int days = this;
 
 		int n_400_year_cycles = days / DAYS_PER_400_YEARS;
 		days -= n_400_year_cycles * DAYS_PER_400_YEARS;
@@ -97,7 +96,7 @@ public struct Dova.Date {
 
 	public DayOfWeek day_of_week {
 		get {
-			return (DayOfWeek) (days % 7);
+			return (DayOfWeek) (this % 7);
 		}
 	}
 
@@ -106,26 +105,21 @@ public struct Dova.Date {
 
 	public Date (int year, int month, int day) {
 		// total days up to beginning of year
-		this.days = (year - 1) * 365 + ((year - 1) / 4) - ((year - 1) / 100) + ((year - 1) / 400);
+		int days = (year - 1) * 365 + ((year - 1) / 4) - ((year - 1) / 100) + ((year - 1) / 400);
 
 		// total days up to beginning of month
 		for (int m = 1; m < month; m++) {
-			this.days += days_in_month[m - 1];
+			days += days_in_month[m - 1];
 		}
 		if (month > 2 && year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
 			// add february 29 of this leap year
-			this.days++;
+			days++;
 		}
 
 		// total days
-		this.days += (day - 1);
-	}
+		days += (day - 1);
 
-	internal Date.from_days (int days) {
-		this.days = days;
-	}
-
-	public Date.today () {
+		this = (Date) days;
 	}
 
 	static string format_number (int number, int digits) {
@@ -135,7 +129,7 @@ public struct Dova.Date {
 		}
 	}
 
-	public string to_string () {
+	public new string to_string () {
 		return format_number (year, 4) + "-" + format_number (month, 2) + "-" + format_number (day, 2);
 	}
 }

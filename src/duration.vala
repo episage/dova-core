@@ -20,23 +20,17 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public struct Dova.Duration {
-	public long ticks;
-
+public struct Dova.Duration : long {
 	public long total_milliseconds {
-		get { return this.ticks / 10000; }
+		get { return this / 10000; }
 	}
 
 	public long total_seconds {
-		get { return this.ticks / 10000000; }
+		get { return this / 10000000; }
 	}
 
-	public Duration (int days, int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
-		this.ticks = (((((long) days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000;
-	}
-
-	internal Duration.with_ticks (long ticks) {
-		this.ticks = ticks;
+	public Duration (int days = 0, int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
+		this = (Duration) ((((((long) days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
 	}
 }
 

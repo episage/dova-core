@@ -36,8 +36,8 @@ public class Dova.Thread {
 
 	public static void sleep (Duration duration) {
 		var ts = Posix.timespec ();
-		ts.tv_sec = duration.ticks / 10000000;
-		ts.tv_nsec = duration.ticks % 10000000 * 100;
+		ts.tv_sec = duration / 10000000;
+		ts.tv_nsec = duration % 10000000 * 100;
 		Posix.nanosleep (&ts, null);
 	}
 

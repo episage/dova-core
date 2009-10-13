@@ -37,7 +37,7 @@ public struct Dova.DateTime {
 	}
 
 	public Date date {
-		get { return Date.from_days ((int) ((time.ticks + offset.ticks) / 10000000 / 3600 / 24)); }
+		get { return (Date) ((time + offset) / 10000000 / 3600 / 24); }
 	}
 
 	public int hour {
@@ -57,7 +57,7 @@ public struct Dova.DateTime {
 	}
 
 	public TimeOfDay time_of_day {
-		get { return TimeOfDay.with_ticks ((time.ticks + offset.ticks) % ((long) 24 * 3600 * 10000000)); }
+		get { return (TimeOfDay) ((time + offset) % ((long) 24 * 3600 * 10000000)); }
 	}
 
 	public DateTime (Time time, Duration offset) {
@@ -72,7 +72,7 @@ public struct Dova.DateTime {
 	}
 
 	public DateTime.dt (Date date, TimeOfDay time_of_day, Duration offset) {
-		this.time = Time.with_ticks ((long) date.days * 24 * 3600 * 10000000 + time_of_day.ticks - offset.ticks);
+		this.time = (Time) ((long) date * 24 * 3600 * 10000000 + time_of_day - offset);
 		this.offset = offset;
 	}
 
@@ -93,7 +93,7 @@ public struct Dova.DateTime {
 
 	public string to_string () {
 		result = date.to_string () + "T" + time_of_day.to_string ();
-		int offset = (int) (offset.ticks / 10000000 / 60);
+		int offset = (int) (offset / 10000000 / 60);
 		if (offset == 0) {
 			result += "Z";
 		} else {
