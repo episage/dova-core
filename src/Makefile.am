@@ -21,6 +21,7 @@ libdova_base_la_SOURCES = \
 	decimal.vala \
 	delegate.vala \
 	double.vala \
+	error.vala \
 	float.vala \
 	int.vala \
 	iterable.vala \
