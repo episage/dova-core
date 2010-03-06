@@ -73,7 +73,7 @@ public class string : Dova.Value {
 		Posix.memcpy (((Array<byte>) result).data, this.data, this.size);
 	}
 
-	internal static string create (int size) {
+	public static string create (int size) {
 		string* str = Posix.calloc (1, (int) sizeof (int) * 2 + size + 1);
 		str->ref_count = 1;
 		str->size = size;

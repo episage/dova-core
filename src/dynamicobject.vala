@@ -44,7 +44,7 @@ public abstract class Dova.DynamicString : DynamicObject {
 	// public signal void changed ();
 }
 
-public abstract class Dova.DynamicDate : DynamicObject {
+/*public abstract class Dova.DynamicDate : DynamicObject {
 	public abstract Date get ();
 	public abstract void set (Date value);
 	// public signal void changed ();
@@ -60,7 +60,7 @@ public abstract class Dova.DynamicDateTime : DynamicObject {
 	public abstract DateTime get ();
 	public abstract void set (DateTime value);
 	// public signal void changed ();
-}
+}*/
 
 public class Dova.IntegerReference : DynamicInteger {
 	int value;

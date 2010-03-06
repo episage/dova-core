@@ -1,48 +1,38 @@
 NULL =
 
+noinst_LTLIBRARIES = \
+	libdova-base.la \
+	libdova-datetime.la \
+	libdova-file.la \
+	libdova-io.la \
+	libdova-model.la \
+	$(NULL)
+
 lib_LTLIBRARIES = \
 	libdova-core.la \
 	$(NULL)
 
-libdova_core_la_SOURCES = \
+libdova_base_la_SOURCES = \
 	array.vala \
-	arraylist.vala \
 	atomic-gcc.vala \
 	bool.vala \
 	byte.vala \
 	char.vala \
-	date.vala \
-	datetime.vala \
-	dayofweek.vala \
 	decimal.vala \
 	delegate.vala \
 	double.vala \
-	duration.vala \
-	dynamiccollection.vala \
-	dynamiclist.vala \
-	dynamicmap.vala \
-	dynamicobject.vala \
-	eventcontext.vala \
 	float.vala \
-	hashmap.vala \
 	int.vala \
 	iterable.vala \
 	iterator.vala \
 	list.vala \
 	long.vala \
 	map.vala \
-	module.vala \
 	object.vala \
 	sbyte.vala \
 	set.vala \
 	short.vala \
-	stream.vala \
 	string.vala \
-	textreader.vala \
-	textwriter.vala \
-	thread.vala \
-	time.vala \
-	timeofday.vala \
 	tuple.vala \
 	uint.vala \
 	ulong.vala \
@@ -50,17 +40,90 @@ libdova_core_la_SOURCES = \
 	value.vala \
 	$(NULL)
 
+libdova_base_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg gcc -H dova-base.h --vapi dova-base-0.1.vapi
+
+libdova_datetime_la_SOURCES = \
+	date.vala \
+	datetime.vala \
+	dayofweek.vala \
+	duration.vala \
+	time.vala \
+	timeofday.vala \
+	$(NULL)
+
+libdova_datetime_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi -H dova-datetime.h --vapi dova-datetime-0.1.vapi
+
+$(srcdir)/libdova_datetime_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
+
+libdova_io_la_SOURCES = \
+	stream.vala \
+	textreader.vala \
+	textwriter.vala \
+	$(NULL)
+
+libdova_io_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi -H dova-io.h --vapi dova-io-0.1.vapi
+
+$(srcdir)/libdova_io_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
+
+libdova_file_la_SOURCES = \
+	file.vala \
+	$(NULL)
+
+libdova_file_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi dova-io-0.1.vapi -H dova-file.h --vapi dova-file-0.1.vapi
+
+$(srcdir)/libdova_file_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
+
+libdova_model_la_SOURCES = \
+	arraylist.vala \
+	dynamiccollection.vala \
+	dynamiclist.vala \
+	dynamicmap.vala \
+	dynamicobject.vala \
+	hashmap.vala \
+	$(NULL)
+
+libdova_model_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi -H dova-model.h --vapi dova-model-0.1.vapi
+
+$(srcdir)/libdova_model_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
+
+libdova_core_la_SOURCES = \
+	eventcontext.vala \
+	module.vala \
+	thread.vala \
+	$(NULL)
+
+libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux dova-base-0.1.vapi dova-datetime-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-model-0.1.vapi -H dova-core.h --vapi dova-core-0.1.vapi
+
+$(srcdir)/libdova_core_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-datetime-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-model-0.1.vapi
+
+libdova_core_la_LIBADD = \
+	libdova-base.la \
+	libdova-datetime.la \
+	libdova-file.la \
+	libdova-io.la \
+	libdova-model.la \
+	$(NULL)
+
 dovaincludedir = $(includedir)/dova-core-0.1
 
 dovainclude_HEADERS = \
+	dova-base.h \
 	dova-core.h \
+	dova-datetime.h \
+	dova-file.h \
+	dova-io.h \
+	dova-model.h \
 	$(NULL)
-
-libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux --pkg gcc -H dova-core.h --vapi dova-core-0.1.vapi
 
 vapidir = $(datadir)/vala/vapi
 
 dist_vapi_DATA = \
-        dova-core-0.1.vapi \
-        $(NULL)
+	dova-base-0.1.vapi \
+	dova-core-0.1.deps \
+	dova-core-0.1.vapi \
+	dova-datetime-0.1.vapi \
+	dova-file-0.1.vapi \
+	dova-io-0.1.vapi \
+	dova-model-0.1.vapi \
+	$(NULL)
 
