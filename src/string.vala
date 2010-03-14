@@ -142,5 +142,24 @@ public class string : Dova.Value {
 	public new string to_string () {
 		return this;
 	}
+
+	public bool equal (string other) {
+		return Posix.strcmp (data, other.data) == 0;
+	}
+
+	public int hash () {
+		// from GLib
+
+		byte *p = data;
+		uint h = *p;
+
+		if (h != 0) {
+			for (p += 1; *p != 0; p++) {
+				h = (h << 5) - h + *p;
+			}
+		}
+
+		return (int) h;
+	}
 }
 
