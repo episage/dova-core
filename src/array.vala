@@ -36,6 +36,12 @@ public class Dova.Array<T> : Object, Iterable<T> {
 		this.length = length;
 	}
 
+	~Array () {
+		for (int i = 0; i < length; i++) {
+			typeof (T).value_copy (data, i, null, 0);
+		}
+	}
+
 	public static void resize<T> (ref T[] array, int new_length) {
 		int old_length = ((Array) array).length;
 		((Array) array).data = Posix.realloc (((Array) array).data, typeof (T).value_size * new_length);
