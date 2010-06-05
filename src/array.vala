@@ -40,6 +40,7 @@ public class Dova.Array<T> : Object, Iterable<T> {
 		for (int i = 0; i < length; i++) {
 			typeof (T).value_copy (data, i, null, 0);
 		}
+		Posix.free (data);
 	}
 
 	public static void resize<T> (ref T[] array, int new_length) {
