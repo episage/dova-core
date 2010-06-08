@@ -48,7 +48,7 @@ public class Dova.TextReader : Object {
 				break;
 			}
 			string tmp = string.create (1);
-			tmp.data[0] = *((byte*) ((Array<byte>) buffer).data);
+			((byte*) tmp.data)[0] = *((byte*) ((Array<byte>) buffer).data);
 			result += tmp;
 		}
 		return;

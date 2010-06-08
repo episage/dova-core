@@ -98,6 +98,36 @@ namespace Posix {
 	[CCode (cheader_filename = "fcntl.h")]
 	public const int O_WRONLY;
 
+	[CCode (cheader_filename = "sys/socket.h")]
+	public int connect (int sockfd, sockaddr* addr, size_t addrlen);
+	[CCode (cheader_filename = "sys/socket.h")]
+	public int socket (int domain, int type, int protocol);
+	[CCode (cheader_filename = "sys/socket.h")]
+	public const int AF_INET;
+	public const int SOCK_STREAM;
+
+	[CCode (cname = "struct sockaddr", cheader_filename = "sys/socket.h")]
+	public struct sockaddr {
+		public int sa_family;
+	}
+
+	[CCode (cname = "struct sockaddr_in", cheader_filename = "netinet/in.h")]
+	public struct in_addr {
+		public uint s_addr;
+	}
+
+	[CCode (cname = "struct sockaddr_in", cheader_filename = "netinet/in.h")]
+	public struct sockaddr_in {
+		public int sin_family;
+		public ushort sin_port;
+		public in_addr sin_addr;
+	}
+
+	[CCode (cheader_filename = "arpa/inet.h")]
+	public ushort htons (ushort hostshort);
+	[CCode (cheader_filename = "arpa/inet.h")]
+	public int inet_pton (int af, char* src, void* dst);
+
 	[CCode (cheader_filename = "sys/time.h")]
 	public int gettimeofday (out timeval tv, void* tz = null);
 	[CCode (cname = "struct timeval", cheader_filename = "sys/time.h")]

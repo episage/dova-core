@@ -6,6 +6,7 @@ noinst_LTLIBRARIES = \
 	libdova-file.la \
 	libdova-io.la \
 	libdova-model.la \
+	libdova-net.la \
 	$(NULL)
 
 lib_LTLIBRARIES = \
@@ -74,6 +75,14 @@ libdova_file_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vap
 
 $(srcdir)/libdova_file_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
 
+libdova_net_la_SOURCES = \
+	net.vala \
+	$(NULL)
+
+libdova_net_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi dova-io-0.1.vapi -H dova-net.h --vapi dova-net-0.1.vapi
+
+$(srcdir)/libdova_net_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
+
 libdova_model_la_SOURCES = \
 	arraylist.vala \
 	dynamiccollection.vala \
@@ -93,9 +102,9 @@ libdova_core_la_SOURCES = \
 	thread.vala \
 	$(NULL)
 
-libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux dova-base-0.1.vapi dova-datetime-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-model-0.1.vapi -H dova-core.h --vapi dova-core-0.1.vapi
+libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux dova-base-0.1.vapi dova-datetime-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-model-0.1.vapi dova-net-0.1.vapi -H dova-core.h --vapi dova-core-0.1.vapi
 
-$(srcdir)/libdova_core_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-datetime-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-model-0.1.vapi
+$(srcdir)/libdova_core_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-datetime-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-model-0.1.vapi $(srcdir)/dova-net-0.1.vapi
 
 libdova_core_la_LIBADD = \
 	libdova-base.la \
@@ -103,6 +112,7 @@ libdova_core_la_LIBADD = \
 	libdova-file.la \
 	libdova-io.la \
 	libdova-model.la \
+	libdova-net.la \
 	$(NULL)
 
 dovaincludedir = $(includedir)/dova-core-0.1
@@ -114,6 +124,7 @@ dovainclude_HEADERS = \
 	dova-file.h \
 	dova-io.h \
 	dova-model.h \
+	dova-net.h \
 	$(NULL)
 
 vapidir = $(datadir)/vala/vapi
@@ -126,5 +137,6 @@ dist_vapi_DATA = \
 	dova-file-0.1.vapi \
 	dova-io-0.1.vapi \
 	dova-model-0.1.vapi \
+	dova-net-0.1.vapi \
 	$(NULL)
 
