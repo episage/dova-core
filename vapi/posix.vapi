@@ -82,13 +82,19 @@ namespace Posix {
 	public int strncmp (void* s1, void* s2, size_t n);
 
 	[CCode (cheader_filename = "fcntl.h")]
-	public int open (char* path, int oflag);
+	public int open (char* path, int oflag, int mode);
 	[CCode (cheader_filename = "unistd.h")]
 	public int close (int fd);
 	[CCode (cheader_filename = "unistd.h")]
 	public ssize_t read (int fd, void* buf, size_t count);
 	[CCode (cheader_filename = "unistd.h")]
 	public ssize_t write (int fd, void* buf, size_t count);
+	[CCode (cheader_filename = "fcntl.h")]
+	public const int O_CREAT;
+	[CCode (cheader_filename = "fcntl.h")]
+	public const int O_RDONLY;
+	[CCode (cheader_filename = "fcntl.h")]
+	public const int O_RDWR;
 	[CCode (cheader_filename = "fcntl.h")]
 	public const int O_WRONLY;
 

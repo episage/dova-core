@@ -1,6 +1,6 @@
 /* file.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,33 @@
  * Author:
  * 	Jürg Billeter <j@bitron.ch>
  */
+
+public abstract class Dova.File {
+	public static File get_for_path (string path) {
+		return new LocalFile (path);
+	}
+
+	public abstract FileStream read ();
+	public abstract FileStream create ();
+}
+
+class Dova.LocalFile : File {
+	string path;
+
+	public LocalFile (string path) {
+		this.path = path;
+	}
+
+	public override FileStream read () {
+		int fd = Posix.open (this.path.data, Posix.O_RDONLY, 0777);
+		return new LocalFileStream (fd);
+	}
+
+	public override FileStream create () {
+		int fd = Posix.open (this.path.data, Posix.O_WRONLY | Posix.O_CREAT, 0777);
+		return new LocalFileStream (fd);
+	}
+}
 
 public abstract class Dova.FileStream : Stream {
 	protected FileStream () {
