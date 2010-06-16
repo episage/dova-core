@@ -27,7 +27,7 @@ public class Dova.Object {
 	public virtual void finalize () {
 	}
 
-	public virtual bool equal (Object other) {
+	public virtual bool equals (Object other) {
 		return (this == other);
 	}
 

@@ -22,7 +22,7 @@
 
 [IntegerType (rank = 6, width = 32)]
 public struct int {
-	public bool equal (int other) {
+	public bool equals (int other) {
 		return (this == other);
 	}
 

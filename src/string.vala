@@ -143,7 +143,7 @@ public class string : Dova.Value {
 		return this;
 	}
 
-	public bool equal (string other) {
+	public bool equals (string other) {
 		return Posix.strcmp (data, other.data) == 0;
 	}
 
