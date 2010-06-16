@@ -1,6 +1,6 @@
-/* dynamicobject.vala
+/* model.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,49 +20,37 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public interface Dova.DynamicObject {
-	// TODO implementations should be able to indicate what exactly changed
-	// for example, what items have been inserted where in a list
-	// or what property has changed in an object
-	// these more specific pieces of information should be optional in general
-	// but will be essential in some situations for performance reasons (large list in UI)
-	// public signal void changed ();
-
-	// this can be used for widgets to enable or disable modify operations (i.e. affects sensitivity of widget)
-	// public abstract bool mutable { get; }
-}
-
-public abstract class Dova.DynamicInteger : DynamicObject {
+public abstract class Dova.IntegerModel {
 	public abstract int get ();
 	public abstract void set (int value);
 	// public signal void changed ();
 }
 
-public abstract class Dova.DynamicString : DynamicObject {
+public abstract class Dova.StringModel {
 	public abstract string get ();
 	public abstract void set (string value);
 	// public signal void changed ();
 }
 
-/*public abstract class Dova.DynamicDate : DynamicObject {
+/*public abstract class Dova.DateModel {
 	public abstract Date get ();
 	public abstract void set (Date value);
 	// public signal void changed ();
 }
 
-public abstract class Dova.DynamicTime : DynamicObject {
+public abstract class Dova.TimeModel {
 	public abstract Time get ();
 	public abstract void set (Time value);
 	// public signal void changed ();
 }
 
-public abstract class Dova.DynamicDateTime : DynamicObject {
+public abstract class Dova.DateTimeModel {
 	public abstract DateTime get ();
 	public abstract void set (DateTime value);
 	// public signal void changed ();
 }*/
 
-public class Dova.IntegerReference : DynamicInteger {
+public class Dova.IntegerReference : IntegerModel {
 	int value;
 
 	public IntegerReference (int value) {
@@ -79,7 +67,7 @@ public class Dova.IntegerReference : DynamicInteger {
 	}
 }
 
-public class Dova.StringReference : DynamicString {
+public class Dova.StringReference : StringModel {
 	string value;
 
 	public StringReference (string value) {
@@ -94,5 +82,32 @@ public class Dova.StringReference : DynamicString {
 		this.value = value;
 		// changed ();
 	}
+}
+
+public abstract class Dova.CollectionModel<T> /*: Iterable<T>*/ {
+	protected CollectionModel () {
+	}
+
+	public abstract Iterator<T> iterator ();
+
+	public abstract bool add (T element);
+	public abstract void clear ();
+	public abstract bool contains (T element);
+	public abstract bool remove (T element);
+	public abstract int size { get; }
+}
+
+public abstract class Dova.ListModel<T> : CollectionModel<T> {
+	protected ListModel () {
+		base ();
+	}
+	public abstract T get (int index);
+	public abstract void set (int index, T element);
+}
+
+public abstract class Dova.MapModel<K,V> {
+	public abstract V get (K key);
+	public abstract void set (K key, V value);
+	// public signal void changed ();
 }
 

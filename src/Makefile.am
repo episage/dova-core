@@ -85,11 +85,8 @@ $(srcdir)/libdova_net_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova
 
 libdova_model_la_SOURCES = \
 	arraylist.vala \
-	dynamiccollection.vala \
-	dynamiclist.vala \
-	dynamicmap.vala \
-	dynamicobject.vala \
 	hashmap.vala \
+	model.vala \
 	$(NULL)
 
 libdova_model_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi -H dova-model.h --vapi dova-model-0.1.vapi

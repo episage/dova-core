@@ -28,7 +28,7 @@ namespace Debug {
         }
 }
 
-public class Dova.ArrayList<T> : DynamicList<T> {
+public class Dova.ArrayList<T> : ListModel<T> {
 	T[] _elements;
 	int _size;
 

@@ -20,7 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public class Dova.HashMap<K,V> : DynamicMap<K,V> {
+public class Dova.HashMap<K,V> : MapModel<K,V> {
 	int size;
 	int mod;
 	int mask;
