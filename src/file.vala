@@ -21,6 +21,8 @@
  */
 
 public abstract class Dova.File {
+	public abstract string? path { get; }
+
 	public static File get_for_path (string path) {
 		return new LocalFile (path);
 	}
@@ -30,10 +32,14 @@ public abstract class Dova.File {
 }
 
 class Dova.LocalFile : File {
-	string path;
+	string _path;
+
+	public override string? path {
+		get { return _path; }
+	}
 
 	public LocalFile (string path) {
-		this.path = path;
+		this._path = path;
 	}
 
 	public override FileStream read () {
