@@ -25,3 +25,19 @@ public abstract class Dova.Value : Object {
 	}
 }
 
+namespace Dova {
+	public void assert (bool condition, string? message = null) {
+		if (!condition) {
+			if (message == null) {
+				Posix.fprintf (Posix.stderr, "assertion failed\n".data);
+			} else {
+				Posix.fprintf (Posix.stderr, "assertion failed: %s\n".data, message.data);
+			}
+			Posix.assert (false);
+		}
+	}
+
+	public void assert_compare (string expr, string v1, string cmp, string v2) {
+		assert (false, "($expr): ($v1 $cmp $v2)");
+	}
+}

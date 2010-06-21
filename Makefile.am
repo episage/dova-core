@@ -3,6 +3,7 @@ NULL =
 
 SUBDIRS = \
 	src \
+	tests \
 	vapi \
 	$(NULL)
 

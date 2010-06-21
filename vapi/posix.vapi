@@ -55,7 +55,18 @@ namespace Posix {
 	public int sched_yield ();
 
 	[CCode (cheader_filename = "stdio.h")]
-	public int printf (string format, ...);
+	public int printf (byte* format, ...);
+	[CCode (cheader_filename = "stdio.h")]
+	public int fprintf (FILE* stream, byte* format, ...);
+	[CCode (cheader_filename = "stdio.h")]
+	public FILE* stdin;
+	[CCode (cheader_filename = "stdio.h")]
+	public FILE* stdout;
+	[CCode (cheader_filename = "stdio.h")]
+	public FILE* stderr;
+	[CCode (cheader_filename = "stdio.h")]
+	public struct FILE {
+	}
 
 	[CCode (cheader_filename = "stdlib.h")]
 	public void* calloc (size_t nelem, size_t elsize);
