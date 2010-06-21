@@ -22,31 +22,36 @@
 
 /**
  * Time of day.
- *
- * Measured in 100 nanosecond ticks since 00:00.
  */
-public struct Dova.TimeOfDay : long {
+public struct Dova.TimeOfDay {
+	// 100 nanosecond ticks since 00:00
+	public long ticks;
+
 	public int hour {
-		get { return (int) (this / 10000000 / 3600); }
+		get { return (int) (ticks / 10000000 / 3600); }
 	}
 
 	public int minute {
-		get { return (int) (this / 10000000 / 60 % 60); }
+		get { return (int) (ticks / 10000000 / 60 % 60); }
 	}
 
 	public int second {
-		get { return (int) (this / 10000000 % 60); }
+		get { return (int) (ticks / 10000000 % 60); }
 	}
 
 	public int millisecond {
-		get { return (int) (this / 10000 % 1000); }
+		get { return (int) (ticks / 10000 % 1000); }
 	}
 
 	public TimeOfDay (int hour, int minute, int second, int millisecond = 0) {
 		int minutes = hour * 60 + minute;
 		int seconds = minutes * 60 + second;
 		int milliseconds = seconds * 1000 + millisecond;
-		this = (TimeOfDay) ((long) milliseconds * 10000);
+		ticks = (long) milliseconds * 10000;
+	}
+
+	internal TimeOfDay.with_ticks (long ticks) {
+		this.ticks = ticks;
 	}
 
 	static string format_number (int number, int digits) {

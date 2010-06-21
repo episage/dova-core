@@ -22,17 +22,18 @@
 
 /**
  * Single day.
- *
- * Measured in julian days since epoch (January 1, 0001).
  */
-public struct Dova.Date : int {
+public struct Dova.Date {
+	// julian days since epoch (January 1, 0001)
+	public int days;
+
 	const int DAYS_PER_400_YEARS = 146097;
 	const int DAYS_PER_100_YEARS = 36524;
 	const int DAYS_PER_4_YEARS = 1461;
 	const int DAYS_PER_YEAR = 365;
 
 	void get_year_month_day (out int year, out int month, out int day) {
-		int days = this;
+		int days = this.days;
 
 		int n_400_year_cycles = days / DAYS_PER_400_YEARS;
 		days -= n_400_year_cycles * DAYS_PER_400_YEARS;
@@ -96,7 +97,7 @@ public struct Dova.Date : int {
 
 	public DayOfWeek day_of_week {
 		get {
-			return (DayOfWeek) (this % 7);
+			return (DayOfWeek) (days % 7);
 		}
 	}
 
@@ -105,7 +106,7 @@ public struct Dova.Date : int {
 
 	public Date (int year, int month, int day) {
 		// total days up to beginning of year
-		int days = (year - 1) * 365 + ((year - 1) / 4) - ((year - 1) / 100) + ((year - 1) / 400);
+		days = (year - 1) * 365 + ((year - 1) / 4) - ((year - 1) / 100) + ((year - 1) / 400);
 
 		// total days up to beginning of month
 		for (int m = 1; m < month; m++) {
@@ -118,8 +119,10 @@ public struct Dova.Date : int {
 
 		// total days
 		days += (day - 1);
+	}
 
-		this = (Date) days;
+	internal Date.with_days (int days) {
+		this.days = days;
 	}
 
 	static string format_number (int number, int digits) {
