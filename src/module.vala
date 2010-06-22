@@ -21,7 +21,7 @@
  */
 
 public class Dova.Module {
-	public static Module open (string name /*, ModuleFlags flags */) {
+	public static Module? open (string name /*, ModuleFlags flags */) {
 		result = null;
 	}
 

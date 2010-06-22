@@ -24,7 +24,7 @@ public class Dova.EventContext {
 	int epfd;
 	ArrayList<EventSource> sources;
 	ArrayList<EventSource> pending;
-	static EventContext _main;
+	static EventContext? _main;
 
 	public EventContext () {
 		sources = new ArrayList<EventSource> ();
@@ -38,7 +38,7 @@ public class Dova.EventContext {
 			if (_main == null) {
 				_main = new EventContext ();
 			}
-			return _main;
+			return (!) _main;
 		}
 	}
 

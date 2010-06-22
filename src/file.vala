@@ -43,12 +43,12 @@ class Dova.LocalFile : File {
 	}
 
 	public override FileStream read () {
-		int fd = Posix.open (this.path.data, Posix.O_RDONLY, 0777);
+		int fd = Posix.open (this._path.data, Posix.O_RDONLY, 0777);
 		return new LocalFileStream (fd);
 	}
 
 	public override FileStream create () {
-		int fd = Posix.open (this.path.data, Posix.O_WRONLY | Posix.O_CREAT, 0777);
+		int fd = Posix.open (this._path.data, Posix.O_WRONLY | Posix.O_CREAT, 0777);
 		return new LocalFileStream (fd);
 	}
 }
@@ -85,15 +85,15 @@ class Dova.LocalFileStream : FileStream {
 }
 
 public abstract class Dova.Console : Object {
-	static TextReader _in;
-	static TextWriter _out;
+	static TextReader? _in;
+	static TextWriter? _out;
 
 	public static TextReader in {
 		get {
 			if (_in == null) {
 				_in = new TextReader (new LocalFileStream (0));
 			}
-			return _in;
+			return (!) _in;
 		}
 	}
 
@@ -102,12 +102,12 @@ public abstract class Dova.Console : Object {
 			if (_out == null) {
 				_out = new TextWriter (new LocalFileStream (1));
 			}
-			return _out;
+			return (!) _out;
 		}
 	}
 
 	public static string read_line () {
-		return in.read_line ();
+		return (!) in.read_line ();
 	}
 
 	public static void write (string s) {

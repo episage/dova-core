@@ -107,7 +107,7 @@ public class string : Dova.Value {
 		} else if (s2 == null) {
 			return 1;
 		}
-		return Posix.strcmp (s1.data, s2.data);
+		return Posix.strcmp (((!) s1).data, ((!) s2).data);
 	}
 
 	public int collate (string other) {

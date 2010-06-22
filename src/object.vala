@@ -105,7 +105,7 @@ public abstract class Dova.Type {
 	public bool is_subtype_of (Type type) {
 		if (this == type) {
 			return true;
-		} else if (base_type != null && base_type.is_subtype_of (type)) {
+		} else if (base_type != null && ((!) base_type).is_subtype_of (type)) {
 			return true;
 		} else if (get_interface (type) != null) {
 			return true;

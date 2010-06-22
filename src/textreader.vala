@@ -49,7 +49,7 @@ public class Dova.TextReader : Object {
 			}
 			string tmp = string.create (1);
 			((byte*) tmp.data)[0] = *((byte*) ((Array<byte>) buffer).data);
-			result += tmp;
+			result = ((!) result) + tmp;
 		}
 		return;
 	}

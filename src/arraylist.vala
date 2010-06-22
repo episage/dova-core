@@ -36,7 +36,7 @@ public class Dova.ArrayList<T> : ListModel<T> {
 		base ();
 		_elements = new T[4];
 		if (list != null) {
-			foreach (var element in list) {
+			foreach (var element in (!) list) {
 				add (element);
 			}
 		}
