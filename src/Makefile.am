@@ -65,7 +65,7 @@ libdova_io_la_SOURCES = \
 
 libdova_io_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi -H dova-io.h --vapi dova-io-0.1.vapi
 
-$(srcdir)/libdova_io_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
+$(srcdir)/libdova_io_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
 
 libdova_file_la_SOURCES = \
 	file.vala \
