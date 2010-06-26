@@ -137,9 +137,9 @@ public class Dova.TcpServer {
 }
 
 public class Dova.NetworkStream : Stream {
-	int fd;
+	internal int fd { get; private set; }
 
-	protected NetworkStream (int fd) {
+	internal NetworkStream (int fd) {
 		this.fd = fd;
 	}
 
@@ -187,5 +187,52 @@ public class Dova.NetworkStream : Stream {
 
 	public override void close () {
 		Posix.close (this.fd);
+	}
+}
+
+public class Dova.UnixEndpoint {
+	internal string path { get; private set; }
+
+	public UnixEndpoint (string path) {
+		this.path = path;
+	}
+}
+
+public class Dova.UnixClient {
+	public UnixStream connect (UnixEndpoint endpoint) {
+		int fd = Posix.socket (Posix.AF_UNIX, Posix.SOCK_STREAM, 0);
+
+		// no blocking
+		int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
+		Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
+
+		var addr = Posix.sockaddr_un ();
+		addr.sun_family = Posix.AF_UNIX;
+		Posix.memcpy (addr.sun_path, endpoint.path.data, endpoint.path.size + 1);
+		int res = Posix.connect (fd, (Posix.sockaddr*) (&addr), 2 + endpoint.path.size);
+
+		if (res < 0) {
+			int err = Posix.errno;
+			if (err == Posix.EINPROGRESS) {
+				Task.wait_fd_out (fd);
+				// TODO check whether it was successful
+			} else {
+				Posix.close (fd);
+				fd = -1;
+			}
+		}
+
+		if (fd >= 0) {
+			result = new UnixStream (fd);
+		} else {
+			// TODO error
+			result = null;
+		}
+	}
+}
+
+public class Dova.UnixStream : NetworkStream {
+	internal UnixStream (int fd) {
+		base (fd);
 	}
 }

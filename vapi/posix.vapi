@@ -186,6 +186,8 @@ namespace Posix {
 	[CCode (cheader_filename = "sys/socket.h")]
 	public const int AF_INET;
 	[CCode (cheader_filename = "sys/socket.h")]
+	public const int AF_UNIX;
+	[CCode (cheader_filename = "sys/socket.h")]
 	public const int SOCK_STREAM;
 
 	[CCode (cname = "struct sockaddr", cheader_filename = "sys/socket.h")]
@@ -238,6 +240,12 @@ namespace Posix {
 	[CCode (cheader_filename = "sys/types.h", default_value = "0L")]
 	[IntegerType (rank = 9)]
 	public struct ssize_t {
+	}
+
+	[CCode (cname = "struct sockaddr_un", cheader_filename = "sys/un.h")]
+	public struct sockaddr_un {
+		public int sun_family;
+		public byte* sun_path;
 	}
 
 	[CCode (cheader_filename = "time.h")]
