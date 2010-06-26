@@ -44,6 +44,9 @@ namespace Linux {
 	public const int EPOLL_CTL_MOD;
 	[CCode (cheader_filename = "sys/epoll.h")]
 	public const int EPOLL_CTL_DEL;
+	[CCode (cheader_filename = "sys/epoll.h")]
+	public const int EPOLLIN;
+	public const int EPOLLOUT;
 
 	[CCode (cheader_filename = "sys/epoll.h")]
 	public int epoll_create1 (int flags);
@@ -53,5 +56,13 @@ namespace Linux {
 
 	[CCode (cheader_filename = "sys/epoll.h")]
 	public int epoll_wait (int epfd, epoll_event* events, int maxevents, int timeout);
+
+	[CCode (cheader_filename = "sys/timerfd.h")]
+	public int timerfd_create (int clockid, int flags);
+	[CCode (cheader_filename = "sys/timerfd.h")]
+	public int timerfd_settime (int fd, int flags, Posix.itimerspec* new_value, Posix.itimerspec* old_value);
+
+	[CCode (cheader_filename = "sys/timerfd.h")]
+	public const int TFD_CLOEXEC;
 }
 

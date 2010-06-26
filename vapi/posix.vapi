@@ -29,6 +29,14 @@ namespace Posix {
 	[CCode (cheader_filename = "assert.h")]
 	public void assert (bool expression);
 
+	[CCode (cheader_filename = "errno.h")]
+	public int errno;
+	[CCode (cheader_filename = "errno.h")]
+	public const int EAGAIN;
+	public const int EINPROGRESS;
+	public const int EINTR;
+	public const int EWOULDBLOCK;
+
 	[CCode (cheader_filename = "pthread.h")]
 	public struct pthread_t {
 	}
@@ -54,6 +62,13 @@ namespace Posix {
 	[CCode (cheader_filename = "sched.h")]
 	public int sched_yield ();
 
+	[CCode (cheader_filename = "signal.h")]
+	public struct stack_t {
+		void* ss_sp;
+		int ss_flags;
+		size_t ss_size;
+	}
+
 	[CCode (cheader_filename = "stdio.h")]
 	public int printf (byte* format, ...);
 	[CCode (cheader_filename = "stdio.h")]
@@ -78,6 +93,8 @@ namespace Posix {
 	public void* realloc (void* ptr, size_t size);
 
 	[CCode (cheader_filename = "string.h")]
+	public void* memchr (void* s, int c, size_t n);
+	[CCode (cheader_filename = "string.h")]
 	public void* memcpy (void* dest, void* src, size_t n);
 	[CCode (cheader_filename = "string.h")]
 	public void* memset (void* s, int c, size_t n);
@@ -86,28 +103,54 @@ namespace Posix {
 	[CCode (cheader_filename = "string.h")]
 	public int strcoll (void* s1, void* s2);
 	[CCode (cheader_filename = "string.h")]
+	public size_t strcspn (byte* s, byte* reject);
+	[CCode (cheader_filename = "string.h")]
 	public void* strstr (void* haystack, void* needle);
 	[CCode (cheader_filename = "string.h")]
-	public size_t strlen (char* s);
+	public size_t strlen (byte* s);
 	[CCode (cheader_filename = "string.h")]
 	public int strncmp (void* s1, void* s2, size_t n);
 
+	[CCode (cheader_filename = "fcntl.h")]
+	public int fcntl (int fd, int cmd, ...);
 	[CCode (cheader_filename = "fcntl.h")]
 	public int open (char* path, int oflag, int mode);
 	[CCode (cheader_filename = "unistd.h")]
 	public int close (int fd);
 	[CCode (cheader_filename = "unistd.h")]
+	public int dup (int oldfd);
+	[CCode (cheader_filename = "unistd.h")]
 	public ssize_t read (int fd, void* buf, size_t count);
 	[CCode (cheader_filename = "unistd.h")]
 	public ssize_t write (int fd, void* buf, size_t count);
 	[CCode (cheader_filename = "fcntl.h")]
+	public const int F_GETFL;
+	[CCode (cheader_filename = "fcntl.h")]
+	public const int F_SETFL;
+	[CCode (cheader_filename = "fcntl.h")]
 	public const int O_CREAT;
+	[CCode (cheader_filename = "fcntl.h")]
+	public const int O_NONBLOCK;
 	[CCode (cheader_filename = "fcntl.h")]
 	public const int O_RDONLY;
 	[CCode (cheader_filename = "fcntl.h")]
 	public const int O_RDWR;
 	[CCode (cheader_filename = "fcntl.h")]
 	public const int O_WRONLY;
+
+	[CCode (cheader_filename = "sys/mman.h")]
+	public const int PROT_READ;
+	[CCode (cheader_filename = "sys/mman.h")]
+	public const int PROT_WRITE;
+	[CCode (cheader_filename = "sys/mman.h")]
+	public const int MAP_PRIVATE;
+	[CCode (cheader_filename = "sys/mman.h")]
+	public const int MAP_ANONYMOUS;
+
+	[CCode (cheader_filename = "sys/mman.h")]
+	public void* mmap (void* addr, size_t length, int prot, int flags, int fd, off_t offset);
+	[CCode (cheader_filename = "sys/mman.h")]
+	public int munmap (void* addr, size_t length);
 
 	[CCode (cheader_filename = "sys/socket.h")]
 	public int connect (int sockfd, sockaddr* addr, size_t addrlen);
@@ -137,7 +180,7 @@ namespace Posix {
 	[CCode (cheader_filename = "arpa/inet.h")]
 	public ushort htons (ushort hostshort);
 	[CCode (cheader_filename = "arpa/inet.h")]
-	public int inet_pton (int af, char* src, void* dst);
+	public int inet_pton (int af, byte* src, void* dst);
 
 	[CCode (cheader_filename = "sys/time.h")]
 	public int gettimeofday (out timeval tv, void* tz = null);
@@ -153,6 +196,11 @@ namespace Posix {
 
 	[CCode (cheader_filename = "sys/types.h", default_value = "0UL")]
 	[IntegerType (rank = 9)]
+	public struct off_t {
+	}
+
+	[CCode (cheader_filename = "sys/types.h", default_value = "0UL")]
+	[IntegerType (rank = 9)]
 	public struct size_t {
 	}
 
@@ -164,6 +212,12 @@ namespace Posix {
 	[CCode (cheader_filename = "time.h")]
 	[IntegerType (rank = 8)]
 	public struct time_t {
+	}
+
+	[CCode (cname = "struct itimerspec", cheader_filename = "time.h")]
+	public struct itimerspec {
+		timespec it_interval;
+		timespec it_value;
 	}
 
 	[CCode (cname = "struct timespec", cheader_filename = "time.h")]
@@ -189,5 +243,20 @@ namespace Posix {
 	}
 	[CCode (cheader_filename = "time.h")]
 	public tm* localtime_r (time_t* timep, tm* res);
-}
 
+	[CCode (cheader_filename = "time.h")]
+	public const int CLOCK_MONOTONIC;
+
+	[CCode (cheader_filename = "ucontext.h")]
+	public struct ucontext_t {
+		ucontext_t* uc_link;
+		stack_t uc_stack;
+	}
+
+	[CCode (cheader_filename = "ucontext.h")]
+	public void getcontext (ucontext_t* ucp);
+	[CCode (cheader_filename = "ucontext.h")]
+	public void makecontext (ucontext_t* ucp, void* func, int argc, ...);
+	[CCode (cheader_filename = "ucontext.h")]
+	public int swapcontext (ucontext_t* oucp, ucontext_t* ucp);
+}
