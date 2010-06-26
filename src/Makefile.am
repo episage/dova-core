@@ -108,7 +108,7 @@ libdova_core_la_SOURCES = \
 	thread.vala \
 	$(NULL)
 
-libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux dova-base-0.1.vapi dova-datetime-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-model-0.1.vapi dova-net-0.1.vapi -H dova-core.h --vapi dova-core-0.1.vapi
+libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux dova-base-0.1.vapi dova-datetime-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-model-0.1.vapi dova-net-0.1.vapi dova-task-0.1.vapi -H dova-core.h --vapi dova-core-0.1.vapi
 
 $(srcdir)/libdova_core_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-datetime-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-model-0.1.vapi $(srcdir)/dova-net-0.1.vapi $(srcdir)/dova-task-0.1.vapi
 

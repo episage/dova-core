@@ -50,6 +50,8 @@ public class Dova.TcpClient {
 		Posix.addrinfo* addrs = null;
 		Posix.getaddrinfo (endpoint.host.data, endpoint.port.to_string ().data, &hints, &addrs);
 
+		result = null;
+
 		Posix.addrinfo* addr = addrs;
 		while (addr != null) {
 			int fd = Posix.socket (addr->ai_family, addr->ai_socktype, addr->ai_protocol);
@@ -65,22 +67,72 @@ public class Dova.TcpClient {
 				if (err == Posix.EINPROGRESS) {
 					Task.wait_fd_out (fd);
 					// TODO check whether it was successful
-
-					Posix.freeaddrinfo (addrs);
-
-					return new NetworkStream (fd);
+				} else {
+					Posix.close (fd);
+					fd = -1;
 				}
 			}
 
-			Posix.close (fd);
+			if (fd >= 0) {
+				result = new NetworkStream (fd);
+				break;
+			}
 
 			addr = addr->ai_next;
 		}
 
 		Posix.freeaddrinfo (addrs);
+	}
+}
 
-		// TODO error
-		result = null;
+public delegate void TcpServerFunc (NetworkStream stream);
+
+public class Dova.TcpServer {
+	// TODO support multiple sockets
+	int fd;
+
+	public TcpServerFunc handler { get; set; }
+
+	public void add_local_endpoint (TcpEndpoint endpoint) {
+		fd = Posix.socket (Posix.AF_INET, Posix.SOCK_STREAM, Posix.IPPROTO_TCP);
+
+		// no blocking
+		int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
+		Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
+
+		var addr = Posix.sockaddr_in ();
+		addr.sin_family = Posix.AF_INET;
+		addr.sin_port = Posix.htons (endpoint.port);
+		int res = Posix.bind (fd, (Posix.sockaddr*) (&addr), sizeof (Posix.sockaddr_in));
+		Posix.listen (fd, 8);
+	}
+
+	public void start () {
+		Task.run (run);
+	}
+
+	void run () {
+		while (true) {
+			int res = Posix.accept (fd, null, null);
+			if (res < 0) {
+				int err = Posix.errno;
+				if (err == Posix.EINTR) {
+					// just restart syscall
+				} else if (err == Posix.EAGAIN || err == Posix.EWOULDBLOCK) {
+					Task.wait_fd_in (fd);
+				} else {
+					// TODO
+				}
+			} else {
+				var stream = new NetworkStream (res);
+				Task.run (() => {
+					handler (stream);
+				});
+			}
+		}
+	}
+
+	public void stop () {
 	}
 }
 

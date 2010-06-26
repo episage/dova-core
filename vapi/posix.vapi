@@ -174,7 +174,13 @@ namespace Posix {
 	public int munmap (void* addr, size_t length);
 
 	[CCode (cheader_filename = "sys/socket.h")]
+	public int accept (int sockfd, sockaddr* addr, size_t* addrlen);
+	[CCode (cheader_filename = "sys/socket.h")]
+	public int bind (int sockfd, sockaddr* addr, size_t addrlen);
+	[CCode (cheader_filename = "sys/socket.h")]
 	public int connect (int sockfd, sockaddr* addr, size_t addrlen);
+	[CCode (cheader_filename = "sys/socket.h")]
+	public int listen (int sockfd, int backlog);
 	[CCode (cheader_filename = "sys/socket.h")]
 	public int socket (int domain, int type, int protocol);
 	[CCode (cheader_filename = "sys/socket.h")]
