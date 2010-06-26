@@ -29,9 +29,14 @@ public abstract class Dova.Stream : Object {
 
 	public abstract int write (byte[] b, int offset = 0, int length = -1);
 
-	public int write_all (byte[] b, int offset = 0, int length = -1) {
-		// FIXME
-		return write (b, offset, length);
+	public void write_all (byte[] b, int offset = 0, int length = -1) {
+		if (length < 0) {
+			length = b.length - offset;
+		}
+		int bytes_written = 0;
+		while (bytes_written < length) {
+			bytes_written += this.write (b, offset + bytes_written, length - bytes_written);
+		}
 	}
 
 	public abstract void close ();
