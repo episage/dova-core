@@ -20,21 +20,27 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public abstract class Dova.Endpoint {
-	public abstract NetworkStream connect ();
-}
+public class Dova.TcpEndpoint {
+	// TODO also support creating TcpEndpoints for SRV entries (domain and service pair)
+	// move address resolving in here and use subclasses?
 
-public class Dova.TcpEndpoint : Endpoint {
-	string host;
-	ushort port;
+	internal string host { get; private set; }
+	internal ushort port { get; private set; }
 
-	public static TcpEndpoint parse (string host_and_port, ushort default_port) {
-		result = new TcpEndpoint ();
-		result.host = host_and_port;
-		result.port = default_port;
+	public TcpEndpoint (string host_and_port, ushort default_port) {
+		this.host = host_and_port;
+		this.port = default_port;
 	}
 
-	public override NetworkStream connect () {
+}
+
+public class Dova.TcpClient {
+	// TODO add proxy and tls support
+
+	public TcpClient () {
+	}
+
+	public NetworkStream connect (TcpEndpoint endpoint) {
 		// resolve name
 		// TODO execute in global (concurrent) task queue
 		var hints = Posix.addrinfo ();
@@ -42,7 +48,7 @@ public class Dova.TcpEndpoint : Endpoint {
 		hints.ai_socktype = Posix.SOCK_STREAM;
 		hints.ai_protocol = Posix.IPPROTO_TCP;
 		Posix.addrinfo* addrs = null;
-		Posix.getaddrinfo (host.data, port.to_string ().data, &hints, &addrs);
+		Posix.getaddrinfo (endpoint.host.data, endpoint.port.to_string ().data, &hints, &addrs);
 
 		Posix.addrinfo* addr = addrs;
 		while (addr != null) {
