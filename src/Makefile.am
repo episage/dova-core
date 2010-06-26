@@ -7,6 +7,7 @@ noinst_LTLIBRARIES = \
 	libdova-io.la \
 	libdova-model.la \
 	libdova-net.la \
+	libdova-task.la \
 	$(NULL)
 
 lib_LTLIBRARIES = \
@@ -58,6 +59,14 @@ libdova_datetime_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/..
 
 $(srcdir)/libdova_datetime_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
 
+libdova_task_la_SOURCES = \
+	task.vala \
+	$(NULL)
+
+libdova_task_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux dova-base-0.1.vapi dova-datetime-0.1.vapi -H dova-task.h --vapi dova-task-0.1.vapi
+
+$(srcdir)/libdova_task_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-datetime-0.1.vapi
+
 libdova_io_la_SOURCES = \
 	stream.vala \
 	textreader.vala \
@@ -80,9 +89,9 @@ libdova_net_la_SOURCES = \
 	net.vala \
 	$(NULL)
 
-libdova_net_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi dova-io-0.1.vapi -H dova-net.h --vapi dova-net-0.1.vapi
+libdova_net_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi dova-datetime-0.1.vapi dova-io-0.1.vapi dova-task-0.1.vapi -H dova-net.h --vapi dova-net-0.1.vapi
 
-$(srcdir)/libdova_net_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
+$(srcdir)/libdova_net_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-task-0.1.vapi
 
 libdova_model_la_SOURCES = \
 	arraylist.vala \
@@ -95,14 +104,13 @@ libdova_model_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../va
 $(srcdir)/libdova_model_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
 
 libdova_core_la_SOURCES = \
-	eventcontext.vala \
 	module.vala \
 	thread.vala \
 	$(NULL)
 
 libdova_core_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix --pkg linux dova-base-0.1.vapi dova-datetime-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-model-0.1.vapi dova-net-0.1.vapi -H dova-core.h --vapi dova-core-0.1.vapi
 
-$(srcdir)/libdova_core_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-datetime-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-model-0.1.vapi $(srcdir)/dova-net-0.1.vapi
+$(srcdir)/libdova_core_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-datetime-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-model-0.1.vapi $(srcdir)/dova-net-0.1.vapi $(srcdir)/dova-task-0.1.vapi
 
 libdova_core_la_LIBADD = \
 	libdova-base.la \
@@ -111,6 +119,7 @@ libdova_core_la_LIBADD = \
 	libdova-io.la \
 	libdova-model.la \
 	libdova-net.la \
+	libdova-task.la \
 	$(NULL)
 
 dovaincludedir = $(includedir)/dova-core-0.1
@@ -123,6 +132,7 @@ dovainclude_HEADERS = \
 	dova-io.h \
 	dova-model.h \
 	dova-net.h \
+	dova-task.h \
 	$(NULL)
 
 vapidir = $(datadir)/vala/vapi
@@ -136,5 +146,6 @@ dist_vapi_DATA = \
 	dova-io-0.1.vapi \
 	dova-model-0.1.vapi \
 	dova-net-0.1.vapi \
+	dova-task-0.1.vapi \
 	$(NULL)
 

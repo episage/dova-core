@@ -36,11 +36,24 @@ public class Dova.TcpEndpoint : Endpoint {
 
 	public override NetworkStream connect () {
 		int fd = Posix.socket (Posix.AF_INET, Posix.SOCK_STREAM, 0);
+
+		int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
+		Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
+
 		var addr = Posix.sockaddr_in ();
 		addr.sin_family = Posix.AF_INET;
 		addr.sin_port = Posix.htons (default_port);
 		Posix.inet_pton (Posix.AF_INET, host_and_port.data, &addr.sin_addr);
-		Posix.connect (fd, (Posix.sockaddr*) (&addr), sizeof (Posix.sockaddr_in));
+		int res = Posix.connect (fd, (Posix.sockaddr*) (&addr), sizeof (Posix.sockaddr_in));
+
+		if (res < 0) {
+			int err = Posix.errno;
+			if (err == Posix.EINPROGRESS) {
+				Task.wait_fd_out (fd);
+				// TODO check whether it was successful
+			}
+		}
+
 		result = new NetworkStream (fd);
 	}
 }
@@ -56,14 +69,42 @@ public class Dova.NetworkStream : Stream {
 		if (length < 0) {
 			length = b.length - offset;
 		}
-		return (int) Posix.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+		while (true) {
+			int res = (int) Posix.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+			if (res < 0) {
+				int err = Posix.errno;
+				if (err == Posix.EINTR) {
+					// just restart syscall
+				} else if (err == Posix.EAGAIN || err == Posix.EWOULDBLOCK) {
+					Task.wait_fd_in (this.fd);
+				} else {
+					// TODO
+				}
+			} else {
+				return res;
+			}
+		}
 	}
 
 	public override int write (byte[] b, int offset, int length) {
 		if (length < 0) {
 			length = b.length - offset;
 		}
-		return (int) Posix.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+		while (true) {
+			int res = (int) Posix.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+			if (res < 0) {
+				int err = Posix.errno;
+				if (err == Posix.EINTR) {
+					// just restart syscall
+				} else if (err == Posix.EAGAIN || err == Posix.EWOULDBLOCK) {
+					Task.wait_fd_out (this.fd);
+				} else {
+					// TODO
+				}
+			} else {
+				return res;
+			}
+		}
 	}
 
 	public override void close () {
