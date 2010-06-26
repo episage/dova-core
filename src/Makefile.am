@@ -38,6 +38,7 @@ libdova_base_la_SOURCES = \
 	tuple.vala \
 	uint.vala \
 	ulong.vala \
+	uri.vala \
 	ushort.vala \
 	value.vala \
 	$(NULL)
