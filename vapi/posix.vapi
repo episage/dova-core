@@ -33,9 +33,30 @@ namespace Posix {
 	public int errno;
 	[CCode (cheader_filename = "errno.h")]
 	public const int EAGAIN;
+	[CCode (cheader_filename = "errno.h")]
 	public const int EINPROGRESS;
+	[CCode (cheader_filename = "errno.h")]
 	public const int EINTR;
+	[CCode (cheader_filename = "errno.h")]
 	public const int EWOULDBLOCK;
+
+	[CCode (cname = "struct addrinfo", cheader_filename = "netdb.h")]
+	public struct addrinfo {
+		public int ai_flags;
+		public int ai_family;
+		public int ai_socktype;
+		public int ai_protocol;
+		public int ai_addrlen;
+		public sockaddr* ai_addr;
+		public byte* ai_canonname;
+		public addrinfo* ai_next;
+	}
+	[CCode (cheader_filename = "netdb.h")]
+	public void freeaddrinfo (addrinfo* res);
+	[CCode (cheader_filename = "netdb.h")]
+	public int getaddrinfo (byte* node, byte* service, addrinfo* hints, addrinfo** res);
+	[CCode (cheader_filename = "netdb.h")]
+	public const int AI_ADDRCONFIG;
 
 	[CCode (cheader_filename = "pthread.h")]
 	public struct pthread_t {
@@ -158,6 +179,7 @@ namespace Posix {
 	public int socket (int domain, int type, int protocol);
 	[CCode (cheader_filename = "sys/socket.h")]
 	public const int AF_INET;
+	[CCode (cheader_filename = "sys/socket.h")]
 	public const int SOCK_STREAM;
 
 	[CCode (cname = "struct sockaddr", cheader_filename = "sys/socket.h")]
@@ -176,6 +198,9 @@ namespace Posix {
 		public ushort sin_port;
 		public in_addr sin_addr;
 	}
+
+	[CCode (cheader_filename = "netinet/in.h")]
+	public const int IPPROTO_TCP;
 
 	[CCode (cheader_filename = "arpa/inet.h")]
 	public ushort htons (ushort hostshort);

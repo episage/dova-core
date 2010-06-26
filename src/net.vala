@@ -25,36 +25,56 @@ public abstract class Dova.Endpoint {
 }
 
 public class Dova.TcpEndpoint : Endpoint {
-	string host_and_port;
-	ushort default_port;
+	string host;
+	ushort port;
 
 	public static TcpEndpoint parse (string host_and_port, ushort default_port) {
 		result = new TcpEndpoint ();
-		result.host_and_port = host_and_port;
-		result.default_port = default_port;
+		result.host = host_and_port;
+		result.port = default_port;
 	}
 
 	public override NetworkStream connect () {
-		int fd = Posix.socket (Posix.AF_INET, Posix.SOCK_STREAM, 0);
+		// resolve name
+		// TODO execute in global (concurrent) task queue
+		var hints = Posix.addrinfo ();
+		hints.ai_flags = Posix.AI_ADDRCONFIG;
+		hints.ai_socktype = Posix.SOCK_STREAM;
+		hints.ai_protocol = Posix.IPPROTO_TCP;
+		Posix.addrinfo* addrs = null;
+		Posix.getaddrinfo (host.data, port.to_string ().data, &hints, &addrs);
 
-		int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
-		Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
+		Posix.addrinfo* addr = addrs;
+		while (addr != null) {
+			int fd = Posix.socket (addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 
-		var addr = Posix.sockaddr_in ();
-		addr.sin_family = Posix.AF_INET;
-		addr.sin_port = Posix.htons (default_port);
-		Posix.inet_pton (Posix.AF_INET, host_and_port.data, &addr.sin_addr);
-		int res = Posix.connect (fd, (Posix.sockaddr*) (&addr), sizeof (Posix.sockaddr_in));
+			// no blocking
+			int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
+			Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
 
-		if (res < 0) {
-			int err = Posix.errno;
-			if (err == Posix.EINPROGRESS) {
-				Task.wait_fd_out (fd);
-				// TODO check whether it was successful
+			int res = Posix.connect (fd, addr->ai_addr, addr->ai_addrlen);
+
+			if (res < 0) {
+				int err = Posix.errno;
+				if (err == Posix.EINPROGRESS) {
+					Task.wait_fd_out (fd);
+					// TODO check whether it was successful
+
+					Posix.freeaddrinfo (addrs);
+
+					return new NetworkStream (fd);
+				}
 			}
+
+			Posix.close (fd);
+
+			addr = addr->ai_next;
 		}
 
-		result = new NetworkStream (fd);
+		Posix.freeaddrinfo (addrs);
+
+		// TODO error
+		result = null;
 	}
 }
 
