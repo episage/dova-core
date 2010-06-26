@@ -85,6 +85,18 @@ public class string : Dova.Value {
 		Posix.memcpy (result.data, cstring, result.size);
 	}
 
+	// indices in bytes
+	public string slice (int start_index, int end_index) {
+		// string is NUL-terminated, so it's always fine to access byte at end_index with valid arguments
+		if ((data[start_index] >= 0x80 && data[start_index] < 0xc0) ||
+		    (data[end_index] >= 0x80 && data[end_index] < 0xc0)) {
+			// error: do not allow splitting characters
+		}
+
+		result = create (end_index - start_index);
+		Posix.memcpy (result.data, &data[start_index], end_index - start_index);
+	}
+
 	// maybe better public static string concat (List<string> strings)
 	public string concat (string other) {
 		result = create (this.size + other.size);
@@ -147,8 +159,124 @@ public class string : Dova.Value {
 		return Posix.strcmp (data, other.data) == 0;
 	}
 
+	// index in bytes
+	public char get (int index) {
+		// based on code from GLib
+
+		// decode UTF-8
+		// this method assumes that string has already been UTF-8 validated
+
+		byte* data = &this.data[index];
+
+		byte first = data[0];
+		if (first < 0x80) {
+			result = first;
+		} else if (first < 0xc2) {
+			// error: invalid first byte
+			// can happen even with valid UTF-8 strings as caller is passing byte index
+			result = 0;
+		} else if (first < 0xe0) {
+			// 2-byte sequence
+			result = data[0] & 0x1f;
+			result <<= 6;
+			result |= data[1] & 0x3f;
+		} else if (first < 0xf0) {
+			// 3-byte sequence
+			result = data[0] & 0x1f;
+			result <<= 6;
+			result |= data[1] & 0x3f;
+			result <<= 6;
+			result |= data[2] & 0x3f;
+		} else if (first < 0xf5) {
+			// 4-byte sequence
+			result = data[0] & 0x1f;
+			result <<= 6;
+			result |= data[1] & 0x3f;
+			result <<= 6;
+			result |= data[2] & 0x3f;
+			result <<= 6;
+			result |= data[3] & 0x3f;
+		} else {
+			// error: invalid first byte
+			// can happen even with valid UTF-8 strings as caller is passing byte index
+			result = 0;
+		}
+	}
+
+	// indices in bytes
+	public int index_of (char c, int start_index = 0, int end_index = -1) {
+		if (end_index < 0) {
+			end_index = size;
+		}
+
+		byte* start = &data[start_index];
+
+		if (c < 0x80) {
+			byte* p = Posix.memchr (start, (int) c, end_index - start_index);
+			if (p == null) {
+				return -1;
+			} else {
+				return (int) (p - (byte*) data);
+			}
+		} else {
+			// based on code from GLib
+
+			byte utf8[4];
+			int first, len;
+			if (c < 0x800) {
+				first = 0xc0;
+				len = 2;
+			} else if (c < 0x10000) {
+				first = 0xe0;
+				len = 3;
+				utf8[2] = (byte) (c & 0x3f) | 0x80;
+				c >>= 6;
+			} else {
+				first = 0xf0;
+				len = 4;
+				utf8[3] = (byte) (c & 0x3f) | 0x80;
+				c >>= 6;
+				utf8[2] = (byte) (c & 0x3f) | 0x80;
+				c >>= 6;
+			}
+			utf8[1] = (byte) (c & 0x3f) | 0x80;
+			c >>= 6;
+			utf8[0] = (byte) c | first;
+
+			while (true) {
+				byte* p = Posix.memchr (start, utf8[0], end_index - start_index);
+				if (p == null) {
+					return -1;
+				}
+				// we do not need to check string boundaries as
+				// this is a valid UTF-8 string and the first byte determines the length
+				switch (len) {
+				case 2:
+					if (p[1] == utf8[1]) {
+						return (int) (p - (byte*) data);
+					}
+					break;
+				case 3:
+					if (p[1] == utf8[1] && p[2] == utf8[2]) {
+						return (int) (p - (byte*) data);
+					}
+					break;
+				case 4:
+					if (p[1] == utf8[1] && p[2] == utf8[2] && p[3] == utf8[3]) {
+						return (int) (p - (byte*) data);
+					}
+					break;
+				}
+
+				int offset = (int) (p + len - start);
+				start += offset;
+				start_index += offset;
+			}
+		}
+	}
+
 	public int hash () {
-		// from GLib
+		// based on code from GLib
 
 		byte *p = data;
 		uint h = *p;
@@ -162,4 +290,3 @@ public class string : Dova.Value {
 		return (int) h;
 	}
 }
-
