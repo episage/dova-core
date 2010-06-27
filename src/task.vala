@@ -27,6 +27,15 @@ public class Dova.Application {
 		Task.current = TaskScheduler.main.main_task;
 	}
 
+	public static string? get_environment_variable (string name) {
+		byte* cstring = Posix.getenv (name.data);
+		if (cstring == null) {
+			result = null;
+		} else {
+			result = string.create_from_cstring (cstring);
+		}
+	}
+
 	public void run () {
 		TaskScheduler.main.sched ();
 	}

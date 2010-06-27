@@ -112,6 +112,8 @@ namespace Posix {
 	public void* malloc (size_t size);
 	[CCode (cheader_filename = "stdlib.h")]
 	public void* realloc (void* ptr, size_t size);
+	[CCode (cheader_filename = "stdlib.h")]
+	public byte* getenv (byte* name);
 
 	[CCode (cheader_filename = "string.h")]
 	public void* memchr (void* s, int c, size_t n);
