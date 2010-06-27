@@ -25,6 +25,7 @@ public class Dova.Application {
 		TaskScheduler.main = new TaskScheduler ();
 		TaskScheduler.main.main_task = new Task ();
 		Task.current = TaskScheduler.main.main_task;
+		Task.current.state = TaskState.RUNNING;
 	}
 
 	public static string? get_environment_variable (string name) {
@@ -45,9 +46,12 @@ public class Dova.Application {
 	}
 }
 
-enum Dova.TaskState {
+public enum Dova.TaskState {
+	SLEEPING,
+	WAITING,
 	READY,
-	WAITING
+	RUNNING,
+	TERMINATED
 }
 
 namespace Dova.TaskPriority {
@@ -99,6 +103,7 @@ class Dova.TaskScheduler {
 						Posix.close (task.wait_fd);
 						task.wait_fd = -1;
 						wait_count--;
+						assert (true && task.state == TaskState.WAITING);
 						ready (task);
 					}
 					if (nfds < 64) {
@@ -126,6 +131,8 @@ class Dova.TaskScheduler {
 					head.prev = null;
 
 					ready_count--;
+					assert (true && head.state == TaskState.READY);
+					head.state = TaskState.RUNNING;
 
 					if (head == main_task) {
 						// scheduler runs in main task
@@ -143,6 +150,8 @@ class Dova.TaskScheduler {
 	}
 
 	internal void ready (Task task) {
+		assert (task.state == TaskState.SLEEPING || task.state == TaskState.WAITING || task.state == TaskState.RUNNING);
+
 		var head = runqueues[task.priority - TaskPriority.HIGH];
 		if (head == null) {
 			runqueues[task.priority - TaskPriority.HIGH] = task;
@@ -155,6 +164,7 @@ class Dova.TaskScheduler {
 			head.prev = task;
 		}
 
+		task.state = TaskState.READY;
 		ready_count++;
 	}
 
@@ -164,6 +174,8 @@ class Dova.TaskScheduler {
 	}
 
 	internal void wait_fd_in (Task task, int fd) {
+		assert (true && task.state == TaskState.RUNNING);
+
 		// epoll doesn't support reigstering the same fd twice
 		// so if we want to wait for the same fd in two fibers (one for read, one for write),
 		// we need to either multiplex events from the fd ourselves
@@ -179,11 +191,14 @@ class Dova.TaskScheduler {
 		task.wait_fd = dupfd;
 
 		wait_count++;
+		task.state = TaskState.WAITING;
 
 		sched ();
 	}
 
 	internal void wait_fd_out (Task task, int fd) {
+		assert (true && task.state == TaskState.RUNNING);
+
 		// epoll doesn't support reigstering the same fd twice
 		// so if we want to wait for the same fd in two fibers (one for read, one for write),
 		// we need to either multiplex events from the fd ourselves
@@ -199,11 +214,14 @@ class Dova.TaskScheduler {
 		task.wait_fd = dupfd;
 
 		wait_count++;
+		task.state = TaskState.WAITING;
 
 		sched ();
 	}
 
 	internal void sleep (Task task, Duration duration) {
+		assert (true && task.state == TaskState.RUNNING);
+
 		var its = Posix.itimerspec ();
 		its.it_value.tv_nsec = duration.ticks % 10000000 * 100;
 		its.it_value.tv_sec = duration.total_seconds;
@@ -219,7 +237,15 @@ class Dova.TaskScheduler {
 		task.wait_fd = tfd;
 
 		wait_count++;
+		task.state = TaskState.WAITING;
 
+		sched ();
+	}
+
+	internal void pause (Task task) {
+		assert (true && task.state == TaskState.RUNNING);
+
+		task.state = TaskState.SLEEPING;
 		sched ();
 	}
 }
@@ -230,10 +256,14 @@ public class Dova.Task {
 	// TLS
 	public static Task current;
 
+	static int last_id;
+
+	internal int id { get; private set; }
+
 	TaskScheduler scheduler;
 
 	Func func;
-	internal TaskState state;
+	public TaskState state { get; internal set; }
 	internal int priority;
 	internal Task? prev { get; set; }
 	internal Task? next { get; set; }
@@ -249,6 +279,7 @@ public class Dova.Task {
 	internal Task () {
 		scheduler = TaskScheduler.main;
 		wait_fd = -1;
+		id = ++last_id;
 	}
 
 	~Task () {
@@ -260,7 +291,9 @@ public class Dova.Task {
 	static void task_func () {
 		current.func ();
 		// end of task
+		current.state = TaskState.TERMINATED;
 		current.scheduler.cleanup_task = current;
+
 		current.scheduler.sched ();
 	}
 
@@ -293,7 +326,7 @@ public class Dova.Task {
 	}
 
 	public static void pause () {
-		current.scheduler.sched ();
+		current.scheduler.pause (current);
 	}
 
 	public static void yield () {
@@ -305,6 +338,7 @@ public class Dova.Task {
 	}
 
 	public void resume () {
+		assert (true && state == TaskState.SLEEPING);
 		scheduler.ready (this);
 	}
 
