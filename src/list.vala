@@ -54,6 +54,14 @@ public class Dova.List<T> : /*Value*/Object, Iterable<T> {
 		}
 	}
 
+	// temporary
+	public List<T> remove_last () {
+		result = new List<T>.clear (this.length - 1);
+		for (int i = 0; i < this.length - 1; i++) {
+			result._elements[i] = this[i];
+		}
+	}
+
 	public Dova.Iterator<T> iterator () {
 		result = new Iterator<T> (this);
 	}
