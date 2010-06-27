@@ -300,4 +300,7 @@ namespace Posix {
 	public void makecontext (ucontext_t* ucp, void* func, int argc, ...);
 	[CCode (cheader_filename = "ucontext.h")]
 	public int swapcontext (ucontext_t* oucp, ucontext_t* ucp);
+
+	[CCode (cheader_filename = "unistd.h")]
+	public uint getuid ();
 }

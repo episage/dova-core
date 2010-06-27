@@ -36,6 +36,10 @@ public class Dova.Application {
 		}
 	}
 
+	public static int get_user_id () {
+		return (int) Posix.getuid ();
+	}
+
 	public void run () {
 		TaskScheduler.main.sched ();
 	}
