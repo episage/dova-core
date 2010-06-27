@@ -191,5 +191,8 @@ public struct char {
 			result = UnicodeBidiClass.LEFT_TO_RIGHT;
 		}
 	}
-}
 
+	public string to_string () {
+		return string.create_from_char (this);
+	}
+}

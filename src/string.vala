@@ -85,6 +85,35 @@ public class string : Dova.Value {
 		Posix.memcpy (result.data, cstring, result.size);
 	}
 
+	internal static string create_from_char (char c) {
+		// based on code from GLib
+
+		byte utf8[4];
+		int first, len;
+		if (c < 0x800) {
+			first = 0xc0;
+			len = 2;
+		} else if (c < 0x10000) {
+			first = 0xe0;
+			len = 3;
+			utf8[2] = (byte) (c & 0x3f) | 0x80;
+			c >>= 6;
+		} else {
+			first = 0xf0;
+			len = 4;
+			utf8[3] = (byte) (c & 0x3f) | 0x80;
+			c >>= 6;
+			utf8[2] = (byte) (c & 0x3f) | 0x80;
+			c >>= 6;
+		}
+		utf8[1] = (byte) (c & 0x3f) | 0x80;
+		c >>= 6;
+		utf8[0] = (byte) c | first;
+
+		result = create (len);
+		Posix.memcpy (result.data, utf8, len);
+	}
+
 	// indices in bytes
 	public string slice (int start_index, int end_index) {
 		// string is NUL-terminated, so it's always fine to access byte at end_index with valid arguments
