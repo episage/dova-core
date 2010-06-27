@@ -239,6 +239,10 @@ public class string : Dova.Value {
 		}
 	}
 
+	public byte get_byte (int index) {
+		result = this.data[index];
+	}
+
 	// indices in bytes
 	public int index_of (char c, int start_index = 0, int end_index = -1) {
 		if (end_index < 0) {
