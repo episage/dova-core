@@ -90,13 +90,20 @@ public class string : Dova.Value {
 
 		byte utf8[4];
 		int first, len;
-		if (c < 0x800) {
+		if (c < 0x80) {
+			first = 0;
+			len = 1;
+		} else if (c < 0x800) {
 			first = 0xc0;
 			len = 2;
+			utf8[1] = (byte) (c & 0x3f) | 0x80;
+			c >>= 6;
 		} else if (c < 0x10000) {
 			first = 0xe0;
 			len = 3;
 			utf8[2] = (byte) (c & 0x3f) | 0x80;
+			c >>= 6;
+			utf8[1] = (byte) (c & 0x3f) | 0x80;
 			c >>= 6;
 		} else {
 			first = 0xf0;
@@ -105,9 +112,9 @@ public class string : Dova.Value {
 			c >>= 6;
 			utf8[2] = (byte) (c & 0x3f) | 0x80;
 			c >>= 6;
+			utf8[1] = (byte) (c & 0x3f) | 0x80;
+			c >>= 6;
 		}
-		utf8[1] = (byte) (c & 0x3f) | 0x80;
-		c >>= 6;
 		utf8[0] = (byte) c | first;
 
 		result = create (len);
