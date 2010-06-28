@@ -21,11 +21,7 @@
  */
 
 public class Dova.Array<T> : Object, Iterable<T> {
-	public int rank { get; private set; }
-	// total size over all dimensions
-	// for multi-dim arrays, there will be one extra int per dimension
-	// either at the end of the allocated memory or right before data[]
-	public int length /*size*/ { get; private set; }
+	public int length { get; private set; }
 	// should be inline allocated
 	public void* data { get; private set; }
 	// T data[];
