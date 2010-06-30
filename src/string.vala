@@ -80,6 +80,15 @@ public class string : Dova.Value {
 		return (owned) str;
 	}
 
+	public static string create_from_utf8 (byte[] b, int offset = 0, int length = -1) {
+		if (length < 0) {
+			length = b.length - offset;
+		}
+
+		result = create (length);
+		Posix.memcpy (result.data, ((Array<byte>) b).data + offset, length);
+	}
+
 	public static string create_from_cstring (byte* cstring) {
 		result = create ((int) Posix.strlen (cstring));
 		Posix.memcpy (result.data, cstring, result.size);
