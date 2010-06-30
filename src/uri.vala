@@ -35,7 +35,7 @@ public class Dova.Uri /*: Value*/ {
 	public string? fragment { get; private set; }
 
 	static bool is_schemechar (string str, int offset) {
-		char c = str[offset];
+		byte c = str[offset];
 		if ((c >= 'A' && c <= 'Z') ||
 		    (c >= 'a' && c <= 'z') ||
 		    (c >= '0' && c <= '9') ||

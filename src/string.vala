@@ -205,7 +205,7 @@ public class string : Dova.Value {
 	}
 
 	// index in bytes
-	public char get (int index) {
+	public char get_char (int index) {
 		// based on code from GLib
 
 		// decode UTF-8
@@ -248,7 +248,7 @@ public class string : Dova.Value {
 		}
 	}
 
-	public byte get_byte (int index) {
+	public byte get (int index) {
 		result = this.data[index];
 	}
 
