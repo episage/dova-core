@@ -206,46 +206,60 @@ public class string : Dova.Value {
 
 	// index in bytes
 	public char get_char (int index) {
+		next_char (ref index, out result);
+	}
+
+	public bool next_char (ref int index, out char c) {
 		// based on code from GLib
 
 		// decode UTF-8
 		// this method assumes that string has already been UTF-8 validated
 
+		if (index >= size) {
+			return false;
+		}
+
 		byte* data = &this.data[index];
 
 		byte first = data[0];
 		if (first < 0x80) {
-			result = first;
+			c = first;
+			index++;
 		} else if (first < 0xc2) {
 			// error: invalid first byte
 			// can happen even with valid UTF-8 strings as caller is passing byte index
-			result = 0;
+			c = 0;
 		} else if (first < 0xe0) {
 			// 2-byte sequence
-			result = data[0] & 0x1f;
-			result <<= 6;
-			result |= data[1] & 0x3f;
+			c = data[0] & 0x1f;
+			c <<= 6;
+			c |= data[1] & 0x3f;
+			index += 2;
 		} else if (first < 0xf0) {
 			// 3-byte sequence
-			result = data[0] & 0x1f;
-			result <<= 6;
-			result |= data[1] & 0x3f;
-			result <<= 6;
-			result |= data[2] & 0x3f;
+			c = data[0] & 0x1f;
+			c <<= 6;
+			c |= data[1] & 0x3f;
+			c <<= 6;
+			c |= data[2] & 0x3f;
+			index += 3;
 		} else if (first < 0xf5) {
 			// 4-byte sequence
-			result = data[0] & 0x1f;
-			result <<= 6;
-			result |= data[1] & 0x3f;
-			result <<= 6;
-			result |= data[2] & 0x3f;
-			result <<= 6;
-			result |= data[3] & 0x3f;
+			c = data[0] & 0x1f;
+			c <<= 6;
+			c |= data[1] & 0x3f;
+			c <<= 6;
+			c |= data[2] & 0x3f;
+			c <<= 6;
+			c |= data[3] & 0x3f;
+			index += 4;
 		} else {
 			// error: invalid first byte
 			// can happen even with valid UTF-8 strings as caller is passing byte index
-			result = 0;
+			c = 0;
 		}
+
+		return true;
 	}
 
 	public byte get (int index) {
