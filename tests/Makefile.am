@@ -9,7 +9,9 @@ check_PROGRAMS = \
 	$(NULL)
 
 test_base_SOURCES = \
+	base.vala \
 	list.vala \
+	string.vala \
 	$(NULL)
 
 test_base_VALAFLAGS = --profile dova --vapidir $(srcdir)/../vapi

@@ -196,6 +196,18 @@ public class string : Dova.Value {
 		result += [s];
 	}
 
+	public string join (List<string> list) {
+		result = "";
+
+		if (list.length > 0) {
+			result += list[0];
+			for (int i = 1; i < list.length; i++) {
+				result += this;
+				result += list[i];
+			}
+		}
+	}
+
 	public new string to_string () {
 		return this;
 	}

@@ -25,7 +25,7 @@ void test_list_int_concat () {
 	assert (list[1] == 23);
 }
 
-void main () {
+void test_list () {
 	test_list_int_empty ();
 	test_list_int_one ();
 	test_list_int_two ();
