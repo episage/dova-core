@@ -118,3 +118,10 @@ public abstract class Dova.Console : Object {
 		out.write_line (s);
 	}
 }
+
+namespace Dova {
+	[Print]
+	public void print (string s) {
+		Console.write_line (s);
+	}
+}
