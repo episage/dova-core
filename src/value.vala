@@ -40,4 +40,9 @@ namespace Dova {
 	public void assert_compare (string expr, string v1, string cmp, string v2) {
 		assert (false, "($expr): ($v1 $cmp $v2)");
 	}
+
+	[NoReturn]
+	public void assert_not_reached () {
+		assert (false);
+	}
 }
