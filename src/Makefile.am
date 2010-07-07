@@ -97,6 +97,7 @@ libdova_model_la_SOURCES = \
 	arraylist.vala \
 	hashmap.vala \
 	model.vala \
+	priorityqueue.vala \
 	$(NULL)
 
 libdova_model_la_VALAFLAGS = --profile dova --nostdpkg --vapidir $(srcdir)/../vapi --pkg posix dova-base-0.1.vapi -H dova-model.h --vapi dova-model-0.1.vapi
