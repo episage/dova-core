@@ -1,6 +1,6 @@
 /* map.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,8 +31,8 @@ public class Dova.Map<K,V> : /*Value*/Object {
 	int noccupied;
 	byte[] states;
 	int[] hashes;
-	K[] keys;
-	V[] values;
+	K[] _keys;
+	V[] _values;
 
 	const int prime_mod[] = [
 		1,          // for 1 << 0
@@ -69,7 +69,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		2147483647  // for 1 << 31
 	];
 
-	public Map (int nnodes, K keys[], V values[]) {
+	public Map (int nnodes, K _keys[], V _values[]) {
 		int n = nnodes >> 2;
 		int shift;
 		for (shift = 3; n > 0; shift++) {
@@ -82,14 +82,14 @@ public class Dova.Map<K,V> : /*Value*/Object {
 
 		states = new byte[size];
 		hashes = new int[size];
-		this.keys = new K[size];
-		this.values = new V[size];
+		this._keys = new K[size];
+		this._values = new V[size];
 
 		for (int i = 0; i < nnodes; i++) {
 			K key;
 			V value;
-			key = keys[i];
-			value = values[i];
+			key = _keys[i];
+			value = _values[i];
 			set (key, value);
 		}
 	}
@@ -101,8 +101,8 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		while (states[node_index] != 0) {
 			if (states[node_index] == 2) {
 				if (hashes[node_index] == key_hash) {
-					if (keys[node_index] == key) {
-						return values[node_index];
+					if (_keys[node_index] == key) {
+						return _values[node_index];
 					}
 				}
 			}
@@ -127,7 +127,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 					have_tombstone = true;
 				}
 			} else if (hashes[node_index] == key_hash) {
-				if (keys[node_index] == key) {
+				if (_keys[node_index] == key) {
 					return node_index;
 				}
 			}
@@ -142,16 +142,17 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		return node_index;
 	}
 
-	void set (K key, V value) {
+	// `this' will be passed by reference when supported as this will be a value type
+	public void set (K key, V value) {
 		int key_hash = key.hash ();
 		int node_index = get_index_for_insertion (key, key_hash);
 		if (states[node_index] == 2) {
 			// key found, replace value
-			values[node_index] = value;
+			_values[node_index] = value;
 		} else {
 			hashes[node_index] = key_hash;
-			keys[node_index] = key;
-			values[node_index] = value;
+			_keys[node_index] = key;
+			_values[node_index] = value;
 			nnodes++;
 			if (states[node_index] == 0) {
 				// was no tombstone
@@ -159,6 +160,30 @@ public class Dova.Map<K,V> : /*Value*/Object {
 				noccupied++;
 			} else {
 				states[node_index] = 2;
+			}
+		}
+	}
+
+	public Set<K> keys {
+		get {
+			result = {};
+			for (int index = 0; index < size; index++) {
+				if (states[index] == 2) {
+					// valid index
+					result.add (_keys[index]);
+				}
+			}
+		}
+	}
+
+	public Set<V> values {
+		get {
+			result = {};
+			for (int index = 0; index < size; index++) {
+				if (states[index] == 2) {
+					// valid index
+					result.add (_values[index]);
+				}
 			}
 		}
 	}

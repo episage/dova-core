@@ -1,6 +1,6 @@
 /* set.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -138,7 +138,8 @@ public class Dova.Set<T> : /*Value*/Object {
 		return node_index;
 	}
 
-	bool add (T element) {
+	// `this' will be passed by reference when supported as this will be a value type
+	public bool add (T element) {
 		int element_hash = element.hash ();
 		int node_index = get_index_for_insertion (element, element_hash);
 		if (states[node_index] == 2) {
@@ -156,6 +157,38 @@ public class Dova.Set<T> : /*Value*/Object {
 				states[node_index] = 2;
 			}
 			return true;
+		}
+	}
+
+	public Dova.Iterator<T> iterator () {
+		return new Iterator<T> (this);
+	}
+
+	class Iterator<T> : Dova.Iterator<T> {
+		Set<T> set;
+
+		int index;
+
+		public Iterator (Set<T> set) {
+			this.set = set;
+			this.index = -1;
+		}
+
+		public override bool next () {
+			index++;
+			while (index < set.size) {
+				if (set.states[index] == 2) {
+					// valid index
+					return true;
+				}
+				index++;
+			}
+			// reached end
+			return false;
+		}
+
+		public override T get () {
+			result = set.elements[index];
 		}
 	}
 }

@@ -1,6 +1,6 @@
 /* hashmap.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,8 +28,8 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 	int noccupied;
 	byte[] states;
 	int[] hashes;
-	K[] keys;
-	V[] values;
+	K[] _keys;
+	V[] _values;
 
 	const int prime_mod[] = [
 		1,          // for 1 << 0
@@ -70,8 +70,8 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 		set_shift (3);
 		states = new byte[size];
 		hashes = new int[size];
-		keys = new K[size];
-		values = new V[size];
+		_keys = new K[size];
+		_values = new V[size];
 	}
 
 	void set_shift (int shift) {
@@ -87,8 +87,8 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 		while (states[node_index] != 0) {
 			if (states[node_index] == 2) {
 				if (hashes[node_index] == key_hash) {
-					if (keys[node_index] == key) {
-						return values[node_index];
+					if (_keys[node_index] == key) {
+						return _values[node_index];
 					}
 				}
 			}
@@ -113,7 +113,7 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 					have_tombstone = true;
 				}
 			} else if (hashes[node_index] == key_hash) {
-				if (keys[node_index] == key) {
+				if (_keys[node_index] == key) {
 					return node_index;
 				}
 			}
@@ -133,11 +133,11 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 		int node_index = get_index_for_insertion (key, key_hash);
 		if (states[node_index] == 2) {
 			// key found, replace value
-			values[node_index] = value;
+			_values[node_index] = value;
 		} else {
 			hashes[node_index] = key_hash;
-			keys[node_index] = key;
-			values[node_index] = value;
+			_keys[node_index] = key;
+			_values[node_index] = value;
 			nnodes++;
 			if (states[node_index] == 0) {
 				// was no tombstone
@@ -157,11 +157,11 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 		while (states[node_index] != 0) {
 			if (states[node_index] == 2) {
 				if (hashes[node_index] == key_hash) {
-					if (keys[node_index] == key) {
+					if (_keys[node_index] == key) {
 						// create tombstone
 						states[node_index] = 1;
-						keys[node_index] = null;
-						values[node_index] = null;
+						_keys[node_index] = null;
+						_values[node_index] = null;
 					}
 				}
 			}
@@ -186,8 +186,8 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 
 			var new_states = new byte[size];
 			var new_hashes = new int[size];
-			var new_keys = new K[size];
-			var new_values = new V[size];
+			var new__keys = new K[size];
+			var new__values = new V[size];
 			for (int i = 0; i < old_size; i++) {
 				if (states[i] == 2) {
 					int step = 0;
@@ -199,15 +199,99 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 					}
 					new_states[new_node_index] = 2;
 					new_hashes[new_node_index] = hashes[i];
-					new_keys[new_node_index] = keys[i];
-					new_values[new_node_index] = values[i];
+					new__keys[new_node_index] = _keys[i];
+					new__values[new_node_index] = _values[i];
 				}
 			}
 			states = new_states;
 			hashes = new_hashes;
-			keys = new_keys;
-			values = new_values;
+			_keys = new__keys;
+			_values = new__values;
 			noccupied = nnodes;
+		}
+	}
+
+	public Iterable<K> keys { get { return new KeySet<K,V> (this); } }
+
+	class KeySet<K,V> : Iterable<K> {
+		HashMap<K,V> map;
+
+		public KeySet (HashMap<K,V> map) {
+			this.map = map;
+		}
+
+		public Iterator<K> iterator () {
+			return new KeyIterator<K,V> (this.map);
+		}
+	}
+
+	class KeyIterator<K,V> : Iterator<K> {
+		HashMap<K,V> map;
+
+		int index;
+
+		public KeyIterator (HashMap<K,V> map) {
+			this.map = map;
+			this.index = -1;
+		}
+
+		public override bool next () {
+			index++;
+			while (index < map.size) {
+				if (map.states[index] == 2) {
+					// valid index
+					return true;
+				}
+				index++;
+			}
+			// reached end
+			return false;
+		}
+
+		public override K get () {
+			result = map._keys[index];
+		}
+	}
+
+	public Iterable<V> values { get { return new ValueSet<K,V> (this); } }
+
+	class ValueSet<K,V> : Iterable<V> {
+		HashMap<K,V> map;
+
+		public ValueSet (HashMap<K,V> map) {
+			this.map = map;
+		}
+
+		public Iterator<V> iterator () {
+			return new ValueIterator<K,V> (this.map);
+		}
+	}
+
+	class ValueIterator<K,V> : Iterator<V> {
+		HashMap<K,V> map;
+
+		int index;
+
+		public ValueIterator (HashMap<K,V> map) {
+			this.map = map;
+			this.index = -1;
+		}
+
+		public override bool next () {
+			index++;
+			while (index < map.size) {
+				if (map.states[index] == 2) {
+					// valid index
+					return true;
+				}
+				index++;
+			}
+			// reached end
+			return false;
+		}
+
+		public override V get () {
+			result = map._values[index];
 		}
 	}
 }
