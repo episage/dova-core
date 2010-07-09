@@ -77,9 +77,7 @@ public class Dova.Set<T> : /*Value*/Object {
 			n >>= 1;
 		}
 
-		capacity = 1 << shift;
-		mod = prime_mod[shift];
-		mask = capacity - 1;
+		set_shift (shift);
 
 		states = new byte[capacity];
 		hashes = new int[capacity];
@@ -90,6 +88,12 @@ public class Dova.Set<T> : /*Value*/Object {
 			element = elements[i];
 			add (element);
 		}
+	}
+
+	void set_shift (int shift) {
+		capacity = 1 << shift;
+		mod = prime_mod[shift];
+		mask = capacity - 1;
 	}
 
 	public bool contains (T element) {
@@ -155,10 +159,46 @@ public class Dova.Set<T> : /*Value*/Object {
 				// was no tombstone
 				states[node_index] = 2;
 				noccupied++;
+				maybe_resize ();
 			} else {
 				states[node_index] = 2;
 			}
 			return true;
+		}
+	}
+
+	void maybe_resize () {
+		if ((capacity > nnodes * 4 && capacity > 8) || capacity <= noccupied + (noccupied / 16)) {
+			int old_capacity = capacity;
+
+			int n = nnodes >> 2;
+			int shift;
+			for (shift = 3; n > 0; shift++) {
+				n >>= 1;
+			}
+			set_shift (shift);
+
+			var new_states = new byte[capacity];
+			var new_hashes = new int[capacity];
+			var new_elements = new T[capacity];
+			for (int i = 0; i < old_capacity; i++) {
+				if (states[i] == 2) {
+					int step = 0;
+					int new_node_index = hashes[i] % mod;
+					while (new_states[new_node_index] != 0) {
+						step++;
+						new_node_index += step;
+						new_node_index &= mask;
+					}
+					new_states[new_node_index] = 2;
+					new_hashes[new_node_index] = hashes[i];
+					new_elements[new_node_index] = elements[i];
+				}
+			}
+			states = new_states;
+			hashes = new_hashes;
+			elements = new_elements;
+			noccupied = nnodes;
 		}
 	}
 
