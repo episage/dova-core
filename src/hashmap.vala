@@ -21,7 +21,9 @@
  */
 
 public class Dova.HashMap<K,V> : MapModel<K,V> {
-	int size;
+	public int size { get { return nnodes; } }
+
+	int capacity;
 	int mod;
 	int mask;
 	int nnodes;
@@ -68,16 +70,16 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 
 	public HashMap () {
 		set_shift (3);
-		states = new byte[size];
-		hashes = new int[size];
-		_keys = new K[size];
-		_values = new V[size];
+		states = new byte[capacity];
+		hashes = new int[capacity];
+		_keys = new K[capacity];
+		_values = new V[capacity];
 	}
 
 	void set_shift (int shift) {
-		size = 1 << shift;
+		capacity = 1 << shift;
 		mod = prime_mod[shift];
-		mask = size - 1;
+		mask = capacity - 1;
 	}
 
 	public override V get (K key) {
@@ -174,8 +176,8 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 	}
 
 	void maybe_resize () {
-		if ((size > nnodes * 4 && size > 8) || size <= noccupied + (noccupied / 16)) {
-			int old_size = size;
+		if ((capacity > nnodes * 4 && capacity > 8) || capacity <= noccupied + (noccupied / 16)) {
+			int old_capacity = capacity;
 
 			int n = nnodes >> 2;
 			int shift;
@@ -184,11 +186,11 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 			}
 			set_shift (shift);
 
-			var new_states = new byte[size];
-			var new_hashes = new int[size];
-			var new__keys = new K[size];
-			var new__values = new V[size];
-			for (int i = 0; i < old_size; i++) {
+			var new_states = new byte[capacity];
+			var new_hashes = new int[capacity];
+			var new__keys = new K[capacity];
+			var new__values = new V[capacity];
+			for (int i = 0; i < old_capacity; i++) {
 				if (states[i] == 2) {
 					int step = 0;
 					int new_node_index = hashes[i] % mod;
@@ -237,7 +239,7 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 
 		public override bool next () {
 			index++;
-			while (index < map.size) {
+			while (index < map.capacity) {
 				if (map.states[index] == 2) {
 					// valid index
 					return true;
@@ -279,7 +281,7 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 
 		public override bool next () {
 			index++;
-			while (index < map.size) {
+			while (index < map.capacity) {
 				if (map.states[index] == 2) {
 					// valid index
 					return true;

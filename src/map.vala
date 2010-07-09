@@ -24,7 +24,9 @@
  * Immutable map.
  */
 public class Dova.Map<K,V> : /*Value*/Object {
-	int size;
+	public int size { get { return nnodes; } }
+
+	int capacity;
 	int mod;
 	int mask;
 	int nnodes;
@@ -76,14 +78,14 @@ public class Dova.Map<K,V> : /*Value*/Object {
 			n >>= 1;
 		}
 
-		size = 1 << shift;
+		capacity = 1 << shift;
 		mod = prime_mod[shift];
-		mask = size - 1;
+		mask = capacity - 1;
 
-		states = new byte[size];
-		hashes = new int[size];
-		this._keys = new K[size];
-		this._values = new V[size];
+		states = new byte[capacity];
+		hashes = new int[capacity];
+		this._keys = new K[capacity];
+		this._values = new V[capacity];
 
 		for (int i = 0; i < nnodes; i++) {
 			K key;
@@ -167,7 +169,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 	public Set<K> keys {
 		get {
 			result = {};
-			for (int index = 0; index < size; index++) {
+			for (int index = 0; index < capacity; index++) {
 				if (states[index] == 2) {
 					// valid index
 					result.add (_keys[index]);
@@ -179,7 +181,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 	public Set<V> values {
 		get {
 			result = {};
-			for (int index = 0; index < size; index++) {
+			for (int index = 0; index < capacity; index++) {
 				if (states[index] == 2) {
 					// valid index
 					result.add (_values[index]);

@@ -24,7 +24,9 @@
  * Immutable set.
  */
 public class Dova.Set<T> : /*Value*/Object {
-	int size;
+	public int size { get { return nnodes; } }
+
+	int capacity;
 	int mod;
 	int mask;
 	int nnodes;
@@ -75,13 +77,13 @@ public class Dova.Set<T> : /*Value*/Object {
 			n >>= 1;
 		}
 
-		size = 1 << shift;
+		capacity = 1 << shift;
 		mod = prime_mod[shift];
-		mask = size - 1;
+		mask = capacity - 1;
 
-		states = new byte[size];
-		hashes = new int[size];
-		this.elements = new T[size];
+		states = new byte[capacity];
+		hashes = new int[capacity];
+		this.elements = new T[capacity];
 
 		for (int i = 0; i < nnodes; i++) {
 			T element;
@@ -176,7 +178,7 @@ public class Dova.Set<T> : /*Value*/Object {
 
 		public override bool next () {
 			index++;
-			while (index < set.size) {
+			while (index < set.capacity) {
 				if (set.states[index] == 2) {
 					// valid index
 					return true;
