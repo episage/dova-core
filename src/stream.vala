@@ -173,14 +173,14 @@ public class Dova.DataReader {
 		return buffer[3] << 24 | buffer[2] << 16 | buffer[1] << 8 | buffer[0];
 	}
 
-	public string read_string (int size) {
+	public string read_string (int length) {
 		// TODO support different encodings
 		// maybe also support 0-terminated strings (possibly separate method)
-		byte[] buffer = new byte[size];
-		stream.read_all (buffer, 0, size);
+		byte[] buffer = new byte[length];
+		stream.read_all (buffer, 0, length);
 
-		result = string.create (size);
-		Posix.memcpy (result.data, buffer.data, size);
+		result = string.create (length);
+		Posix.memcpy (result.data, buffer.data, length);
 	}
 }
 
@@ -217,8 +217,8 @@ public class Dova.DataWriter {
 
 	public void write_string (string s) {
 		// TODO support different encodings
-		var buffer = new byte[s.size];
-		Posix.memcpy (buffer.data, s.data, s.size);
-		stream.write_all (buffer, 0, s.size);
+		var buffer = new byte[s.length];
+		Posix.memcpy (buffer.data, s.data, s.length);
+		stream.write_all (buffer, 0, s.length);
 	}
 }

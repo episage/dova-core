@@ -208,8 +208,8 @@ public class Dova.UnixClient {
 
 		var addr = Posix.sockaddr_un ();
 		addr.sun_family = Posix.AF_UNIX;
-		Posix.memcpy (addr.sun_path, endpoint.path.data, endpoint.path.size + 1);
-		int res = Posix.connect (fd, (Posix.sockaddr*) (&addr), 2 + endpoint.path.size);
+		Posix.memcpy (addr.sun_path, endpoint.path.data, endpoint.path.length + 1);
+		int res = Posix.connect (fd, (Posix.sockaddr*) (&addr), 2 + endpoint.path.length);
 
 		if (res < 0) {
 			int err = Posix.errno;

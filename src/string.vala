@@ -23,31 +23,9 @@
 [CCode (ref_function = "string_ref", unref_function = "string_unref")]
 public class string : Dova.Value {
 	public int ref_count;
-	public int size;
+	// length in bytes
+	public int length;
 	public byte data[];
-
-	const byte utf8_skip_data[] = [
-	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	  1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
-	  2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
-	  3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,6,6,1,1
-	];
-
-	public int length {
-		get {
-			byte* p = data;
-			byte* end = p + size;
-			result = 0;
-			while (p < end) {
-				result++;
-				p += utf8_skip_data[*p];
-			}
-		}
-	}
 
 	public new string* ref () {
 		if (ref_count == 0) {
@@ -69,14 +47,14 @@ public class string : Dova.Value {
 	}
 
 	public byte[] get_utf8_bytes () {
-		result = new byte[this.size];
-		Posix.memcpy (((Array<byte>) result).data, this.data, this.size);
+		result = new byte[this.length];
+		Posix.memcpy (((Array<byte>) result).data, this.data, this.length);
 	}
 
-	public static string create (int size) {
-		string* str = Posix.calloc (1, (int) sizeof (int) * 2 + size + 1);
+	public static string create (int length) {
+		string* str = Posix.calloc (1, (int) sizeof (int) * 2 + length + 1);
 		str->ref_count = 1;
-		str->size = size;
+		str->length = length;
 		return (owned) str;
 	}
 
@@ -91,7 +69,7 @@ public class string : Dova.Value {
 
 	public static string create_from_cstring (byte* cstring) {
 		result = create ((int) Posix.strlen (cstring));
-		Posix.memcpy (result.data, cstring, result.size);
+		Posix.memcpy (result.data, cstring, result.length);
 	}
 
 	internal static string create_from_char (char c) {
@@ -144,10 +122,10 @@ public class string : Dova.Value {
 
 	// maybe better public static string concat (List<string> strings)
 	public string concat (string other) {
-		result = create (this.size + other.size);
+		result = create (this.length + other.length);
 		byte* p = (byte*) result.data;
-		Posix.memcpy (p, this.data, this.size);
-		Posix.memcpy (p + this.size, other.data, other.size);
+		Posix.memcpy (p, this.data, this.length);
+		Posix.memcpy (p + this.length, other.data, other.length);
 	}
 
 	public bool contains (string value) {
@@ -172,10 +150,10 @@ public class string : Dova.Value {
 	}
 
 	public bool starts_with (string value) {
-		if (this.size < value.size) {
+		if (this.length < value.length) {
 			return false;
 		}
-		result = (Posix.strncmp (this.data, value.data, value.size) == 0);
+		result = (Posix.strncmp (this.data, value.data, value.length) == 0);
 	}
 
 	public List<string> split (string delimiter) {
@@ -185,14 +163,14 @@ public class string : Dova.Value {
 		byte* next;
 		while ((next = Posix.strstr (p, delimiter.data)) != null) {
 			string s = create ((int) (next - p));
-			Posix.memcpy (s.data, p, s.size);
+			Posix.memcpy (s.data, p, s.length);
 			result += [s];
 
-			p += s.size + delimiter.size;
+			p += s.length + delimiter.length;
 		}
 
-		string s = create ((int) ((byte*) data + size - p));
-		Posix.memcpy (s.data, p, s.size);
+		string s = create ((int) ((byte*) data + length - p));
+		Posix.memcpy (s.data, p, s.length);
 		result += [s];
 	}
 
@@ -227,7 +205,7 @@ public class string : Dova.Value {
 		// decode UTF-8
 		// this method assumes that string has already been UTF-8 validated
 
-		if (index >= size) {
+		if (index >= length) {
 			return false;
 		}
 
@@ -281,7 +259,7 @@ public class string : Dova.Value {
 	// indices in bytes
 	public int index_of (char c, int start_index = 0, int end_index = -1) {
 		if (end_index < 0) {
-			end_index = size;
+			end_index = length;
 		}
 
 		byte* start = &data[start_index];

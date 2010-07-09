@@ -73,7 +73,7 @@ public class Dova.Uri /*: Value*/ {
 			// authority
 			i += 2;
 			// authority ends either at path '/', query '?', fragment '#', or end of string
-			int authority_end = uri.size;
+			int authority_end = uri.length;
 			int slash = uri.index_of ('/', i);
 			int question = uri.index_of ('?', i);
 			int hash = uri.index_of ('#', i);
@@ -115,9 +115,9 @@ public class Dova.Uri /*: Value*/ {
 		int fragment_start = uri.index_of ('#', i);
 		if (fragment_start >= 0) {
 			// fragment
-			fragment = uri[fragment_start + 1:uri.size];
+			fragment = uri[fragment_start + 1:uri.length];
 		} else {
-			fragment_start = uri.size;
+			fragment_start = uri.length;
 		}
 
 		int query_start = uri.index_of ('?', i);
@@ -125,7 +125,7 @@ public class Dova.Uri /*: Value*/ {
 			// query
 			query = uri[query_start + 1:fragment_start];
 		} else {
-			query_start = uri.size;
+			query_start = uri.length;
 		}
 
 		path = uri[i:query_start];
