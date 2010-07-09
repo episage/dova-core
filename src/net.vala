@@ -54,13 +54,13 @@ public class Dova.TcpClient {
 
 		Posix.addrinfo* addr = addrs;
 		while (addr != null) {
-			int fd = Posix.socket (addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+			int fd = Posix.socket (addr.ai_family, addr.ai_socktype, addr.ai_protocol);
 
 			// no blocking
 			int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
 			Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
 
-			int res = Posix.connect (fd, addr->ai_addr, addr->ai_addrlen);
+			int res = Posix.connect (fd, addr.ai_addr, addr.ai_addrlen);
 
 			if (res < 0) {
 				int err = Posix.errno;
@@ -78,7 +78,7 @@ public class Dova.TcpClient {
 				break;
 			}
 
-			addr = addr->ai_next;
+			addr = addr.ai_next;
 		}
 
 		Posix.freeaddrinfo (addrs);

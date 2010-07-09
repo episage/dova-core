@@ -46,18 +46,18 @@ public class Dova.Object {
 
 	public static Object* alloc (Type type) {
 		result = Posix.calloc (1, type.object_size);
-		result->type = type;
-		result->ref_count = 1;
+		result.type = type;
+		result.ref_count = 1;
 	}
 
 	public static void* ref (void* object) {
-		AtomicInt.fetch_and_add (ref ((Object*) object)->ref_count, 1);
+		AtomicInt.fetch_and_add (ref ((Object*) object).ref_count, 1);
 		return object;
 	}
 	
 	public static void unref (void* object) {
-		if (AtomicInt.fetch_and_sub (ref ((Object*) object)->ref_count, 1) == 1) {
-			((Object*) object)->finalize ();
+		if (AtomicInt.fetch_and_sub (ref ((Object*) object).ref_count, 1) == 1) {
+			((Object*) object).finalize ();
 			Posix.free (object);
 		}
 	}
@@ -89,12 +89,12 @@ public abstract class Dova.Type {
 
 	public new static void alloc (Type base_type, int object_size, int type_size, out Type* result, out int object_offset, out int type_offset) {
 		result = Posix.calloc (1, base_type.type_size + type_size);
-		result->type = typeof (Type);
-		result->base_type = base_type;
+		result.type = typeof (Type);
+		result.base_type = base_type;
 		object_offset = base_type.object_size;
-		result->object_size = base_type.object_size + object_size;
+		result.object_size = base_type.object_size + object_size;
 		type_offset = base_type.type_size;
-		result->type_size = base_type.type_size + type_size;
+		result.type_size = base_type.type_size + type_size;
 	}
 
 	public void insert_type (Type type) {

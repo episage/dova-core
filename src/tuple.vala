@@ -35,7 +35,7 @@ public class Dova.Tuple : /*Value*/Object {
 		int size = 0;
 		for (int i = 0; i < length; i++) {
 			// use 8 byte alignment
-			size += ((types[i]->value_size - 1) / 8 + 1) * 8;
+			size += ((types[i].value_size - 1) / 8 + 1) * 8;
 		}
 
 		data = Posix.calloc (1, size);
@@ -43,9 +43,9 @@ public class Dova.Tuple : /*Value*/Object {
 		byte* next = data;
 		for (int i = 0; i < length; i++) {
 			this.values[i] = (void*) next;
-			types[i]->value_copy (this.values[i], 0, values[i], 0);
+			types[i].value_copy (this.values[i], 0, values[i], 0);
 			// use 8 byte alignment
-			next += ((types[i]->value_size - 1) / 8 + 1) * 8;
+			next += ((types[i].value_size - 1) / 8 + 1) * 8;
 		}
 	}
 

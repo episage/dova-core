@@ -53,8 +53,8 @@ public class string : Dova.Value {
 
 	public static string create (int length) {
 		string* str = Posix.calloc (1, (int) sizeof (int) * 2 + length + 1);
-		str->ref_count = 1;
-		str->length = length;
+		str.ref_count = 1;
+		str.length = length;
 		return (owned) str;
 	}
 
