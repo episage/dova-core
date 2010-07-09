@@ -213,6 +213,26 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 		}
 	}
 
+	public bool contains_key (K key) {
+		int step = 0;
+		int key_hash = key.hash ();
+		int node_index = key_hash % mod;
+		while (states[node_index] != 0) {
+			if (states[node_index] == 2) {
+				if (hashes[node_index] == key_hash) {
+					if (_keys[node_index] == key) {
+						return true;
+					}
+				}
+			}
+
+			step++;
+			node_index += step;
+			node_index &= mask;
+		}
+		return false;
+	}
+
 	public Iterable<K> keys { get { return new KeySet<K,V> (this); } }
 
 	class KeySet<K,V> : Iterable<K> {
