@@ -27,6 +27,8 @@ public class Dova.List<T> : /*Value*/Object, Iterable<T> {
 	T[] _elements;
 	public int length { get; private set; }
 
+	public void* data { get { return _elements.data; } }
+
 	public List (int length, T elements[]) /*: _elements (elements.length)*/ {
 		_elements = new T[length];
 		this.length = length;
