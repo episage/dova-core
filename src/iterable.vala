@@ -26,19 +26,19 @@ public delegate R MapFunc<T,R> (T element);
 public abstract class Dova.Iterable<T> {
 	public abstract Iterator<T> iterator ();
 
-	public virtual Iterable<T> filter (FilterFunc<T> func) {
+	public Iterable<T> filter (FilterFunc<T> func) {
 		return new FilterIterable<T> (this, func);
 	}
 
-	public virtual Iterable<R> map<R> (MapFunc<T,R> func) {
+	public Iterable<R> map<R> (MapFunc<T,R> func) {
 		return new MapIterable<T,R> (this, func);
 	}
 
-	public virtual Iterable<T> take (int n) {
+	public Iterable<T> take (int n) {
 		return new TakeIterable<T> (this, n);
 	}
 
-	public virtual Iterable<T> drop (int n) {
+	public Iterable<T> drop (int n) {
 		return new DropIterable<T> (this, n);
 	}
 }
