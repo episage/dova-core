@@ -22,7 +22,12 @@
 
 public delegate int Dova.CompareFunc<T> (T a, T b);
 
-public class Dova.PriorityQueue<T> : Object {
+public abstract class Dova.QueueModel<T> : Object {
+	public abstract void push (T element);
+	public abstract T pop ();
+}
+
+public class Dova.PriorityQueue<T> : QueueModel<T> {
 	T[] elements;
 	public int length { get; private set; }
 
@@ -33,7 +38,7 @@ public class Dova.PriorityQueue<T> : Object {
 		elements = new T[4];
 	}
 
-	public void push (T element) {
+	public override void push (T element) {
 		if (elements.length <= length) {
 			Array.resize<T> (ref elements, elements.length * 2);
 		}
@@ -56,7 +61,7 @@ public class Dova.PriorityQueue<T> : Object {
 		elements[index] = element;
 	}
 
-	public T pop () {
+	public override T pop () {
 		assert (length > 0);
 
 		result = elements[0];
