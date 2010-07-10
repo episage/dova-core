@@ -61,6 +61,14 @@ public abstract class Dova.Iterable<T> {
 		}
 		return true;
 	}
+
+	public List<T> to_list () {
+		result = [];
+		var iterator = this.iterator ();
+		while (iterator.next ()) {
+			result += [iterator.get ()];
+		}
+	}
 }
 
 class Dova.FilterIterable<T> : Iterable<T> {
