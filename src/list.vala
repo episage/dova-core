@@ -49,10 +49,10 @@ public class Dova.List<T> : /*Value*/Object {
 	public List<T> concat (List<T> list2) {
 		result = new List<T>.clear (this.length + list2.length);
 		for (int i = 0; i < this.length; i++) {
-			result._elements[i] = this[i];
+			result._elements[i] = this._elements[i];
 		}
 		for (int i = 0; i < list2.length; i++) {
-			result._elements[this.length + i] = list2[i];
+			result._elements[this.length + i] = list2._elements[i];
 		}
 	}
 
