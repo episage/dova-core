@@ -21,12 +21,17 @@
  */
 
 public delegate bool FilterFunc<T> (T element);
+public delegate R MapFunc<T,R> (T element);
 
 public abstract class Dova.Iterable<T> {
 	public abstract Iterator<T> iterator ();
 
 	public virtual Iterable<T> filter (FilterFunc<T> func) {
 		return new FilterIterable<T> (this, func);
+	}
+
+	public virtual Iterable<R> map<R> (MapFunc<T,R> func) {
+		return new MapIterable<T,R> (this, func);
 	}
 }
 
@@ -64,5 +69,37 @@ class Dova.FilterIterator<T> : Iterator<T> {
 
 	public override T get () {
 		return base_iterator.get ();
+	}
+}
+
+class Dova.MapIterable<T,R> : Iterable<R> {
+	Iterable<T> base_iterable;
+	MapFunc<T,R> func;
+
+	public MapIterable (Iterable<T> base_iterable, MapFunc<T,R> func) {
+		this.base_iterable = base_iterable;
+		this.func = func;
+	}
+
+	public override Iterator<R> iterator () {
+		return new MapIterator<T,R> (base_iterable.iterator (), func);
+	}
+}
+
+class Dova.MapIterator<T,R> : Iterator<R> {
+	Iterator<T> base_iterator;
+	MapFunc<T,R> func;
+
+	public MapIterator (Iterator<T> base_iterator, MapFunc<T,R> func) {
+		this.base_iterator = base_iterator;
+		this.func = func;
+	}
+
+	public override bool next () {
+		return base_iterator.next ();
+	}
+
+	public override R get () {
+		return func (base_iterator.get ());
 	}
 }
