@@ -37,6 +37,10 @@ public abstract class Dova.Iterable<T> {
 	public virtual Iterable<T> take (int n) {
 		return new TakeIterable<T> (this, n);
 	}
+
+	public virtual Iterable<T> drop (int n) {
+		return new DropIterable<T> (this, n);
+	}
 }
 
 class Dova.FilterIterable<T> : Iterable<T> {
@@ -137,6 +141,45 @@ class Dova.TakeIterator<T> : Iterator<T> {
 		}
 
 		n--;
+		return base_iterator.next ();
+	}
+
+	public override T get () {
+		return base_iterator.get ();
+	}
+}
+
+class Dova.DropIterable<T> : Iterable<T> {
+	Iterable<T> base_iterable;
+	int n;
+
+	public DropIterable (Iterable<T> base_iterable, int n) {
+		this.base_iterable = base_iterable;
+		this.n = n;
+	}
+
+	public override Iterator<T> iterator () {
+		return new DropIterator<T> (base_iterable.iterator (), n);
+	}
+}
+
+class Dova.DropIterator<T> : Iterator<T> {
+	Iterator<T> base_iterator;
+	int n;
+
+	public DropIterator (Iterator<T> base_iterator, int n) {
+		this.base_iterator = base_iterator;
+		this.n = n;
+	}
+
+	public override bool next () {
+		while (n > 0) {
+			n--;
+			if (!base_iterator.next ()) {
+				return false;
+			}
+		}
+
 		return base_iterator.next ();
 	}
 
