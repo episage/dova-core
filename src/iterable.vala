@@ -41,6 +41,26 @@ public abstract class Dova.Iterable<T> {
 	public Iterable<T> drop (int n) {
 		return new DropIterable<T> (this, n);
 	}
+
+	public bool any (FilterFunc<T> func) {
+		var iterator = this.iterator ();
+		while (iterator.next ()) {
+			if (func (iterator.get ())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public bool all (FilterFunc<T> func) {
+		var iterator = this.iterator ();
+		while (iterator.next ()) {
+			if (!func (iterator.get ())) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
 
 class Dova.FilterIterable<T> : Iterable<T> {
