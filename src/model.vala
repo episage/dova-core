@@ -98,6 +98,18 @@ public abstract class Dova.ListModel<T> : Iterable<T> {
 	public abstract void set (int index, T element);
 }
 
+public abstract class Dova.SetModel<T> : Iterable<T> {
+	protected SetModel () {
+		base ();
+	}
+
+	public abstract bool add (T element);
+	public abstract void clear ();
+	public abstract bool contains (T element);
+	public abstract bool remove (T element);
+	public abstract int size { get; }
+}
+
 public abstract class Dova.MapModel<K,V> {
 	public abstract V get (K key);
 	public abstract void set (K key, V value);

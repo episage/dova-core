@@ -145,7 +145,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 	}
 
 	// `this' will be passed by reference when supported as this will be a value type
-	public void set (K key, V value) {
+	void set (K key, V value) {
 		int key_hash = key.hash ();
 		int node_index = get_index_for_insertion (key, key_hash);
 		if (states[node_index] == 2) {

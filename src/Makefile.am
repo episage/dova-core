@@ -96,6 +96,7 @@ $(srcdir)/libdova_net_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova
 libdova_model_la_SOURCES = \
 	arraylist.vala \
 	hashmap.vala \
+	hashset.vala \
 	iterable.vala \
 	model.vala \
 	priorityqueue.vala \

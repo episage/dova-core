@@ -1,4 +1,4 @@
-/* set.vala
+/* hashset.vala
  *
  * Copyright (C) 2009-2010  Jürg Billeter
  *
@@ -20,11 +20,8 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-/**
- * Immutable set.
- */
-public class Dova.Set<T> : /*Value*/Object {
-	public int size { get { return nnodes; } }
+public class Dova.HashSet<T> : SetModel<T> {
+	public override int size { get { return nnodes; } }
 
 	int capacity;
 	int mod;
@@ -70,24 +67,11 @@ public class Dova.Set<T> : /*Value*/Object {
 		2147483647  // for 1 << 31
 	];
 
-	public Set (int nnodes, T elements[]) {
-		int n = nnodes >> 2;
-		int shift;
-		for (shift = 3; n > 0; shift++) {
-			n >>= 1;
-		}
-
-		set_shift (shift);
-
+	public HashSet () {
+		set_shift (3);
 		states = new byte[capacity];
 		hashes = new int[capacity];
-		this.elements = new T[capacity];
-
-		for (int i = 0; i < nnodes; i++) {
-			T element;
-			element = elements[i];
-			add (element);
-		}
+		elements = new T[capacity];
 	}
 
 	void set_shift (int shift) {
@@ -96,7 +80,7 @@ public class Dova.Set<T> : /*Value*/Object {
 		mask = capacity - 1;
 	}
 
-	public bool contains (T element) {
+	public override bool contains (T element) {
 		int step = 0;
 		int element_hash = element.hash ();
 		int node_index = element_hash % mod;
@@ -144,8 +128,7 @@ public class Dova.Set<T> : /*Value*/Object {
 		return node_index;
 	}
 
-	// `this' will be passed by reference when supported as this will be a value type
-	internal bool add (T element) {
+	public override bool add (T element) {
 		int element_hash = element.hash ();
 		int node_index = get_index_for_insertion (element, element_hash);
 		if (states[node_index] == 2) {
@@ -164,6 +147,40 @@ public class Dova.Set<T> : /*Value*/Object {
 				states[node_index] = 2;
 			}
 			return true;
+		}
+	}
+
+	public override bool remove (T element) {
+		int step = 0;
+		int element_hash = element.hash ();
+		int node_index = element_hash % mod;
+		while (states[node_index] != 0) {
+			if (states[node_index] == 2) {
+				if (hashes[node_index] == element_hash) {
+					if (elements[node_index] == element) {
+						// create tombstone
+						states[node_index] = 1;
+						elements[node_index] = null;
+						return true;
+					}
+				}
+			}
+
+			step++;
+			node_index += step;
+			node_index &= mask;
+		}
+		// element not found
+		return false;
+	}
+
+	public override void clear () {
+		for (int i = 0; i < capacity; i++) {
+			if (states[i] == 2) {
+				// create tombstone
+				states[i] = 1;
+				elements[i] = null;
+			}
 		}
 	}
 
@@ -202,16 +219,16 @@ public class Dova.Set<T> : /*Value*/Object {
 		}
 	}
 
-	public Dova.Iterator<T> iterator () {
+	public override Dova.Iterator<T> iterator () {
 		return new Iterator<T> (this);
 	}
 
 	class Iterator<T> : Dova.Iterator<T> {
-		Set<T> set;
+		HashSet<T> set;
 
 		int index;
 
-		public Iterator (Set<T> set) {
+		public Iterator (HashSet<T> set) {
 			this.set = set;
 			this.index = -1;
 		}
