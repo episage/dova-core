@@ -20,7 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public class Dova.Array<T> : Object, Iterable<T> {
+public class Dova.Array<T> : Object {
 	public int length { get; private set; }
 	// should be inline allocated
 	public void* data { get; private set; }

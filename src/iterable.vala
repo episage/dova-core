@@ -1,6 +1,6 @@
 /* iterable.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,6 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public interface Dova.Iterable<T> {
+public abstract class Dova.Iterable<T> {
 	public abstract Iterator<T> iterator ();
 }
-

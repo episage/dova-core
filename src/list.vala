@@ -23,7 +23,7 @@
 /**
  * Immutable list.
  */
-public class Dova.List<T> : /*Value*/Object, Iterable<T> {
+public class Dova.List<T> : /*Value*/Object {
 	T[] _elements;
 	public int length { get; private set; }
 

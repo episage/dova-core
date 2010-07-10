@@ -84,11 +84,9 @@ public class Dova.StringReference : StringModel {
 	}
 }
 
-public abstract class Dova.CollectionModel<T> /*: Iterable<T>*/ {
+public abstract class Dova.CollectionModel<T> : Iterable<T> {
 	protected CollectionModel () {
 	}
-
-	public abstract Iterator<T> iterator ();
 
 	public abstract bool add (T element);
 	public abstract void clear ();

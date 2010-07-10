@@ -242,7 +242,7 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 			this.map = map;
 		}
 
-		public Iterator<K> iterator () {
+		public override Iterator<K> iterator () {
 			return new KeyIterator<K,V> (this.map);
 		}
 	}
@@ -284,7 +284,7 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 			this.map = map;
 		}
 
-		public Iterator<V> iterator () {
+		public override Iterator<V> iterator () {
 			return new ValueIterator<K,V> (this.map);
 		}
 	}
