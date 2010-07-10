@@ -84,22 +84,17 @@ public class Dova.StringReference : StringModel {
 	}
 }
 
-public abstract class Dova.CollectionModel<T> : Iterable<T> {
-	protected CollectionModel () {
-	}
-
-	public abstract bool add (T element);
-	public abstract void clear ();
-	public abstract bool contains (T element);
-	public abstract bool remove (T element);
-	public abstract int size { get; }
-}
-
-public abstract class Dova.ListModel<T> : CollectionModel<T> {
+public abstract class Dova.ListModel<T> : Iterable<T> {
 	protected ListModel () {
 		base ();
 	}
+
+	public abstract void append (T element);
+	public abstract void clear ();
+	public abstract bool contains (T element);
 	public abstract T get (int index);
+	public abstract int length { get; }
+	public abstract bool remove (T element);
 	public abstract void set (int index, T element);
 }
 

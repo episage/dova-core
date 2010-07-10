@@ -1,6 +1,6 @@
 /* arraylist.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@ namespace Debug {
 
 public class Dova.ArrayList<T> : ListModel<T> {
 	T[] _elements;
-	int _size;
+	int _length;
 
 	public void* data { get { return _elements.data; } }
 
@@ -39,25 +39,20 @@ public class Dova.ArrayList<T> : ListModel<T> {
 		_elements = new T[4];
 		if (list != null) {
 			foreach (var element in (!) list) {
-				add (element);
+				append (element);
 			}
 		}
 	}
 
-	public override int size {
-		get { return _size; }
+	public override int length {
+		get { return _length; }
 	}
 
-	public int length {
-		get { return _size; }
-	}
-
-	public override bool add (T element) {
-		if (_size == _elements.length) {
+	public override void append (T element) {
+		if (_length == _elements.length) {
 			grow_if_needed (1);
 		}
-		_elements[_size++] = element;
-		result = true;
+		_elements[_length++] = element;
 	}
 
 	public override bool contains (T element) {
@@ -72,13 +67,13 @@ public class Dova.ArrayList<T> : ListModel<T> {
 	}
 
 	public override T get (int index) {
-		assert (index >= 0 && index < _size);
+		assert (index >= 0 && index < _length);
 
 		result = _elements[index];
 	}
 
 	public override void set (int index, T element) {
-		assert (index >= 0 && index < _size);
+		assert (index >= 0 && index < _length);
 
 		_elements[index] = element;
 	}
@@ -88,7 +83,7 @@ public class Dova.ArrayList<T> : ListModel<T> {
 	}
 
 	void set_capacity (int value) {
-		assert (value >= _size);
+		assert (value >= _length);
 
 		Array.resize<T> (ref _elements, value);
 	}
@@ -97,10 +92,10 @@ public class Dova.ArrayList<T> : ListModel<T> {
 	void grow_if_needed (int new_count) {
 		assert (new_count >= 0);
 
-		int minimum_size = _size + new_count;
-		if (minimum_size > _elements.length) {
+		int minimum_length = _length + new_count;
+		if (minimum_length > _elements.length) {
 			// double the capacity unless we add even more items at this time
-			set_capacity (new_count > _elements.length ? minimum_size : 2 * _elements.length);
+			set_capacity (new_count > _elements.length ? minimum_length : 2 * _elements.length);
 		}
 	}
 
