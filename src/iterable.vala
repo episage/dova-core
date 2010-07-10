@@ -20,6 +20,49 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+public delegate bool FilterFunc<T> (T element);
+
 public abstract class Dova.Iterable<T> {
 	public abstract Iterator<T> iterator ();
+
+	public virtual Iterable<T> filter (FilterFunc<T> func) {
+		return new FilterIterable<T> (this, func);
+	}
+}
+
+class Dova.FilterIterable<T> : Iterable<T> {
+	Iterable<T> base_iterable;
+	FilterFunc<T> func;
+
+	public FilterIterable (Iterable<T> base_iterable, FilterFunc<T> func) {
+		this.base_iterable = base_iterable;
+		this.func = func;
+	}
+
+	public override Iterator<T> iterator () {
+		return new FilterIterator<T> (base_iterable.iterator (), func);
+	}
+}
+
+class Dova.FilterIterator<T> : Iterator<T> {
+	Iterator<T> base_iterator;
+	FilterFunc<T> func;
+
+	public FilterIterator (Iterator<T> base_iterator, FilterFunc<T> func) {
+		this.base_iterator = base_iterator;
+		this.func = func;
+	}
+
+	public override bool next () {
+		while (base_iterator.next ()) {
+			if (func (base_iterator.get ())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public override T get () {
+		return base_iterator.get ();
+	}
 }
