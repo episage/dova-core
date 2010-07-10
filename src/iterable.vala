@@ -33,6 +33,10 @@ public abstract class Dova.Iterable<T> {
 	public virtual Iterable<R> map<R> (MapFunc<T,R> func) {
 		return new MapIterable<T,R> (this, func);
 	}
+
+	public virtual Iterable<T> take (int n) {
+		return new TakeIterable<T> (this, n);
+	}
 }
 
 class Dova.FilterIterable<T> : Iterable<T> {
@@ -101,5 +105,42 @@ class Dova.MapIterator<T,R> : Iterator<R> {
 
 	public override R get () {
 		return func (base_iterator.get ());
+	}
+}
+
+class Dova.TakeIterable<T> : Iterable<T> {
+	Iterable<T> base_iterable;
+	int n;
+
+	public TakeIterable (Iterable<T> base_iterable, int n) {
+		this.base_iterable = base_iterable;
+		this.n = n;
+	}
+
+	public override Iterator<T> iterator () {
+		return new TakeIterator<T> (base_iterable.iterator (), n);
+	}
+}
+
+class Dova.TakeIterator<T> : Iterator<T> {
+	Iterator<T> base_iterator;
+	int n;
+
+	public TakeIterator (Iterator<T> base_iterator, int n) {
+		this.base_iterator = base_iterator;
+		this.n = n;
+	}
+
+	public override bool next () {
+		if (n <= 0) {
+			return false;
+		}
+
+		n--;
+		return base_iterator.next ();
+	}
+
+	public override T get () {
+		return base_iterator.get ();
 	}
 }
