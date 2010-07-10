@@ -57,6 +57,8 @@ public class Dova.PriorityQueue<T> : Object {
 	}
 
 	public T pop () {
+		assert (length > 0);
+
 		result = elements[0];
 
 		int index = 0;
