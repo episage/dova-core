@@ -111,3 +111,9 @@ public abstract class Dova.MapModel<K,V> {
 	// public signal void changed ();
 }
 
+public abstract class Dova.DequeModel<T> {
+	public abstract void push_head (T element);
+	public abstract void push_tail (T element);
+	public abstract T pop_head ();
+	public abstract T pop_tail ();
+}
