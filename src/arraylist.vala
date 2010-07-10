@@ -32,6 +32,8 @@ public class Dova.ArrayList<T> : ListModel<T> {
 	T[] _elements;
 	int _size;
 
+	public void* data { get { return _elements.data; } }
+
 	public ArrayList (List<T>? list = null) {
 		base ();
 		_elements = new T[4];
