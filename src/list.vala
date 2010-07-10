@@ -56,6 +56,21 @@ public class Dova.List<T> : /*Value*/Object {
 		}
 	}
 
+	public List<T> append (T element) {
+		result = this.concat ([element]);
+	}
+
+	public List<T> set (int index, T element) {
+		result = new List<T>.clear (this.length);
+		for (int i = 0; i < this.length; i++) {
+			if (i == index) {
+				result._elements[i] = element;
+			} else {
+				result._elements[i] = this._elements[i];
+			}
+		}
+	}
+
 	// temporary
 	public List<T> remove_last () {
 		result = new List<T>.clear (this.length - 1);
