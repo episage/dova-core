@@ -167,3 +167,8 @@ public abstract class Dova.Type {
 	public extern void value_copy (void* dest, int dest_index, void* src, int src_index);
 }
 
+namespace Dova {
+	[ModuleInit]
+	public void init () {
+	}
+}
