@@ -110,6 +110,7 @@ libdova_core_la_LIBADD = \
 	libdova-model.la \
 	libdova-net.la \
 	libdova-task.la \
+	-lm \
 	$(NULL)
 
 dovaincludedir = $(includedir)/dova-core-0.1

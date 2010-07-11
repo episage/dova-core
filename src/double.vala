@@ -22,5 +22,17 @@
 
 [FloatingType (rank = 2, width = 64)]
 public struct double {
-}
+	public double floor () {
+		return Posix.floor (this);
+	}
 
+	public double ceil () {
+		return Posix.ceil (this);
+	}
+
+	public string to_string () {
+		byte[] buffer = new byte[30];
+		Posix.snprintf (buffer.data, buffer.length, "%.17g".data, this);
+		return string.create_from_cstring (buffer.data);
+	}
+}

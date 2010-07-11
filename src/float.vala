@@ -22,5 +22,9 @@
 
 [FloatingType (rank = 1)]
 public struct float {
+	public string to_string () {
+		byte[] buffer = new byte[30];
+		Posix.snprintf (buffer.data, buffer.length, "%.8g".data, this);
+		return string.create_from_cstring (buffer.data);
+	}
 }
-

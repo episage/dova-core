@@ -40,6 +40,11 @@ namespace Posix {
 	[CCode (cheader_filename = "errno.h")]
 	public const int EWOULDBLOCK;
 
+	[CCode (cheader_filename = "math.h")]
+	public double ceil (double x);
+	[CCode (cheader_filename = "math.h")]
+	public double floor (double x);
+
 	[CCode (cname = "struct addrinfo", cheader_filename = "netdb.h")]
 	public struct addrinfo {
 		public int ai_flags;
@@ -94,6 +99,8 @@ namespace Posix {
 	public int printf (byte* format, ...);
 	[CCode (cheader_filename = "stdio.h")]
 	public int fprintf (FILE* stream, byte* format, ...);
+	[CCode (cheader_filename = "stdio.h")]
+	public int snprintf (byte* str, size_t size, byte* format, ...);
 	[CCode (cheader_filename = "stdio.h")]
 	public FILE* stdin;
 	[CCode (cheader_filename = "stdio.h")]
