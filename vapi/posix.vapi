@@ -291,6 +291,8 @@ namespace Posix {
 	}
 	[CCode (cheader_filename = "time.h")]
 	public tm* localtime_r (time_t* timep, tm* res);
+	[CCode (cheader_filename = "time.h")]
+	public int clock_gettime (int clk_id, timespec* tp);
 
 	[CCode (cheader_filename = "time.h")]
 	public const int CLOCK_MONOTONIC;

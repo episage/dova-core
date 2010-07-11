@@ -316,6 +316,14 @@ public struct Dova.Duration {
 	internal Duration.with_ticks (long ticks) {
 		this.ticks = ticks;
 	}
+
+	public string to_string () {
+		string ms = (total_milliseconds % 1000).to_string ();
+		while (ms.length < 3) {
+			ms = "0" + ms;
+		}
+		return "PT$(total_seconds).$(ms)S";
+	}
 }
 
 /**

@@ -38,6 +38,7 @@ libdova_base_la_SOURCES = \
 	set.vala \
 	short.vala \
 	string.vala \
+	timer.vala \
 	tuple.vala \
 	uint.vala \
 	ulong.vala \
@@ -112,6 +113,7 @@ libdova_core_la_LIBADD = \
 	libdova-net.la \
 	libdova-task.la \
 	-lm \
+	-lrt \
 	$(NULL)
 
 dovaincludedir = $(includedir)/dova-core-0.1
