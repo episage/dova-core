@@ -1,6 +1,6 @@
 /* bool.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,5 +22,8 @@
 
 [BooleanType]
 public struct bool {
+	public string to_string () {
+		return this ? "true" : "false";
+	}
 }
 
