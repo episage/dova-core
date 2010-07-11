@@ -19,6 +19,7 @@ libdova_base_la_SOURCES = \
 	bool.vala \
 	byte.vala \
 	char.vala \
+	char_props_data.vala \
 	datetime.vala \
 	decimal.vala \
 	delegate.vala \
