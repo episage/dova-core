@@ -33,6 +33,7 @@ libdova_base_la_SOURCES = \
 	map.vala \
 	node.vala \
 	object.vala \
+	random.vala \
 	sbyte.vala \
 	set.vala \
 	short.vala \
