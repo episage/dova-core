@@ -156,6 +156,13 @@ public class string : Dova.Value {
 		result = (Posix.strncmp (this.data, value.data, value.length) == 0);
 	}
 
+	public bool ends_with (string value) {
+		if (this.length < value.length) {
+			return false;
+		}
+		result = (Posix.strncmp (&this.data[this.length - value.length], value.data, value.length) == 0);
+	}
+
 	public List<string> split (string delimiter) {
 		result = [];
 		byte* p = data;
