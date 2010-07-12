@@ -346,6 +346,29 @@ public class string : Dova.Value {
 		}
 	}
 
+	// indices in bytes
+	public int last_index_of (string needle, int start_index = 0, int end_index = -1) {
+		if (end_index < 0) {
+			end_index = length;
+		}
+
+		int needle_length = needle.length;
+
+		while (end_index - start_index >= needle_length) {
+			if (Posix.memcmp (&data[end_index - needle_length], needle.data, needle_length) == 0) {
+				return end_index - needle_length;
+			}
+			end_index--;
+		}
+
+		return -1;
+	}
+
+	// indices in bytes
+	public int last_index_of_char (char c, int start_index = 0, int end_index = -1) {
+		return last_index_of (c.to_string (), start_index, end_index);
+	}
+
 	public int hash () {
 		// based on code from GLib
 
