@@ -257,7 +257,25 @@ public class string : Dova.Value {
 	}
 
 	// indices in bytes
-	public int index_of (char c, int start_index = 0, int end_index = -1) {
+	public int index_of (string needle, int start_index = 0, int end_index = -1) {
+		if (end_index < 0) {
+			end_index = length;
+		}
+
+		int needle_length = needle.length;
+
+		while (end_index - start_index >= needle_length) {
+			if (Posix.memcmp (&data[start_index], needle.data, needle_length) == 0) {
+				return start_index;
+			}
+			start_index++;
+		}
+
+		return -1;
+	}
+
+	// indices in bytes
+	public int index_of_char (char c, int start_index = 0, int end_index = -1) {
 		if (end_index < 0) {
 			end_index = length;
 		}

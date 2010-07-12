@@ -74,9 +74,9 @@ public class Dova.Uri /*: Value*/ {
 			i += 2;
 			// authority ends either at path '/', query '?', fragment '#', or end of string
 			int authority_end = uri.length;
-			int slash = uri.index_of ('/', i);
-			int question = uri.index_of ('?', i);
-			int hash = uri.index_of ('#', i);
+			int slash = uri.index_of_char ('/', i);
+			int question = uri.index_of_char ('?', i);
+			int hash = uri.index_of_char ('#', i);
 			if (slash >= 0 && slash < authority_end) {
 				authority_end = slash;
 			}
@@ -88,14 +88,14 @@ public class Dova.Uri /*: Value*/ {
 			}
 
 			// userinfo ends with @
-			int userinfo_end = uri.index_of ('@', i, authority_end);
+			int userinfo_end = uri.index_of_char ('@', i, authority_end);
 			if (userinfo_end >= 0 && userinfo_end < authority_end) {
 				userinfo = uri[i:userinfo_end];
 				i = userinfo_end + 1;
 			}
 
 			// TODO IPv6 support
-			int host_end = uri.index_of (':', i, authority_end);
+			int host_end = uri.index_of_char (':', i, authority_end);
 			if (host_end < 0) {
 				// no port
 				host_end = authority_end;
@@ -112,7 +112,7 @@ public class Dova.Uri /*: Value*/ {
 			i = authority_end;
 		}
 
-		int fragment_start = uri.index_of ('#', i);
+		int fragment_start = uri.index_of_char ('#', i);
 		if (fragment_start >= 0) {
 			// fragment
 			fragment = uri[fragment_start + 1:uri.length];
@@ -120,7 +120,7 @@ public class Dova.Uri /*: Value*/ {
 			fragment_start = uri.length;
 		}
 
-		int query_start = uri.index_of ('?', i);
+		int query_start = uri.index_of_char ('?', i);
 		if (query_start >= 0) {
 			// query
 			query = uri[query_start + 1:fragment_start];
