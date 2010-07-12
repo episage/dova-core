@@ -20,9 +20,8 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public class Dova.TcpEndpoint {
+public class Dova.TcpEndpoint /* : Dova.Value */ {
 	// TODO also support creating TcpEndpoints for SRV entries (domain and service pair)
-	// move address resolving in here and use subclasses?
 
 	internal string host { get; private set; }
 	internal ushort port { get; private set; }

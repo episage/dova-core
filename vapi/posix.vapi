@@ -226,6 +226,20 @@ namespace Posix {
 	[CCode (cheader_filename = "arpa/inet.h")]
 	public int inet_pton (int af, byte* src, void* dst);
 
+	[CCode (cheader_filename = "sys/stat.h")]
+	public int stat (byte* path, stat_t* buf);
+	[CCode (cname = "struct stat", cheader_filename = "sys/stat.h")]
+	public struct stat_t {
+		public uint st_mode;
+		public off_t st_size;
+		public timespec st_mtim;
+	}
+
+	[CCode (cheader_filename = "sys/stat.h")]
+	public bool S_ISREG (uint m);
+	public bool S_ISDIR (uint m);
+	public bool S_ISLNK (uint m);
+
 	[CCode (cheader_filename = "sys/time.h")]
 	public int gettimeofday (out timeval tv, void* tz = null);
 	[CCode (cname = "struct timeval", cheader_filename = "sys/time.h")]

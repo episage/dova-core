@@ -29,6 +29,35 @@ public abstract class Dova.File {
 
 	public abstract FileStream read ();
 	public abstract FileStream create ();
+
+	public abstract FileInfo query_info ();
+}
+
+public class Dova.FileInfo {
+	Map<string,Value> attributes;
+
+	public FileType type { get { return (FileType) (int) this["type"]; } }
+	public long size { get { return (long) this["size"]; } }
+	public Time modification_time { get { return (Time) this["modified"]; } }
+
+	public FileInfo () {
+		attributes = new Map<string,Value>.clear (0);
+	}
+
+	public Value get (string attribute) {
+		return attributes.get (attribute);
+	}
+
+	public void set (string attribute, Value value) {
+		attributes = attributes.set (attribute, value);
+	}
+}
+
+public enum Dova.FileType {
+	UNKNOWN,
+	REGULAR,
+	DIRECTORY,
+	SYMBOLIC_LINK
 }
 
 class Dova.LocalFile : File {
@@ -50,6 +79,28 @@ class Dova.LocalFile : File {
 	public override FileStream create () {
 		int fd = Posix.open (this._path.data, Posix.O_WRONLY | Posix.O_CREAT, 0777);
 		return new LocalFileStream (fd);
+	}
+
+	const long UNIX_SECONDS = 62135596800;
+
+	public override FileInfo query_info () {
+		result = new FileInfo ();
+
+		var st = Posix.stat_t ();
+		Posix.stat (this._path.data, &st);
+
+		var type = FileType.UNKNOWN;
+		if (Posix.S_ISREG (st.st_mode)) {
+			type = FileType.REGULAR;
+		} else if (Posix.S_ISDIR (st.st_mode)) {
+			type = FileType.DIRECTORY;
+		} else if (Posix.S_ISLNK (st.st_mode)) {
+			type = FileType.SYMBOLIC_LINK;
+		}
+
+		result["type"] = (Value) (int) type;
+		result["size"] = (Value) (long) st.st_size;
+		result["modified"] = (Value) Time.with_ticks ((UNIX_SECONDS + st.st_mtim.tv_sec) * 10000000 + (long) st.st_mtim.tv_nsec / 100);
 	}
 }
 

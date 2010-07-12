@@ -37,7 +37,7 @@ public struct Dova.Time {
 		ticks = ((UNIX_SECONDS + tv.tv_sec) * 10000000 + tv.tv_usec * 10);
 	}
 
-	internal Time.with_ticks (long ticks) {
+	public Time.with_ticks (long ticks) {
 		this.ticks = ticks;
 	}
 
