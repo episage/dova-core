@@ -164,6 +164,8 @@ public class string : Dova.Value {
 	}
 
 	public List<string> split (string delimiter) {
+		assert (delimiter.length > 0);
+
 		result = [];
 		byte* p = data;
 
@@ -409,5 +411,11 @@ public class string : Dova.Value {
 		while (next_char (ref index, out c)) {
 			result += c.to_upper ().to_string ();
 		}
+	}
+
+	public string replace (string old, string replacement) {
+		assert (old.length > 0);
+
+		return replacement.join (this.split (old));
 	}
 }
