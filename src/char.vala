@@ -290,6 +290,120 @@ public struct char {
 	public bool is_upper { get { return category == UnicodeCategory.UPPERCASE_LETTER; } }
 	public bool is_control { get { return category == UnicodeCategory.CONTROL; } }
 
+	const int UCASE_TYPE_MASK = 3;
+	const int UCASE_NONE = 0;
+	const int UCASE_LOWER = 1;
+	const int UCASE_UPPER = 2;
+	const int UCASE_TITLE = 3;
+
+	static int ucase_get_type (ushort props) {
+		return props & UCASE_TYPE_MASK;
+	}
+
+	const int UCASE_EXCEPTION = 8;
+
+	// no exception: bits 15..6 are a 10-bit signed case mapping delta
+	const int UCASE_DELTA_SHIFT = 6;
+	const int UCASE_DELTA_MASK = 0xffc0;
+	const int UCASE_MAX_DELTA = 0x1ff;
+	const int UCASE_MIN_DELTA = (-UCASE_MAX_DELTA - 1);
+
+	static int ucase_get_delta (ushort props) {
+		return ((short) props >> UCASE_DELTA_SHIFT);
+	}
+
+	const int UCASE_EXC_SHIFT = 4;
+
+	const int UCASE_EXC_LOWER = 0;
+	const int UCASE_EXC_FOLD = 1;
+	const int UCASE_EXC_UPPER = 2;
+	const int UCASE_EXC_TITLE = 3;
+	const int UCASE_EXC_CLOSURE = 6;
+	const int UCASE_EXC_FULL_MAPPINGS = 7;
+	const int UCASE_EXC_ALL_SLOTS = 8;
+
+	const int UCASE_EXC_DOUBLE_SLOTS = 0x100;
+
+	static ushort* ucase_get_exceptions (ushort props) {
+		return case_props_singleton.exceptions + (props >> UCASE_EXC_SHIFT);
+	}
+
+	static bool ucase_props_has_exception (ushort props) {
+		return (props & UCASE_EXCEPTION) != 0;
+	}
+
+	// number of bits in an 8-bit integer value
+	const byte ucase_flags_offset[] = [
+		0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
+		1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+		1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+		1, 2, 2, 3, 2, 3, 3, 4, 2, 3, 3, 4, 3, 4, 4, 5,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+		2, 3, 3, 4, 3, 4, 4, 5, 3, 4, 4, 5, 4, 5, 5, 6,
+		3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+		3, 4, 4, 5, 4, 5, 5, 6, 4, 5, 5, 6, 5, 6, 6, 7,
+		4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
+	];
+
+	static bool ucase_has_slot (ushort flags, int idx) {
+		return (flags & (1 << idx)) != 0;
+	}
+
+	static int ucase_slot_offset (ushort flags, int idx) {
+		return ucase_flags_offset[flags & ((1 << idx) - 1)];
+	}
+
+	static uint ucase_get_slot_value (ushort exc_word, int idx, ushort* pexc16) {
+		if ((exc_word & UCASE_EXC_DOUBLE_SLOTS) == 0) {
+			pexc16 += ucase_slot_offset (exc_word, idx);
+			return *pexc16;
+		} else {
+			pexc16 += 2 * ucase_slot_offset (exc_word, idx);
+			return (pexc16[0] << 16) | pexc16[1];
+		}
+	}
+
+	public char to_lower () {
+		result = this;
+
+		ushort props = case_props_singleton.trie.get16 (this);
+		if (!ucase_props_has_exception (props)) {
+			if (ucase_get_type (props) >= UCASE_UPPER) {
+				result += ucase_get_delta (props);
+			}
+		} else {
+			ushort* pe = ucase_get_exceptions (props);
+			ushort exc_word = *pe++;
+			if (ucase_has_slot (exc_word, UCASE_EXC_LOWER)) {
+				result = ucase_get_slot_value (exc_word, UCASE_EXC_LOWER, pe);
+			}
+		}
+	}
+
+	public char to_upper () {
+		result = this;
+
+		ushort props = case_props_singleton.trie.get16 (this);
+		if (!ucase_props_has_exception (props)) {
+			if (ucase_get_type (props) == UCASE_LOWER) {
+				result += ucase_get_delta (props);
+			}
+		} else {
+			ushort* pe = ucase_get_exceptions (props);
+			ushort exc_word = *pe++;
+			if (ucase_has_slot (exc_word, UCASE_EXC_UPPER)) {
+				result = ucase_get_slot_value (exc_word, UCASE_EXC_UPPER, pe);
+			}
+		}
+	}
+
 	public UnicodeScript script {
 		get {
 			result = UnicodeScript.COMMON;
@@ -378,5 +492,20 @@ struct UTrie2 {
 
 	public uint get32 (char c) {
 		return data32[index_from_cp (0, c)];
+	}
+}
+
+struct UCaseProps {
+	int* indexes;
+	ushort* exceptions;
+	ushort* unfold;
+
+	UTrie2 trie;
+
+	public UCaseProps (int* indexes, ushort* exceptions, ushort* unfold, UTrie2 trie) {
+		this.indexes = indexes;
+		this.exceptions = exceptions;
+		this.unfold = unfold;
+		this.trie = trie;
 	}
 }

@@ -342,4 +342,24 @@ public class string : Dova.Value {
 
 		return (int) h;
 	}
+
+	public string to_lower () {
+		result = "";
+
+		char c;
+		int index = 0;
+		while (next_char (ref index, out c)) {
+			result += c.to_lower ().to_string ();
+		}
+	}
+
+	public string to_upper () {
+		result = "";
+
+		char c;
+		int index = 0;
+		while (next_char (ref index, out c)) {
+			result += c.to_upper ().to_string ();
+		}
+	}
 }
