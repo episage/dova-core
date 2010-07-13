@@ -51,11 +51,17 @@ public class Dova.Object {
 	}
 
 	public static void* ref (void* object) {
+		if (object == null) {
+			return null;
+		}
 		AtomicInt.fetch_and_add (ref ((Object*) object).ref_count, 1);
 		return object;
 	}
 	
 	public static void unref (void* object) {
+		if (object == null) {
+			return;
+		}
 		if (AtomicInt.fetch_and_sub (ref ((Object*) object).ref_count, 1) == 1) {
 			((Object*) object).finalize ();
 			Posix.free (object);

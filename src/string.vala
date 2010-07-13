@@ -28,6 +28,9 @@ public class string : Dova.Value {
 	public byte data[];
 
 	public new string* ref () {
+		if (this == null) {
+			return null;
+		}
 		if (ref_count == 0) {
 			// constant strings
 			return this;
@@ -37,6 +40,9 @@ public class string : Dova.Value {
 	}
 
 	public new void unref () {
+		if (this == null) {
+			return;
+		}
 		if (ref_count == 0) {
 			// constant strings
 			return;
