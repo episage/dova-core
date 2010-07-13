@@ -32,7 +32,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 	int nnodes;
 	int noccupied;
 	byte[] states;
-	int[] hashes;
+	uint[] hashes;
 	K[] _keys;
 	V[] _values;
 
@@ -83,7 +83,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		mask = capacity - 1;
 
 		states = new byte[capacity];
-		hashes = new int[capacity];
+		hashes = new uint[capacity];
 		this._keys = new K[capacity];
 		this._values = new V[capacity];
 
@@ -104,15 +104,15 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		mask = capacity - 1;
 
 		states = new byte[capacity];
-		hashes = new int[capacity];
+		hashes = new uint[capacity];
 		this._keys = new K[capacity];
 		this._values = new V[capacity];
 	}
 
 	public V get (K key) {
 		int step = 0;
-		int key_hash = key.hash ();
-		int node_index = key_hash % mod;
+		uint key_hash = key.hash ();
+		int node_index = (int) (key_hash % mod);
 		while (states[node_index] != 0) {
 			if (states[node_index] == 2) {
 				if (hashes[node_index] == key_hash) {
@@ -129,11 +129,11 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		return null;
 	}
 
-	int get_index_for_insertion (K key, int key_hash) {
+	int get_index_for_insertion (K key, uint key_hash) {
 		int first_tombstone = -1;
 		bool have_tombstone = false;
 		int step = 0;
-		int node_index = key_hash % mod;
+		int node_index = (int) (key_hash % mod);
 		while (states[node_index] != 0) {
 			if (states[node_index] == 1) {
 				// tombstone
@@ -163,7 +163,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		mask = map.mask;
 
 		states = new byte[capacity];
-		hashes = new int[capacity];
+		hashes = new uint[capacity];
 		this._keys = new K[capacity];
 		this._values = new V[capacity];
 
@@ -181,7 +181,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 	}
 
 	void internal_set (K key, V value) {
-		int key_hash = key.hash ();
+		uint key_hash = key.hash ();
 		int node_index = get_index_for_insertion (key, key_hash);
 		if (states[node_index] == 2) {
 			// key found, replace value

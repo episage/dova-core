@@ -29,7 +29,7 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 	int nnodes;
 	int noccupied;
 	byte[] states;
-	int[] hashes;
+	uint[] hashes;
 	K[] _keys;
 	V[] _values;
 
@@ -71,7 +71,7 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 	public HashMap () {
 		set_shift (3);
 		states = new byte[capacity];
-		hashes = new int[capacity];
+		hashes = new uint[capacity];
 		_keys = new K[capacity];
 		_values = new V[capacity];
 	}
@@ -84,8 +84,8 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 
 	public override V get (K key) {
 		int step = 0;
-		int key_hash = key.hash ();
-		int node_index = key_hash % mod;
+		uint key_hash = key.hash ();
+		int node_index = (int) (key_hash % mod);
 		while (states[node_index] != 0) {
 			if (states[node_index] == 2) {
 				if (hashes[node_index] == key_hash) {
@@ -102,11 +102,11 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 		return null;
 	}
 
-	int get_index_for_insertion (K key, int key_hash) {
+	int get_index_for_insertion (K key, uint key_hash) {
 		int first_tombstone = -1;
 		bool have_tombstone = false;
 		int step = 0;
-		int node_index = key_hash % mod;
+		int node_index = (int) (key_hash % mod);
 		while (states[node_index] != 0) {
 			if (states[node_index] == 1) {
 				// tombstone
@@ -131,7 +131,7 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 	}
 
 	public override void set (K key, V value) {
-		int key_hash = key.hash ();
+		uint key_hash = key.hash ();
 		int node_index = get_index_for_insertion (key, key_hash);
 		if (states[node_index] == 2) {
 			// key found, replace value
@@ -154,8 +154,8 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 
 	public void remove (K key) {
 		int step = 0;
-		int key_hash = key.hash ();
-		int node_index = key_hash % mod;
+		uint key_hash = key.hash ();
+		int node_index = (int) (key_hash % mod);
 		while (states[node_index] != 0) {
 			if (states[node_index] == 2) {
 				if (hashes[node_index] == key_hash) {
@@ -187,13 +187,13 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 			set_shift (shift);
 
 			var new_states = new byte[capacity];
-			var new_hashes = new int[capacity];
+			var new_hashes = new uint[capacity];
 			var new__keys = new K[capacity];
 			var new__values = new V[capacity];
 			for (int i = 0; i < old_capacity; i++) {
 				if (states[i] == 2) {
 					int step = 0;
-					int new_node_index = hashes[i] % mod;
+					int new_node_index = (int) (hashes[i] % mod);
 					while (new_states[new_node_index] != 0) {
 						step++;
 						new_node_index += step;
@@ -215,8 +215,8 @@ public class Dova.HashMap<K,V> : MapModel<K,V> {
 
 	public bool contains_key (K key) {
 		int step = 0;
-		int key_hash = key.hash ();
-		int node_index = key_hash % mod;
+		uint key_hash = key.hash ();
+		int node_index = (int) (key_hash % mod);
 		while (states[node_index] != 0) {
 			if (states[node_index] == 2) {
 				if (hashes[node_index] == key_hash) {

@@ -32,7 +32,7 @@ public class Dova.Set<T> : /*Value*/Object {
 	int nnodes;
 	int noccupied;
 	byte[] states;
-	int[] hashes;
+	uint[] hashes;
 	T[] elements;
 
 	const int prime_mod[] = [
@@ -80,7 +80,7 @@ public class Dova.Set<T> : /*Value*/Object {
 		set_shift (shift);
 
 		states = new byte[capacity];
-		hashes = new int[capacity];
+		hashes = new uint[capacity];
 		this.elements = new T[capacity];
 
 		for (int i = 0; i < nnodes; i++) {
@@ -98,8 +98,8 @@ public class Dova.Set<T> : /*Value*/Object {
 
 	public bool contains (T element) {
 		int step = 0;
-		int element_hash = element.hash ();
-		int node_index = element_hash % mod;
+		uint element_hash = element.hash ();
+		int node_index = (int) (element_hash % mod);
 		while (states[node_index] != 0) {
 			if (states[node_index] == 2) {
 				if (hashes[node_index] == element_hash) {
@@ -116,11 +116,11 @@ public class Dova.Set<T> : /*Value*/Object {
 		return false;
 	}
 
-	int get_index_for_insertion (T element, int element_hash) {
+	int get_index_for_insertion (T element, uint element_hash) {
 		int first_tombstone = -1;
 		bool have_tombstone = false;
 		int step = 0;
-		int node_index = element_hash % mod;
+		int node_index = (int) (element_hash % mod);
 		while (states[node_index] != 0) {
 			if (states[node_index] == 1) {
 				// tombstone
@@ -146,7 +146,7 @@ public class Dova.Set<T> : /*Value*/Object {
 
 	// `this' will be passed by reference when supported as this will be a value type
 	internal bool add (T element) {
-		int element_hash = element.hash ();
+		uint element_hash = element.hash ();
 		int node_index = get_index_for_insertion (element, element_hash);
 		if (states[node_index] == 2) {
 			// already in set
@@ -179,12 +179,12 @@ public class Dova.Set<T> : /*Value*/Object {
 			set_shift (shift);
 
 			var new_states = new byte[capacity];
-			var new_hashes = new int[capacity];
+			var new_hashes = new uint[capacity];
 			var new_elements = new T[capacity];
 			for (int i = 0; i < old_capacity; i++) {
 				if (states[i] == 2) {
 					int step = 0;
-					int new_node_index = hashes[i] % mod;
+					int new_node_index = (int) (hashes[i] % mod);
 					while (new_states[new_node_index] != 0) {
 						step++;
 						new_node_index += step;

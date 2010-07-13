@@ -31,9 +31,9 @@ public class Dova.Object {
 		return (this == other);
 	}
 
-	public virtual int hash () {
+	public virtual uint hash () {
 		void* ptr = this;
-		return (int) (long) ptr;
+		return (uint) (int) (long) ptr;
 	}
 
 	public virtual string to_string () {
