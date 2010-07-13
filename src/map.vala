@@ -96,6 +96,19 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		}
 	}
 
+	public Map.clear (int length) {
+		int shift = 3;
+
+		capacity = 1 << shift;
+		mod = prime_mod[shift];
+		mask = capacity - 1;
+
+		states = new byte[capacity];
+		hashes = new int[capacity];
+		this._keys = new K[capacity];
+		this._values = new V[capacity];
+	}
+
 	public V get (K key) {
 		int step = 0;
 		int key_hash = key.hash ();
@@ -144,8 +157,30 @@ public class Dova.Map<K,V> : /*Value*/Object {
 		return node_index;
 	}
 
-	// `this' will be passed by reference when supported as this will be a value type
-	void set (K key, V value) {
+	Map.copy (Map<K,V> map) {
+		capacity = map.capacity;
+		mod = map.mod;
+		mask = map.mask;
+
+		states = new byte[capacity];
+		hashes = new int[capacity];
+		this._keys = new K[capacity];
+		this._values = new V[capacity];
+
+		for (int i = 0; i < capacity; i++) {
+			states[i] = map.states[i];
+			hashes[i] = map.hashes[i];
+			_keys[i] = map._keys[i];
+			_values[i] = map._values[i];
+		}
+	}
+
+	public Map<K,V> set (K key, V value) {
+		result = new Map<K,V>.copy (this);
+		result.internal_set (key, value);
+	}
+
+	void internal_set (K key, V value) {
 		int key_hash = key.hash ();
 		int node_index = get_index_for_insertion (key, key_hash);
 		if (states[node_index] == 2) {
