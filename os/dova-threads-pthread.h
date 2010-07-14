@@ -64,7 +64,14 @@ static inline void call_once (once_flag *flag, void (*func) (void)) {
 }
 
 static inline int cnd_broadcast (cnd_t *cond) {
-	pthread_cond_broadcast (cond);
+	int ret;
+
+	ret = pthread_cond_broadcast (cond);
+	if (ret) {
+		return thrd_error;
+	}
+
+	return thrd_success;
 }
 
 static inline void cnd_destroy (cnd_t *cond) {
@@ -260,7 +267,7 @@ static inline int thrd_join (thrd_t thr, int *res) {
 	}
 
 	if (res) {
-		*res = retval;
+		*res = (int) (long) retval;
 	}
 
 	return thrd_success;
