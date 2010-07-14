@@ -25,7 +25,13 @@ public class Dova.Application {
 		Task._init ();
 	}
 
-	public static string? get_environment_variable (string name) {
+	public void run () {
+		Task.pause ();
+	}
+}
+
+namespace Dova.Environment {
+	public string? get_variable (string name) {
 		byte* cstring = OS.getenv (name.data);
 		if (cstring == null) {
 			result = null;
@@ -34,12 +40,8 @@ public class Dova.Application {
 		}
 	}
 
-	public static int get_user_id () {
+	public int get_user_id () {
 		return (int) OS.getuid ();
-	}
-
-	public void run () {
-		Task.pause ();
 	}
 }
 
