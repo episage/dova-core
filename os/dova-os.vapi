@@ -33,6 +33,11 @@ namespace OS {
 
 	public void assert (bool expression);
 
+	public int dlclose (void* handle);
+	public byte* dlerror ();
+	public void* dlopen (byte* file, int mode);
+	public void* dlsym (void* handle, byte* name);
+
 	public int errno;
 	public const int EAGAIN;
 	public const int EINPROGRESS;

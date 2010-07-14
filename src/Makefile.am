@@ -119,6 +119,7 @@ libdova_core_la_LIBADD = \
 	libdova-task.la \
 	-lm \
 	-lrt \
+	-ldl \
 	$(NULL)
 
 dovaincludedir = $(includedir)/dova-core-0.1

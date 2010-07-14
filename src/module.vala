@@ -1,6 +1,6 @@
 /* module.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,12 +21,33 @@
  */
 
 public class Dova.Module {
-	public static Module? open (string name /*, ModuleFlags flags */) {
-		result = null;
+	void* native;
+
+	Module (void* native) {
+		this.native = native;
 	}
 
-	public void* symbol (string symbol) {
-		result = null;
+	~Module () {
+		OS.dlclose (native);
+	}
+
+	public static Module? open (File file /*, ModuleFlags flags */) /* throws ModuleError */ {
+		void* native = OS.dlopen (file.path.data, 0);
+		if (native == null) {
+			return null;
+		}
+
+		result = new Module (native);
+	}
+
+	public void* symbol (string symbol) /* throws ModuleError */ {
+		OS.dlerror ();
+		result = OS.dlsym (native, symbol.data);
+		byte* errstr = OS.dlerror ();
+		if (errstr == null) {
+			// throw error
+			return null;
+		}
 	}
 }
 
