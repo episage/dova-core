@@ -22,10 +22,10 @@
 
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "dova-os.h")]
 namespace OS {
-	[CCode (cname = "__sync_fetch_and_add")]
-	public int __sync_fetch_and_add_int (int* ptr, int value);
-	[CCode (cname = "__sync_fetch_and_sub")]
-	public int __sync_fetch_and_sub_int (int* ptr, int value);
+	public void atomic_int32_store (volatile int* atomic, int desired);
+	public int atomic_int32_load (volatile int* atomic);
+	public int atomic_int32_fetch_add (volatile int* atomic, int operand);
+	public int atomic_int32_fetch_sub (volatile int* atomic, int operand);
 
 	[IntegerType (rank = 9)]
 	public struct long {

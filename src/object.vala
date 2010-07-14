@@ -22,7 +22,7 @@
 
 public class Dova.Object {
 	public Type type;
-	volatile AtomicInt ref_count;
+	volatile int ref_count;
 
 	public virtual void finalize () {
 	}
@@ -54,7 +54,7 @@ public class Dova.Object {
 		if (object == null) {
 			return null;
 		}
-		AtomicInt.fetch_and_add (ref ((Object*) object).ref_count, 1);
+		OS.atomic_int32_fetch_add (&((Object*) object).ref_count, 1);
 		return object;
 	}
 	
@@ -62,7 +62,7 @@ public class Dova.Object {
 		if (object == null) {
 			return;
 		}
-		if (AtomicInt.fetch_and_sub (ref ((Object*) object).ref_count, 1) == 1) {
+		if (OS.atomic_int32_fetch_sub (&((Object*) object).ref_count, 1) == 1) {
 			((Object*) object).finalize ();
 			OS.free (object);
 		}

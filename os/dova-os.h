@@ -48,4 +48,22 @@
 #include <ucontext.h>
 #include <unistd.h>
 
+static inline void atomic_int32_store (volatile int32_t *atomic, int32_t desired) {
+	*atomic = desired;
+	__sync_synchronize ();
+}
+
+static inline int32_t atomic_int32_load (volatile int32_t *atomic) {
+	__sync_synchronize ();
+	return *atomic;
+}
+
+static inline int32_t atomic_int32_fetch_add (volatile int32_t *atomic, int32_t operand) {
+	return __sync_fetch_and_add (atomic, operand);
+}
+
+static inline int32_t atomic_int32_fetch_sub (volatile int32_t *atomic, int32_t operand) {
+	return __sync_fetch_and_sub (atomic, operand);
+}
+
 #endif

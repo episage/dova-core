@@ -19,7 +19,6 @@ lib_LTLIBRARIES = \
 
 libdova_base_la_SOURCES = \
 	array.vala \
-	atomic-gcc.vala \
 	bool.vala \
 	byte.vala \
 	char.vala \
