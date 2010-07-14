@@ -42,10 +42,10 @@ public class Dova.Random {
 
 	public Random () {
 		int seed = 0;
-		int fd = Posix.open ("/dev/urandom", Posix.O_RDONLY, 0);
+		int fd = OS.open ("/dev/urandom", OS.O_RDONLY, 0);
 		if (fd >= 0) {
-			int len = (int) Posix.read (fd, &seed, sizeof (uint));
-			Posix.close (fd);
+			int len = (int) OS.read (fd, &seed, sizeof (uint));
+			OS.close (fd);
 			if (len < sizeof (uint)) {
 				fd = -1;
 			}

@@ -23,7 +23,7 @@
 public delegate int Dova.ThreadStart ();
 
 public class Dova.Thread {
-	Posix.pthread_t native;
+	OS.pthread_t native;
 
 	static void* start_routine (void* data) {
 		var func = (ThreadStart) data;
@@ -31,34 +31,34 @@ public class Dova.Thread {
 	}
 
 	public Thread (ThreadStart func) {
-		Posix.pthread_create (&native, null, (void*) start_routine, (void*) func);
+		OS.pthread_create (&native, null, (void*) start_routine, (void*) func);
 	}
 
 	public static void sleep (Duration duration) {
-		var ts = Posix.timespec ();
+		var ts = OS.timespec ();
 		ts.tv_sec = duration.ticks / 10000000;
 		ts.tv_nsec = duration.ticks % 10000000 * 100;
-		Posix.nanosleep (&ts, null);
+		OS.nanosleep (&ts, null);
 	}
 
 	public static void yield () {
-		Posix.sched_yield ();
+		OS.sched_yield ();
 	}
 }
 
 public class Dova.Mutex {
-	Posix.pthread_mutex_t native;
+	OS.pthread_mutex_t native;
 
 	public Mutex () {
-		Posix.pthread_mutex_init (&native, null);
+		OS.pthread_mutex_init (&native, null);
 	}
 
 	public void lock () {
-		Posix.pthread_mutex_lock (&native);
+		OS.pthread_mutex_lock (&native);
 	}
 
 	public void unlock () {
-		Posix.pthread_mutex_unlock (&native);
+		OS.pthread_mutex_unlock (&native);
 	}
 }
 

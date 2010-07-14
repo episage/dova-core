@@ -24,7 +24,7 @@ using Debug;
 
 namespace Debug {
         public void assert (bool expression) {
-                Posix.assert (expression);
+                OS.assert (expression);
         }
 }
 

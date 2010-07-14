@@ -32,8 +32,8 @@ public struct Dova.Time {
 	const long UNIX_SECONDS = 62135596800;
 
 	public Time.now () {
-		Posix.timeval tv;
-		Posix.gettimeofday (out tv, null);
+		OS.timeval tv;
+		OS.gettimeofday (out tv, null);
 		ticks = ((UNIX_SECONDS + tv.tv_sec) * 10000000 + tv.tv_usec * 10);
 	}
 
@@ -47,10 +47,10 @@ public struct Dova.Time {
 
 	public DateTime local {
 		get {
-			var ltm = Posix.tm ();
+			var ltm = OS.tm ();
 			long seconds = ticks / 10000000;
-			Posix.time_t unix_time = seconds - UNIX_SECONDS;
-			Posix.localtime_r (&unix_time, &ltm);
+			OS.time_t unix_time = seconds - UNIX_SECONDS;
+			OS.localtime_r (&unix_time, &ltm);
 			DateTime local = DateTime.dt (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), TimeOfDay (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Duration ());
 			Duration offset = Duration.with_ticks ((local.time.ticks / 10000000 - seconds) * 10000000);
 			return DateTime (this, offset);

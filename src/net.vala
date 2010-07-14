@@ -42,32 +42,32 @@ public class Dova.TcpClient {
 	public NetworkStream connect (TcpEndpoint endpoint) {
 		// resolve name
 		// TODO execute in global (concurrent) task queue
-		var hints = Posix.addrinfo ();
-		hints.ai_flags = Posix.AI_ADDRCONFIG;
-		hints.ai_socktype = Posix.SOCK_STREAM;
-		hints.ai_protocol = Posix.IPPROTO_TCP;
-		Posix.addrinfo* addrs = null;
-		Posix.getaddrinfo (endpoint.host.data, endpoint.port.to_string ().data, &hints, &addrs);
+		var hints = OS.addrinfo ();
+		hints.ai_flags = OS.AI_ADDRCONFIG;
+		hints.ai_socktype = OS.SOCK_STREAM;
+		hints.ai_protocol = OS.IPPROTO_TCP;
+		OS.addrinfo* addrs = null;
+		OS.getaddrinfo (endpoint.host.data, endpoint.port.to_string ().data, &hints, &addrs);
 
 		result = null;
 
-		Posix.addrinfo* addr = addrs;
+		OS.addrinfo* addr = addrs;
 		while (addr != null) {
-			int fd = Posix.socket (addr.ai_family, addr.ai_socktype, addr.ai_protocol);
+			int fd = OS.socket (addr.ai_family, addr.ai_socktype, addr.ai_protocol);
 
 			// no blocking
-			int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
-			Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
+			int flags = OS.fcntl (fd, OS.F_GETFL, 0);
+			OS.fcntl (fd, OS.F_SETFL, flags | OS.O_NONBLOCK);
 
-			int res = Posix.connect (fd, addr.ai_addr, addr.ai_addrlen);
+			int res = OS.connect (fd, addr.ai_addr, addr.ai_addrlen);
 
 			if (res < 0) {
-				int err = Posix.errno;
-				if (err == Posix.EINPROGRESS) {
+				int err = OS.errno;
+				if (err == OS.EINPROGRESS) {
 					Task.wait_fd_out (fd);
 					// TODO check whether it was successful
 				} else {
-					Posix.close (fd);
+					OS.close (fd);
 					fd = -1;
 				}
 			}
@@ -80,7 +80,7 @@ public class Dova.TcpClient {
 			addr = addr.ai_next;
 		}
 
-		Posix.freeaddrinfo (addrs);
+		OS.freeaddrinfo (addrs);
 	}
 }
 
@@ -93,17 +93,17 @@ public class Dova.TcpServer {
 	public TcpServerFunc handler { get; set; }
 
 	public void add_local_endpoint (TcpEndpoint endpoint) {
-		fd = Posix.socket (Posix.AF_INET, Posix.SOCK_STREAM, Posix.IPPROTO_TCP);
+		fd = OS.socket (OS.AF_INET, OS.SOCK_STREAM, OS.IPPROTO_TCP);
 
 		// no blocking
-		int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
-		Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
+		int flags = OS.fcntl (fd, OS.F_GETFL, 0);
+		OS.fcntl (fd, OS.F_SETFL, flags | OS.O_NONBLOCK);
 
-		var addr = Posix.sockaddr_in ();
-		addr.sin_family = Posix.AF_INET;
-		addr.sin_port = Posix.htons (endpoint.port);
-		int res = Posix.bind (fd, (Posix.sockaddr*) (&addr), sizeof (Posix.sockaddr_in));
-		Posix.listen (fd, 8);
+		var addr = OS.sockaddr_in ();
+		addr.sin_family = OS.AF_INET;
+		addr.sin_port = OS.htons (endpoint.port);
+		int res = OS.bind (fd, (OS.sockaddr*) (&addr), sizeof (OS.sockaddr_in));
+		OS.listen (fd, 8);
 	}
 
 	public void start () {
@@ -112,12 +112,12 @@ public class Dova.TcpServer {
 
 	void run () {
 		while (true) {
-			int res = Posix.accept (fd, null, null);
+			int res = OS.accept (fd, null, null);
 			if (res < 0) {
-				int err = Posix.errno;
-				if (err == Posix.EINTR) {
+				int err = OS.errno;
+				if (err == OS.EINTR) {
 					// just restart syscall
-				} else if (err == Posix.EAGAIN || err == Posix.EWOULDBLOCK) {
+				} else if (err == OS.EAGAIN || err == OS.EWOULDBLOCK) {
 					Task.wait_fd_in (fd);
 				} else {
 					// TODO
@@ -147,12 +147,12 @@ public class Dova.NetworkStream : Stream {
 			length = b.length - offset;
 		}
 		while (true) {
-			int res = (int) Posix.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+			int res = (int) OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
 			if (res < 0) {
-				int err = Posix.errno;
-				if (err == Posix.EINTR) {
+				int err = OS.errno;
+				if (err == OS.EINTR) {
 					// just restart syscall
-				} else if (err == Posix.EAGAIN || err == Posix.EWOULDBLOCK) {
+				} else if (err == OS.EAGAIN || err == OS.EWOULDBLOCK) {
 					Task.wait_fd_in (this.fd);
 				} else {
 					// TODO
@@ -168,12 +168,12 @@ public class Dova.NetworkStream : Stream {
 			length = b.length - offset;
 		}
 		while (true) {
-			int res = (int) Posix.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+			int res = (int) OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
 			if (res < 0) {
-				int err = Posix.errno;
-				if (err == Posix.EINTR) {
+				int err = OS.errno;
+				if (err == OS.EINTR) {
 					// just restart syscall
-				} else if (err == Posix.EAGAIN || err == Posix.EWOULDBLOCK) {
+				} else if (err == OS.EAGAIN || err == OS.EWOULDBLOCK) {
 					Task.wait_fd_out (this.fd);
 				} else {
 					// TODO
@@ -185,7 +185,7 @@ public class Dova.NetworkStream : Stream {
 	}
 
 	public override void close () {
-		Posix.close (this.fd);
+		OS.close (this.fd);
 	}
 }
 
@@ -199,24 +199,24 @@ public class Dova.UnixEndpoint {
 
 public class Dova.UnixClient {
 	public UnixStream connect (UnixEndpoint endpoint) {
-		int fd = Posix.socket (Posix.AF_UNIX, Posix.SOCK_STREAM, 0);
+		int fd = OS.socket (OS.AF_UNIX, OS.SOCK_STREAM, 0);
 
 		// no blocking
-		int flags = Posix.fcntl (fd, Posix.F_GETFL, 0);
-		Posix.fcntl (fd, Posix.F_SETFL, flags | Posix.O_NONBLOCK);
+		int flags = OS.fcntl (fd, OS.F_GETFL, 0);
+		OS.fcntl (fd, OS.F_SETFL, flags | OS.O_NONBLOCK);
 
-		var addr = Posix.sockaddr_un ();
-		addr.sun_family = Posix.AF_UNIX;
-		Posix.memcpy (addr.sun_path, endpoint.path.data, endpoint.path.length + 1);
-		int res = Posix.connect (fd, (Posix.sockaddr*) (&addr), 2 + endpoint.path.length);
+		var addr = OS.sockaddr_un ();
+		addr.sun_family = OS.AF_UNIX;
+		OS.memcpy (addr.sun_path, endpoint.path.data, endpoint.path.length + 1);
+		int res = OS.connect (fd, (OS.sockaddr*) (&addr), 2 + endpoint.path.length);
 
 		if (res < 0) {
-			int err = Posix.errno;
-			if (err == Posix.EINPROGRESS) {
+			int err = OS.errno;
+			if (err == OS.EINPROGRESS) {
 				Task.wait_fd_out (fd);
 				// TODO check whether it was successful
 			} else {
-				Posix.close (fd);
+				OS.close (fd);
 				fd = -1;
 			}
 		}

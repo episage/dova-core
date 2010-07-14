@@ -2,9 +2,9 @@ ACLOCAL_AMFLAGS = -I m4
 NULL =
 
 SUBDIRS = \
+	os \
 	src \
 	tests \
-	vapi \
 	$(NULL)
 
 pkgconfigdir = $(libdir)/pkgconfig

@@ -31,11 +31,11 @@ public struct Dova.AtomicInt {
 	}
 
 	public static int fetch_and_add (ref volatile AtomicInt object, int operand) {
-		result = Gcc.__sync_fetch_and_add_int (&object, operand);
+		result = OS.__sync_fetch_and_add_int (&object, operand);
 	}
 
 	public static int fetch_and_sub (ref volatile AtomicInt object, int operand) {
-		result = Gcc.__sync_fetch_and_sub_int (&object, operand);
+		result = OS.__sync_fetch_and_sub_int (&object, operand);
 	}
 }
 

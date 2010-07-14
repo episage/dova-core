@@ -45,7 +45,7 @@ public class Dova.Object {
 	}
 
 	public static Object* alloc (Type type) {
-		result = Posix.calloc (1, type.object_size);
+		result = OS.calloc (1, type.object_size);
 		result.type = type;
 		result.ref_count = 1;
 	}
@@ -64,7 +64,7 @@ public class Dova.Object {
 		}
 		if (AtomicInt.fetch_and_sub (ref ((Object*) object).ref_count, 1) == 1) {
 			((Object*) object).finalize ();
-			Posix.free (object);
+			OS.free (object);
 		}
 	}
 }
@@ -94,7 +94,7 @@ public abstract class Dova.Type {
 	}
 
 	public new static void alloc (Type base_type, int object_size, int type_size, out Type* result, out int object_offset, out int type_offset) {
-		result = Posix.calloc (1, base_type.type_size + type_size);
+		result = OS.calloc (1, base_type.type_size + type_size);
 		result.type = typeof (Type);
 		result.base_type = base_type;
 		object_offset = base_type.object_size;
@@ -126,7 +126,7 @@ public abstract class Dova.Type {
 		int index = this.n_interfaces;
 
 		this.n_interfaces++;
-		this.interfaces = Posix.realloc (this.interfaces, this.n_interfaces * (int) sizeof (Interface));
+		this.interfaces = OS.realloc (this.interfaces, this.n_interfaces * (int) sizeof (Interface));
 
 		// sort interface implementations by interface type pointer
 		// to allow binary search when using interface

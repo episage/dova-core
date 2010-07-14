@@ -20,8 +20,8 @@ AC_SUBST(LDFLAGS)
 
 AC_CONFIG_FILES([Makefile
            dova-core-0.1.pc
+           os/Makefile
            src/Makefile
-           tests/Makefile
-           vapi/Makefile])
+           tests/Makefile])
 
 AC_OUTPUT

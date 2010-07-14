@@ -29,7 +29,7 @@ public class Dova.Application {
 	}
 
 	public static string? get_environment_variable (string name) {
-		byte* cstring = Posix.getenv (name.data);
+		byte* cstring = OS.getenv (name.data);
 		if (cstring == null) {
 			result = null;
 		} else {
@@ -38,7 +38,7 @@ public class Dova.Application {
 	}
 
 	public static int get_user_id () {
-		return (int) Posix.getuid ();
+		return (int) OS.getuid ();
 	}
 
 	public void run () {
@@ -71,7 +71,7 @@ class Dova.TaskScheduler {
 	internal static TaskScheduler main;
 
 	public TaskScheduler () {
-		this.epfd = Linux.epoll_create1 (Linux.EPOLL_CLOEXEC);
+		this.epfd = OS.epoll_create1 (OS.EPOLL_CLOEXEC);
 
 		runqueues = new Task[TaskPriority.LOW - TaskPriority.HIGH + 1];
 	}
@@ -87,20 +87,20 @@ class Dova.TaskScheduler {
 
 		while (wait_count + ready_count > 0) {
 			if (wait_count > 0) {
-				Linux.epoll_event events[64];
+				OS.epoll_event events[64];
 
 				while (true) {
 					int timeout = ready_count > 0 ? 0 : -1;
 
-					int nfds = Linux.epoll_wait (epfd, events, 64, timeout);
+					int nfds = OS.epoll_wait (epfd, events, 64, timeout);
 					if (nfds < 0) {
 						// handle errors (EINTR)
 					}
 					for (int i = 0; i < nfds; i++) {
 						var task = (Task) events[i].data.ptr;
-						Linux.epoll_ctl (epfd, Linux.EPOLL_CTL_DEL, task.wait_fd, null);
+						OS.epoll_ctl (epfd, OS.EPOLL_CTL_DEL, task.wait_fd, null);
 						// close duplicate fd
-						Posix.close (task.wait_fd);
+						OS.close (task.wait_fd);
 						task.wait_fd = -1;
 						wait_count--;
 						assert (true && task.state == TaskState.WAITING);
@@ -181,12 +181,12 @@ class Dova.TaskScheduler {
 		// we need to either multiplex events from the fd ourselves
 		// or use dup() to register a duplicate of the fd for the second event
 
-		int dupfd = Posix.dup (fd);
+		int dupfd = OS.dup (fd);
 
-		var event = Linux.epoll_event ();
-		event.events = Linux.EPOLLIN;
+		var event = OS.epoll_event ();
+		event.events = OS.EPOLLIN;
 		event.data.ptr = task;
-		Linux.epoll_ctl (epfd, Linux.EPOLL_CTL_ADD, dupfd, &event);
+		OS.epoll_ctl (epfd, OS.EPOLL_CTL_ADD, dupfd, &event);
 
 		task.wait_fd = dupfd;
 
@@ -204,12 +204,12 @@ class Dova.TaskScheduler {
 		// we need to either multiplex events from the fd ourselves
 		// or use dup() to register a duplicate of the fd for the second event
 
-		int dupfd = Posix.dup (fd);
+		int dupfd = OS.dup (fd);
 
-		var event = Linux.epoll_event ();
-		event.events = Linux.EPOLLOUT;
+		var event = OS.epoll_event ();
+		event.events = OS.EPOLLOUT;
 		event.data.ptr = task;
-		Linux.epoll_ctl (epfd, Linux.EPOLL_CTL_ADD, dupfd, &event);
+		OS.epoll_ctl (epfd, OS.EPOLL_CTL_ADD, dupfd, &event);
 
 		task.wait_fd = dupfd;
 
@@ -222,17 +222,17 @@ class Dova.TaskScheduler {
 	internal void sleep (Task task, Duration duration) {
 		assert (true && task.state == TaskState.RUNNING);
 
-		var its = Posix.itimerspec ();
+		var its = OS.itimerspec ();
 		its.it_value.tv_nsec = duration.ticks % 10000000 * 100;
 		its.it_value.tv_sec = duration.total_seconds;
 
-		int tfd = Linux.timerfd_create (Posix.CLOCK_MONOTONIC, Linux.TFD_CLOEXEC);
-		Linux.timerfd_settime (tfd, 0, &its, null);
+		int tfd = OS.timerfd_create (OS.CLOCK_MONOTONIC, OS.TFD_CLOEXEC);
+		OS.timerfd_settime (tfd, 0, &its, null);
 
-		var event = Linux.epoll_event ();
-		event.events = Linux.EPOLLIN;
+		var event = OS.epoll_event ();
+		event.events = OS.EPOLLIN;
 		event.data.ptr = task;
-		Linux.epoll_ctl (epfd, Linux.EPOLL_CTL_ADD, tfd, &event);
+		OS.epoll_ctl (epfd, OS.EPOLL_CTL_ADD, tfd, &event);
 
 		task.wait_fd = tfd;
 
@@ -267,7 +267,7 @@ public class Dova.Task {
 	internal int priority;
 	internal Task? prev { get; set; }
 	internal Task? next { get; set; }
-	Posix.ucontext_t ucontext;
+	OS.ucontext_t ucontext;
 	void* stack;
 
 	internal int wait_fd;
@@ -284,7 +284,7 @@ public class Dova.Task {
 
 	~Task () {
 		if (stack != null) {
-			Posix.munmap (stack, STACK_SIZE);
+			OS.munmap (stack, STACK_SIZE);
 		}
 	}
 
@@ -305,11 +305,11 @@ public class Dova.Task {
 		result.priority = current.priority;
 
 		result.func = func;
-		result.stack = Posix.mmap (null, STACK_SIZE, Posix.PROT_READ | Posix.PROT_WRITE, Posix.MAP_PRIVATE | Posix.MAP_ANONYMOUS, -1, 0);
-		Posix.getcontext (&result.ucontext);
+		result.stack = OS.mmap (null, STACK_SIZE, OS.PROT_READ | OS.PROT_WRITE, OS.MAP_PRIVATE | OS.MAP_ANONYMOUS, -1, 0);
+		OS.getcontext (&result.ucontext);
 		result.ucontext.uc_stack.ss_sp = result.stack;
 		result.ucontext.uc_stack.ss_size = STACK_SIZE;
-		Posix.makecontext (&result.ucontext, (void*) task_func, 0);
+		OS.makecontext (&result.ucontext, (void*) task_func, 0);
 		result.resume ();
 	}
 
@@ -345,6 +345,6 @@ public class Dova.Task {
 	internal void dispatch () {
 		var old_task = current;
 		current = this;
-		Posix.swapcontext (&old_task.ucontext, &ucontext);
+		OS.swapcontext (&old_task.ucontext, &ucontext);
 	}
 }

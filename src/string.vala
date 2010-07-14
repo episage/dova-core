@@ -48,17 +48,17 @@ public class string : Dova.Value {
 			return;
 		}
 		if (--ref_count == 0) {
-			Posix.free (this);
+			OS.free (this);
 		}
 	}
 
 	public byte[] get_utf8_bytes () {
 		result = new byte[this.length];
-		Posix.memcpy (((Array<byte>) result).data, this.data, this.length);
+		OS.memcpy (((Array<byte>) result).data, this.data, this.length);
 	}
 
 	public static string create (int length) {
-		string* str = Posix.calloc (1, (int) sizeof (int) * 2 + length + 1);
+		string* str = OS.calloc (1, (int) sizeof (int) * 2 + length + 1);
 		str.ref_count = 1;
 		str.length = length;
 		return (owned) str;
@@ -70,12 +70,12 @@ public class string : Dova.Value {
 		}
 
 		result = create (length);
-		Posix.memcpy (result.data, ((Array<byte>) b).data + offset, length);
+		OS.memcpy (result.data, ((Array<byte>) b).data + offset, length);
 	}
 
 	public static string create_from_cstring (byte* cstring) {
-		result = create ((int) Posix.strlen (cstring));
-		Posix.memcpy (result.data, cstring, result.length);
+		result = create ((int) OS.strlen (cstring));
+		OS.memcpy (result.data, cstring, result.length);
 	}
 
 	internal static string create_from_char (char c) {
@@ -111,7 +111,7 @@ public class string : Dova.Value {
 		utf8[0] = (byte) c | first;
 
 		result = create (len);
-		Posix.memcpy (result.data, utf8, len);
+		OS.memcpy (result.data, utf8, len);
 	}
 
 	// indices in bytes
@@ -123,19 +123,19 @@ public class string : Dova.Value {
 		}
 
 		result = create (end_index - start_index);
-		Posix.memcpy (result.data, &data[start_index], end_index - start_index);
+		OS.memcpy (result.data, &data[start_index], end_index - start_index);
 	}
 
 	// maybe better public static string concat (List<string> strings)
 	public string concat (string other) {
 		result = create (this.length + other.length);
 		byte* p = (byte*) result.data;
-		Posix.memcpy (p, this.data, this.length);
-		Posix.memcpy (p + this.length, other.data, other.length);
+		OS.memcpy (p, this.data, this.length);
+		OS.memcpy (p + this.length, other.data, other.length);
 	}
 
 	public bool contains (string value) {
-		return (Posix.strstr (this.data, value.data) != null);
+		return (OS.strstr (this.data, value.data) != null);
 	}
 
 	public static int compare (string? s1, string? s2) {
@@ -148,25 +148,25 @@ public class string : Dova.Value {
 		} else if (s2 == null) {
 			return 1;
 		}
-		return Posix.strcmp (((!) s1).data, ((!) s2).data);
+		return OS.strcmp (((!) s1).data, ((!) s2).data);
 	}
 
 	public int collate (string other) {
-		return Posix.strcoll (this.data, other.data);
+		return OS.strcoll (this.data, other.data);
 	}
 
 	public bool starts_with (string value) {
 		if (this.length < value.length) {
 			return false;
 		}
-		result = (Posix.strncmp (this.data, value.data, value.length) == 0);
+		result = (OS.strncmp (this.data, value.data, value.length) == 0);
 	}
 
 	public bool ends_with (string value) {
 		if (this.length < value.length) {
 			return false;
 		}
-		result = (Posix.strncmp (&this.data[this.length - value.length], value.data, value.length) == 0);
+		result = (OS.strncmp (&this.data[this.length - value.length], value.data, value.length) == 0);
 	}
 
 	public List<string> split (string delimiter) {
@@ -176,16 +176,16 @@ public class string : Dova.Value {
 		byte* p = data;
 
 		byte* next;
-		while ((next = Posix.strstr (p, delimiter.data)) != null) {
+		while ((next = OS.strstr (p, delimiter.data)) != null) {
 			string s = create ((int) (next - p));
-			Posix.memcpy (s.data, p, s.length);
+			OS.memcpy (s.data, p, s.length);
 			result += [s];
 
 			p += s.length + delimiter.length;
 		}
 
 		string s = create ((int) ((byte*) data + length - p));
-		Posix.memcpy (s.data, p, s.length);
+		OS.memcpy (s.data, p, s.length);
 		result += [s];
 	}
 
@@ -206,7 +206,7 @@ public class string : Dova.Value {
 	}
 
 	public bool equals (string other) {
-		return Posix.strcmp (data, other.data) == 0;
+		return OS.strcmp (data, other.data) == 0;
 	}
 
 	// index in bytes
@@ -280,7 +280,7 @@ public class string : Dova.Value {
 		int needle_length = needle.length;
 
 		while (end_index - start_index >= needle_length) {
-			if (Posix.memcmp (&data[start_index], needle.data, needle_length) == 0) {
+			if (OS.memcmp (&data[start_index], needle.data, needle_length) == 0) {
 				return start_index;
 			}
 			start_index++;
@@ -298,7 +298,7 @@ public class string : Dova.Value {
 		byte* start = &data[start_index];
 
 		if (c < 0x80) {
-			byte* p = Posix.memchr (start, (int) c, end_index - start_index);
+			byte* p = OS.memchr (start, (int) c, end_index - start_index);
 			if (p == null) {
 				return -1;
 			} else {
@@ -330,7 +330,7 @@ public class string : Dova.Value {
 			utf8[0] = (byte) c | first;
 
 			while (true) {
-				byte* p = Posix.memchr (start, utf8[0], end_index - start_index);
+				byte* p = OS.memchr (start, utf8[0], end_index - start_index);
 				if (p == null) {
 					return -1;
 				}
@@ -370,7 +370,7 @@ public class string : Dova.Value {
 		int needle_length = needle.length;
 
 		while (end_index - start_index >= needle_length) {
-			if (Posix.memcmp (&data[end_index - needle_length], needle.data, needle_length) == 0) {
+			if (OS.memcmp (&data[end_index - needle_length], needle.data, needle_length) == 0) {
 				return end_index - needle_length;
 			}
 			end_index--;

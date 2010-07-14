@@ -78,7 +78,7 @@ public class Dova.MemoryStream : Stream {
 		if (length > this.length) {
 			length = this.length;
 		}
-		Posix.memcpy (b.data + offset, this.buffer.data + this.offset, length);
+		OS.memcpy (b.data + offset, this.buffer.data + this.offset, length);
 		this.offset += length;
 		this.length -= length;
 		result = length;
@@ -95,7 +95,7 @@ public class Dova.MemoryStream : Stream {
 		if (length == 0) {
 			// no space, throw error
 		}
-		Posix.memcpy (this.buffer.data + this.offset, b.data + offset, length);
+		OS.memcpy (this.buffer.data + this.offset, b.data + offset, length);
 		this.offset += length;
 		this.length -= length;
 		result = length;
@@ -180,7 +180,7 @@ public class Dova.DataReader {
 		stream.read_all (buffer, 0, length);
 
 		result = string.create (length);
-		Posix.memcpy (result.data, buffer.data, length);
+		OS.memcpy (result.data, buffer.data, length);
 	}
 }
 
@@ -203,7 +203,7 @@ public class Dova.DataWriter {
 		// TODO find way to avoid array allocation here (ideally, an other way than just caching the array)
 		// maybe switch from byte[] to byte* in streams?
 		var buffer = new byte[4];
-		Posix.memcpy (buffer.data, &i, 4);
+		OS.memcpy (buffer.data, &i, 4);
 		stream.write_all (buffer, 0, 4);
 	}
 
@@ -211,14 +211,14 @@ public class Dova.DataWriter {
 		// TODO find way to avoid array allocation here (ideally, an other way than just caching the array)
 		// maybe switch from byte[] to byte* in streams?
 		var buffer = new byte[4];
-		Posix.memcpy (buffer.data, &i, 4);
+		OS.memcpy (buffer.data, &i, 4);
 		stream.write_all (buffer, 0, 4);
 	}
 
 	public void write_string (string s) {
 		// TODO support different encodings
 		var buffer = new byte[s.length];
-		Posix.memcpy (buffer.data, s.data, s.length);
+		OS.memcpy (buffer.data, s.data, s.length);
 		stream.write_all (buffer, 0, s.length);
 	}
 }

@@ -30,7 +30,7 @@ public class Dova.Tuple : /*Value*/Object {
 
 	public Tuple (int length, Type** types, void** values) {
 		this.length = length;
-		this.values = Posix.calloc (length, sizeof (void*));
+		this.values = OS.calloc (length, sizeof (void*));
 
 		int size = 0;
 		for (int i = 0; i < length; i++) {
@@ -38,7 +38,7 @@ public class Dova.Tuple : /*Value*/Object {
 			size += ((types[i].value_size - 1) / 8 + 1) * 8;
 		}
 
-		data = Posix.calloc (1, size);
+		data = OS.calloc (1, size);
 
 		byte* next = data;
 		for (int i = 0; i < length; i++) {

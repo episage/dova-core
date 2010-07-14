@@ -23,21 +23,21 @@
 public class Dova.Timer {
 	public bool running { get; private set; }
 	public Duration elapsed { get; private set; }
-	Posix.timespec begin;
+	OS.timespec begin;
 
 	public Timer () {
 	}
 
 	public void start () {
 		assert (!running);
-		Posix.clock_gettime (Posix.CLOCK_MONOTONIC, &begin);
+		OS.clock_gettime (OS.CLOCK_MONOTONIC, &begin);
 		running = true;
 	}
 
 	public void stop () {
 		assert (running);
-		var end = Posix.timespec ();
-		Posix.clock_gettime (Posix.CLOCK_MONOTONIC, &end);
+		var end = OS.timespec ();
+		OS.clock_gettime (OS.CLOCK_MONOTONIC, &end);
 		end.tv_sec -= begin.tv_sec;
 		end.tv_nsec -= begin.tv_nsec;
 		if (end.tv_nsec < 0) {

@@ -29,11 +29,11 @@ namespace Dova {
 	public void assert (bool condition, string? message = null) {
 		if (!condition) {
 			if (message == null) {
-				Posix.fprintf (Posix.stderr, "assertion failed\n".data);
+				OS.fprintf (OS.stderr, "assertion failed\n".data);
 			} else {
-				Posix.fprintf (Posix.stderr, "assertion failed: %s\n".data, ((!) message).data);
+				OS.fprintf (OS.stderr, "assertion failed: %s\n".data, ((!) message).data);
 			}
-			Posix.assert (false);
+			OS.assert (false);
 		}
 	}
 

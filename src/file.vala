@@ -72,12 +72,12 @@ class Dova.LocalFile : File {
 	}
 
 	public override FileStream read () {
-		int fd = Posix.open (this._path.data, Posix.O_RDONLY, 0777);
+		int fd = OS.open (this._path.data, OS.O_RDONLY, 0777);
 		return new LocalFileStream (fd);
 	}
 
 	public override FileStream create () {
-		int fd = Posix.open (this._path.data, Posix.O_WRONLY | Posix.O_CREAT, 0777);
+		int fd = OS.open (this._path.data, OS.O_WRONLY | OS.O_CREAT, 0777);
 		return new LocalFileStream (fd);
 	}
 
@@ -86,15 +86,15 @@ class Dova.LocalFile : File {
 	public override FileInfo query_info () {
 		result = new FileInfo ();
 
-		var st = Posix.stat_t ();
-		Posix.stat (this._path.data, &st);
+		var st = OS.stat_t ();
+		OS.stat (this._path.data, &st);
 
 		var type = FileType.UNKNOWN;
-		if (Posix.S_ISREG (st.st_mode)) {
+		if (OS.S_ISREG (st.st_mode)) {
 			type = FileType.REGULAR;
-		} else if (Posix.S_ISDIR (st.st_mode)) {
+		} else if (OS.S_ISDIR (st.st_mode)) {
 			type = FileType.DIRECTORY;
-		} else if (Posix.S_ISLNK (st.st_mode)) {
+		} else if (OS.S_ISLNK (st.st_mode)) {
 			type = FileType.SYMBOLIC_LINK;
 		}
 
@@ -120,18 +120,18 @@ class Dova.LocalFileStream : FileStream {
 		if (length < 0) {
 			length = b.length - offset;
 		}
-		return (int) Posix.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+		return (int) OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
 	}
 
 	public override int write (byte[] b, int offset, int length) {
 		if (length < 0) {
 			length = b.length - offset;
 		}
-		return (int) Posix.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+		return (int) OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
 	}
 
 	public override void close () {
-		Posix.close (this.fd);
+		OS.close (this.fd);
 	}
 }
 
