@@ -112,3 +112,25 @@ namespace Dova {
 		Console.write_line (s);
 	}
 }
+
+namespace Dova.Log {
+	[Print]
+	public void debug (string s) {
+		OS.fprintf (OS.stderr, "%s\n".data, s.data);
+	}
+
+	[Print]
+	public void message (string s) {
+		OS.fprintf (OS.stderr, "%s\n".data, s.data);
+	}
+
+	[Print]
+	public void warning (string s) {
+		OS.fprintf (OS.stderr, "%s\n".data, s.data);
+	}
+
+	[Print]
+	public void error (string s) {
+		OS.fprintf (OS.stderr, "%s\n".data, s.data);
+	}
+}
