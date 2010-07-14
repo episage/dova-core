@@ -92,7 +92,7 @@ public class Dova.Map<K,V> : /*Value*/Object {
 			V value;
 			key = _keys[i];
 			value = _values[i];
-			set (key, value);
+			internal_set (key, value);
 		}
 	}
 
