@@ -1,6 +1,6 @@
 /* thread.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,15 +23,15 @@
 public delegate int Dova.ThreadStart ();
 
 public class Dova.Thread {
-	OS.pthread_t native;
+	OS.thrd_t native;
 
-	static void* start_routine (void* data) {
+	static int start_routine (void* data) {
 		var func = (ThreadStart) data;
-		result = (void*) func ();
+		result = func ();
 	}
 
 	public Thread (ThreadStart func) {
-		OS.pthread_create (&native, null, (void*) start_routine, (void*) func);
+		OS.thrd_create (&native, (void*) start_routine, (void*) func);
 	}
 
 	public static void sleep (Duration duration) {
@@ -42,23 +42,30 @@ public class Dova.Thread {
 	}
 
 	public static void yield () {
-		OS.sched_yield ();
+		OS.thrd_yield ();
 	}
 }
 
-public class Dova.Mutex {
-	OS.pthread_mutex_t native;
+public enum Dova.MutexType {
+	PLAIN = 1 << 0,
+	RECURSIVE = 1 << 1,
+	TIMED = 1 << 2,
+	TRY = 1 << 3
+}
 
-	public Mutex () {
-		OS.pthread_mutex_init (&native, null);
+public class Dova.Mutex {
+	OS.mtx_t native;
+
+	public Mutex (MutexType type = MutexType.PLAIN) {
+		OS.mtx_init (&native, type);
 	}
 
 	public void lock () {
-		OS.pthread_mutex_lock (&native);
+		OS.mtx_lock (&native);
 	}
 
 	public void unlock () {
-		OS.pthread_mutex_unlock (&native);
+		OS.mtx_unlock (&native);
 	}
 }
 

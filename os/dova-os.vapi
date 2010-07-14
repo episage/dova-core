@@ -57,21 +57,16 @@ namespace OS {
 	public int getaddrinfo (byte* node, byte* service, addrinfo* hints, addrinfo** res);
 	public const int AI_ADDRCONFIG;
 
-	public struct pthread_t {
+	public struct thrd_t {
 	}
-	public struct pthread_attr_t {
-	}
-	public struct pthread_mutex_t {
-	}
-	public struct pthread_mutexattr_t {
+	public struct mtx_t {
 	}
 
-	public int pthread_create (pthread_t* thread, pthread_attr_t* attr, void* start_routine, void* arg);
-	public int pthread_mutex_init (pthread_mutex_t* mutex, pthread_mutexattr_t* attr);
-	public int pthread_mutex_lock (pthread_mutex_t* mutex);
-	public int pthread_mutex_unlock (pthread_mutex_t* mutex);
-
-	public int sched_yield ();
+	public int thrd_create (thrd_t* thread, void* start_routine, void* arg);
+	public int thrd_yield ();
+	public int mtx_init (mtx_t* mtx, int type);
+	public int mtx_lock (mtx_t* mtx);
+	public int mtx_unlock (mtx_t* mtx);
 
 	public struct stack_t {
 		void* ss_sp;

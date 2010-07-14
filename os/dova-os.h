@@ -30,7 +30,6 @@
 #include <math.h>
 #include <netdb.h>
 #include <netinet/in.h>
-#include <pthread.h>
 #include <sched.h>
 #include <signal.h>
 #include <stdio.h>
@@ -65,5 +64,7 @@ static inline int32_t atomic_int32_fetch_add (volatile int32_t *atomic, int32_t 
 static inline int32_t atomic_int32_fetch_sub (volatile int32_t *atomic, int32_t operand) {
 	return __sync_fetch_and_sub (atomic, operand);
 }
+
+#include "dova-threads-pthread.h"
 
 #endif
