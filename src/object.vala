@@ -175,6 +175,7 @@ public abstract class Dova.Type {
 
 namespace Dova {
 	[ModuleInit]
-	public void init () {
+	public void init (int argc, byte** argv) {
+		OS.setargv (argv);
 	}
 }

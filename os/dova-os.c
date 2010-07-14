@@ -1,4 +1,4 @@
-/* dova-os.h
+/* dova-os.c
  *
  * Copyright (C) 2010  Jürg Billeter
  *
@@ -20,38 +20,14 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-#ifndef __DOVA_OS_H__
-#define __DOVA_OS_H_
+#include <dova-os.h>
 
-#include <arpa/inet.h>
-#include <assert.h>
-#include <dlfcn.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <math.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sched.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/epoll.h>
-#include <sys/mman.h>
-#include <sys/socket.h>
-#include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/timerfd.h>
-#include <sys/types.h>
-#include <sys/un.h>
-#include <time.h>
-#include <ucontext.h>
-#include <unistd.h>
+static char **argv = NULL;
 
-#include "dova-atomic-gcc.h"
-#include "dova-threads-pthread.h"
+char **getargv (void) {
+	return argv;
+}
 
-char **getargv (void);
-void setargv (char **argv);
-
-#endif
+void setargv (char **argv_) {
+	argv = argv_;
+}

@@ -20,9 +20,19 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public class Dova.Application {
-	public Application () {
+namespace Dova.Application {
+	public void init () {
 		Task._init ();
+	}
+
+	public List<string> get_arguments () {
+		byte** argv = OS.getargv ();
+
+		result = [];
+		while (*argv != null) {
+			result += [string.create_from_cstring (*argv)];
+			argv++;
+		}
 	}
 
 	public void run () {

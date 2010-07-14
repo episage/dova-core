@@ -31,6 +31,9 @@ namespace OS {
 	public struct long {
 	}
 
+	public byte** getargv ();
+	public void setargv (byte** argv);
+
 	public void assert (bool expression);
 
 	public int dlclose (void* handle);
