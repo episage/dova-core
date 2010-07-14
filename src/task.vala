@@ -20,32 +20,6 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public class Dova.Application {
-	public Application () {
-		TaskScheduler.main = new TaskScheduler ();
-		TaskScheduler.main.main_task = new Task ();
-		Task.current = TaskScheduler.main.main_task;
-		Task.current.state = TaskState.RUNNING;
-	}
-
-	public static string? get_environment_variable (string name) {
-		byte* cstring = OS.getenv (name.data);
-		if (cstring == null) {
-			result = null;
-		} else {
-			result = string.create_from_cstring (cstring);
-		}
-	}
-
-	public static int get_user_id () {
-		return (int) OS.getuid ();
-	}
-
-	public void run () {
-		TaskScheduler.main.sched ();
-	}
-}
-
 public enum Dova.TaskState {
 	SLEEPING,
 	WAITING,
@@ -286,6 +260,13 @@ public class Dova.Task {
 		if (stack != null) {
 			OS.munmap (stack, STACK_SIZE);
 		}
+	}
+
+	public static void _init () {
+		TaskScheduler.main = new TaskScheduler ();
+		TaskScheduler.main.main_task = new Task ();
+		Task.current = TaskScheduler.main.main_task;
+		Task.current.state = TaskState.RUNNING;
 	}
 
 	static void task_func () {
