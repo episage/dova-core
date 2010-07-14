@@ -44,6 +44,15 @@ public class Dova.Thread {
 	public static void yield () {
 		OS.thrd_yield ();
 	}
+
+	public int join () {
+		result = 0;
+		OS.thrd_join (native, &result);
+	}
+
+	public static void exit (int retval) {
+		OS.thrd_exit (retval);
+	}
 }
 
 public enum Dova.MutexType {
@@ -60,8 +69,17 @@ public class Dova.Mutex {
 		OS.mtx_init (&native, type);
 	}
 
+	~Mutex () {
+		OS.mtx_destroy (&native);
+	}
+
 	public void lock () {
 		OS.mtx_lock (&native);
+	}
+
+	public bool try_lock () {
+		int ret = OS.mtx_trylock (&native);
+		return (ret == OS.thrd_success);
 	}
 
 	public void unlock () {

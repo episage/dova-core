@@ -57,6 +57,8 @@ namespace OS {
 	public int getaddrinfo (byte* node, byte* service, addrinfo* hints, addrinfo** res);
 	public const int AI_ADDRCONFIG;
 
+	public const int thrd_success;
+
 	public struct thrd_t {
 	}
 	public struct mtx_t {
@@ -64,8 +66,12 @@ namespace OS {
 
 	public int thrd_create (thrd_t* thread, void* start_routine, void* arg);
 	public int thrd_yield ();
+	public int thrd_join (thrd_t thr, int* res);
+	public void thrd_exit (int res);
 	public int mtx_init (mtx_t* mtx, int type);
+	public void mtx_destroy (mtx_t* mtx);
 	public int mtx_lock (mtx_t* mtx);
+	public int mtx_trylock (mtx_t* mtx);
 	public int mtx_unlock (mtx_t* mtx);
 
 	public struct stack_t {
