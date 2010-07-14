@@ -105,9 +105,9 @@ libdova_app_la_SOURCES = \
 	app.vala \
 	$(NULL)
 
-libdova_app_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi dova-task-0.1.vapi -H dova-app.h --vapi dova-app-0.1.vapi
+libdova_app_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-task-0.1.vapi -H dova-app.h --vapi dova-app-0.1.vapi
 
-$(srcdir)/libdova_app_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-task-0.1.vapi
+$(srcdir)/libdova_app_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-task-0.1.vapi
 
 libdova_core_la_SOURCES = \
 	module.vala \

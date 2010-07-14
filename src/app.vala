@@ -42,3 +42,71 @@ public class Dova.Application {
 		Task.pause ();
 	}
 }
+
+class Dova.LocalFileStream : FileStream {
+	int fd;
+
+	public LocalFileStream (int fd) {
+		this.fd = fd;
+	}
+
+	public override int read (byte[] b, int offset, int length) {
+		if (length < 0) {
+			length = b.length - offset;
+		}
+		return (int) OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+	}
+
+	public override int write (byte[] b, int offset, int length) {
+		if (length < 0) {
+			length = b.length - offset;
+		}
+		return (int) OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+	}
+
+	public override void close () {
+		OS.close (this.fd);
+	}
+}
+
+public abstract class Dova.Console : Object {
+	static TextReader? _in;
+	static TextWriter? _out;
+
+	public static TextReader in {
+		get {
+			if (_in == null) {
+				_in = new TextReader (new LocalFileStream (0));
+			}
+			return (!) _in;
+		}
+	}
+
+	public static TextWriter out {
+		get {
+			if (_out == null) {
+				_out = new TextWriter (new LocalFileStream (1));
+			}
+			return (!) _out;
+		}
+	}
+
+	public static string read_line () {
+		return (!) in.read_line ();
+	}
+
+	public static void write (string s) {
+		out.write (s);
+	}
+
+	public static void write_line (string s) {
+		out.write_line (s);
+	}
+}
+
+namespace Dova {
+	[Print]
+	public void print (string s) {
+		Console.write_line (s);
+	}
+}
