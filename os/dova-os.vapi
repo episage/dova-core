@@ -254,7 +254,11 @@ namespace OS {
 	public void makecontext (ucontext_t* ucp, void* func, int argc, ...);
 	public int swapcontext (ucontext_t* oucp, ucontext_t* ucp);
 
+	public const int _PC_PATH_MAX;
+
+	public byte* getcwd (byte* buf, size_t size);
 	public uint getuid ();
+	public long pathconf (byte* path, int name);
 
 
 	public struct epoll_data_t {

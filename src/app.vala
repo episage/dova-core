@@ -38,6 +38,8 @@ namespace Dova.Application {
 	public void run () {
 		Task.pause ();
 	}
+
+	// allow access to stdin, stdout, stderr streams
 }
 
 namespace Dova.Environment {
@@ -52,6 +54,17 @@ namespace Dova.Environment {
 
 	public int get_user_id () {
 		return (int) OS.getuid ();
+	}
+
+	public File get_current_directory () {
+		int max_path = (int) OS.pathconf (".".data, OS._PC_PATH_MAX);
+
+		byte* buf = OS.malloc (max_path);
+		OS.getcwd (buf, max_path);
+
+		result = File.get_for_path (string.create_from_cstring (buf));
+
+		OS.free (buf);
 	}
 }
 
