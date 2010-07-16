@@ -26,4 +26,6 @@
 #define _XOPEN_SOURCE 700
 #define _GNU_SOURCE
 
+#define thread_local __thread
+
 #endif
