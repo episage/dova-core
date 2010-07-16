@@ -29,4 +29,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define decimal128 _Decimal128
+
 #endif
