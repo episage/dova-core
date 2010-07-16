@@ -1,6 +1,7 @@
 NULL =
 
 AM_CPPFLAGS = \
+	-I$(top_srcdir)/types \
 	-I$(top_srcdir)/os \
 	$(NULL)
 

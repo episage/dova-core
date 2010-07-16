@@ -2,6 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 NULL =
 
 SUBDIRS = \
+	types \
 	os \
 	src \
 	tests \

@@ -1,5 +1,9 @@
 NULL =
 
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/types \
+	$(NULL)
+
 noinst_LTLIBRARIES = \
 	libdova-os.la \
 	$(NULL)
