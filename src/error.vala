@@ -20,6 +20,11 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+namespace Dova {
+	[ThreadLocal]
+	public Error? error;
+}
+
 public class Dova.Error {
 	public string message { get; set; }
 
@@ -27,4 +32,3 @@ public class Dova.Error {
 		this.message = message;
 	}
 }
-
