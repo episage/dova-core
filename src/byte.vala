@@ -20,6 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+[CCode (cname = "uint8_t")]
 [IntegerType (rank = 3, width = 8, signed = false)]
 public struct byte {
 	public string to_string () {

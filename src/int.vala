@@ -20,6 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+[CCode (cname = "int32_t")]
 [IntegerType (rank = 6, width = 32)]
 public struct int {
 	public bool equals (int other) {

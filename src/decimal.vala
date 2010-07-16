@@ -20,6 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+[CCode (cname = "decimal128")]
 [FloatingType (rank = 3, decimal = true, width = 128)]
 public struct decimal {
 }

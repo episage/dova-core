@@ -20,6 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+[CCode (cname = "uint32_t")]
 [IntegerType (rank = 7, width = 32, signed = false)]
 public struct uint {
 	public string to_string () {

@@ -173,6 +173,7 @@ public enum Dova.UnicodeScript {
 	UNKNOWN
 }
 
+[CCode (cname = "uint32_t")]
 [IntegerType (rank = 7, width = 32)]
 public struct char {
 	public UnicodeCategory category {

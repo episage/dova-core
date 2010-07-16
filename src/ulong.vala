@@ -20,6 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+[CCode (cname = "uint64_t")]
 [IntegerType (rank = 9, width = 64, signed = false)]
 public struct ulong {
 	public string to_string () {

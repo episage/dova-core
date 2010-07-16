@@ -20,6 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+[CCode (cname = "int16_t")]
 [IntegerType (rank = 4, width = 16)]
 public struct short {
 	public string to_string () {

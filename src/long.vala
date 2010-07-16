@@ -20,6 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+[CCode (cname = "int64_t")]
 [IntegerType (rank = 8, width = 64)]
 public struct long {
 	public string to_string () {
