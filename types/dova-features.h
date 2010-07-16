@@ -1,4 +1,4 @@
-/* dova-types.h
+/* dova-features.h
  *
  * Copyright (C) 2010  Jürg Billeter
  *
@@ -20,13 +20,9 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-#ifndef __DOVA_TYPES_H__
-#define __DOVA_TYPES_H_
+#ifndef __DOVA_FEATURES_H__
+#define __DOVA_FEATURES_H_
 
-#include <dova-features.h>
-
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
+#define _XOPEN_SOURCE 700
 
 #endif
