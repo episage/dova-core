@@ -82,6 +82,24 @@ public struct uint {
 	}
 }
 
+[CCode (cname = "intptr_t")]
+[IntegerType (rank = 8)]
+public struct intptr {
+	public string to_string () {
+		long l = (long) this;
+		return l.to_string ();
+	}
+}
+
+[CCode (cname = "uintptr_t")]
+[IntegerType (rank = 9, signed = false)]
+public struct uintptr {
+	public string to_string () {
+		ulong l = (ulong) this;
+		return l.to_string ();
+	}
+}
+
 [CCode (cname = "int64_t")]
 [IntegerType (rank = 8, width = 64)]
 public struct long {
