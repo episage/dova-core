@@ -22,7 +22,6 @@ lib_LTLIBRARIES = \
 libdova_base_la_SOURCES = \
 	array.vala \
 	bool.vala \
-	byte.vala \
 	char.vala \
 	char_case_props_data.vala \
 	char_props_data.vala \
@@ -32,24 +31,18 @@ libdova_base_la_SOURCES = \
 	double.vala \
 	error.vala \
 	float.vala \
-	int.vala \
+	integer.vala \
 	iterator.vala \
 	list.vala \
-	long.vala \
 	map.vala \
 	node.vala \
 	object.vala \
 	random.vala \
-	sbyte.vala \
 	set.vala \
-	short.vala \
 	string.vala \
 	timer.vala \
 	tuple.vala \
-	uint.vala \
-	ulong.vala \
 	uri.vala \
-	ushort.vala \
 	value.vala \
 	$(NULL)
 
