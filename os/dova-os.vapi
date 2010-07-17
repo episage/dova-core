@@ -20,16 +20,30 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+/*
+ POSIX type mapping
+
+ char:           byte
+ signed char:    sbyte
+ unsigned char:  byte
+ short:          short
+ unsigned short: ushort
+ int:            int
+ unsigned int:   uint
+ long:           intptr
+ unsigned long:  uintptr
+ size_t:         uintptr
+ ssize_t:        intptr
+ off_t:          long
+ time_t:         intptr
+ */
+
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "dova-os.h")]
 namespace OS {
 	public void atomic_int32_store (volatile int* atomic, int desired);
 	public int atomic_int32_load (volatile int* atomic);
 	public int atomic_int32_fetch_add (volatile int* atomic, int operand);
 	public int atomic_int32_fetch_sub (volatile int* atomic, int operand);
-
-	[IntegerType (rank = 9)]
-	public struct long {
-	}
 
 	public byte** getargv ();
 	public void setargv (byte** argv);
@@ -85,41 +99,41 @@ namespace OS {
 	public struct stack_t {
 		void* ss_sp;
 		int ss_flags;
-		size_t ss_size;
+		uintptr ss_size;
 	}
 
 	public int printf (byte* format, ...);
 	public int fprintf (FILE* stream, byte* format, ...);
-	public int snprintf (byte* str, size_t size, byte* format, ...);
+	public int snprintf (byte* str, uintptr size, byte* format, ...);
 	public FILE* stdin;
 	public FILE* stdout;
 	public FILE* stderr;
 	public struct FILE {
 	}
 
-	public void* calloc (size_t nelem, size_t elsize);
+	public void* calloc (uintptr nelem, uintptr elsize);
 	public void free (void* ptr);
-	public void* malloc (size_t size);
-	public void* realloc (void* ptr, size_t size);
+	public void* malloc (uintptr size);
+	public void* realloc (void* ptr, uintptr size);
 	public byte* getenv (byte* name);
 
-	public void* memchr (void* s, int c, size_t n);
-	public int memcmp (void* s1, void* s2, size_t n);
-	public void* memcpy (void* dest, void* src, size_t n);
-	public void* memset (void* s, int c, size_t n);
+	public void* memchr (void* s, int c, uintptr n);
+	public int memcmp (void* s1, void* s2, uintptr n);
+	public void* memcpy (void* dest, void* src, uintptr n);
+	public void* memset (void* s, int c, uintptr n);
 	public int strcmp (void* s1, void* s2);
 	public int strcoll (void* s1, void* s2);
-	public size_t strcspn (byte* s, byte* reject);
+	public uintptr strcspn (byte* s, byte* reject);
 	public void* strstr (void* haystack, void* needle);
-	public size_t strlen (byte* s);
-	public int strncmp (void* s1, void* s2, size_t n);
+	public uintptr strlen (byte* s);
+	public int strncmp (void* s1, void* s2, uintptr n);
 
 	public int fcntl (int fd, int cmd, ...);
 	public int open (char* path, int oflag, int mode);
 	public int close (int fd);
 	public int dup (int oldfd);
-	public ssize_t read (int fd, void* buf, size_t count);
-	public ssize_t write (int fd, void* buf, size_t count);
+	public intptr read (int fd, void* buf, uintptr count);
+	public intptr write (int fd, void* buf, uintptr count);
 	public const int F_GETFL;
 	public const int F_SETFL;
 	public const int O_CREAT;
@@ -133,12 +147,12 @@ namespace OS {
 	public const int MAP_PRIVATE;
 	public const int MAP_ANONYMOUS;
 
-	public void* mmap (void* addr, size_t length, int prot, int flags, int fd, off_t offset);
-	public int munmap (void* addr, size_t length);
+	public void* mmap (void* addr, uintptr length, int prot, int flags, int fd, long offset);
+	public int munmap (void* addr, uintptr length);
 
-	public int accept (int sockfd, sockaddr* addr, size_t* addrlen);
-	public int bind (int sockfd, sockaddr* addr, size_t addrlen);
-	public int connect (int sockfd, sockaddr* addr, size_t addrlen);
+	public int accept (int sockfd, sockaddr* addr, uintptr* addrlen);
+	public int bind (int sockfd, sockaddr* addr, uintptr addrlen);
+	public int connect (int sockfd, sockaddr* addr, uintptr addrlen);
 	public int listen (int sockfd, int backlog);
 	public int socket (int domain, int type, int protocol);
 	public const int AF_INET;
@@ -171,7 +185,7 @@ namespace OS {
 	[CCode (cname = "struct stat")]
 	public struct stat_t {
 		public uint st_mode;
-		public off_t st_size;
+		public long st_size;
 		public timespec st_mtim;
 	}
 
@@ -182,36 +196,14 @@ namespace OS {
 	public int gettimeofday (out timeval tv, void* tz = null);
 	[CCode (cname = "struct timeval")]
 	public struct timeval {
-		public time_t tv_sec;
-		public suseconds_t tv_usec;
-	}
-	[IntegerType (rank = 8)]
-	public struct suseconds_t {
-	}
-
-	[CCode (default_value = "0UL")]
-	[IntegerType (rank = 9)]
-	public struct off_t {
-	}
-
-	[CCode (default_value = "0UL")]
-	[IntegerType (rank = 9)]
-	public struct size_t {
-	}
-
-	[CCode (default_value = "0L")]
-	[IntegerType (rank = 9)]
-	public struct ssize_t {
+		public intptr tv_sec;
+		public intptr tv_usec;
 	}
 
 	[CCode (cname = "struct sockaddr_un")]
 	public struct sockaddr_un {
 		public int sun_family;
 		public byte* sun_path;
-	}
-
-	[IntegerType (rank = 8)]
-	public struct time_t {
 	}
 
 	[CCode (cname = "struct itimerspec")]
@@ -222,8 +214,8 @@ namespace OS {
 
 	[CCode (cname = "struct timespec")]
 	public struct timespec {
-		time_t tv_sec;
-		long tv_nsec;
+		intptr tv_sec;
+		intptr tv_nsec;
 	}
 
 	public int nanosleep (timespec* req, timespec* rem);
@@ -240,7 +232,7 @@ namespace OS {
 		public int tm_yday;
 		public int tm_isdst;
 	}
-	public tm* localtime_r (time_t* timep, tm* res);
+	public tm* localtime_r (intptr* timep, tm* res);
 	public int clock_gettime (int clk_id, timespec* tp);
 
 	public const int CLOCK_MONOTONIC;
@@ -256,9 +248,9 @@ namespace OS {
 
 	public const int _PC_PATH_MAX;
 
-	public byte* getcwd (byte* buf, size_t size);
+	public byte* getcwd (byte* buf, uintptr size);
 	public uint getuid ();
-	public long pathconf (byte* path, int name);
+	public intptr pathconf (byte* path, int name);
 
 
 	public struct epoll_data_t {
