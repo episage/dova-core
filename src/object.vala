@@ -20,8 +20,18 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public class any {
+public abstract class any {
 	public Type type;
+
+	public abstract bool equals (any other);
+
+	public abstract uint hash ();
+
+	public abstract string to_string ();
+
+	public bool is_a (Type type) {
+		return this.type.is_subtype_of (type);
+	}
 }
 
 public class Dova.Object : any {
@@ -30,21 +40,17 @@ public class Dova.Object : any {
 	public virtual void finalize () {
 	}
 
-	public virtual bool equals (Object other) {
+	public override sealed bool equals (any other) {
 		return (this == other);
 	}
 
-	public virtual uint hash () {
+	public override sealed uint hash () {
 		void* ptr = this;
-		return (uint) (int) (long) ptr;
+		return (uint) (uintptr) ptr;
 	}
 
-	public virtual string to_string () {
+	public override string to_string () {
 		return this.type.name;
-	}
-
-	public bool is_a (Type type) {
-		return this.type.is_subtype_of (type);
 	}
 
 	public static Object* alloc (Type type) {
