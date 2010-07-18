@@ -20,37 +20,11 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-[CCode (ref_function = "string_ref", unref_function = "string_unref")]
 public class string : Dova.Value {
-	public int ref_count;
 	// length in bytes
-	public int length;
-	public byte data[];
-
-	public new string* ref () {
-		if (this == null) {
-			return null;
-		}
-		if (ref_count == 0) {
-			// constant strings
-			return this;
-		}
-		ref_count++;
-		return this;
-	}
-
-	public new void unref () {
-		if (this == null) {
-			return;
-		}
-		if (ref_count == 0) {
-			// constant strings
-			return;
-		}
-		if (--ref_count == 0) {
-			OS.free (this);
-		}
-	}
+	public int length { get; private set; }
+	byte _data[];
+	public byte* data { get { return _data; } }
 
 	public byte[] get_utf8_bytes () {
 		result = new byte[this.length];
@@ -58,8 +32,7 @@ public class string : Dova.Value {
 	}
 
 	public static string create (int length) {
-		string* str = OS.calloc (1, (int) sizeof (int) * 2 + length + 1);
-		str.ref_count = 1;
+		string* str = (string*) Value.alloc (typeof (string), length + 1);
 		str.length = length;
 		return (owned) str;
 	}
@@ -201,12 +174,12 @@ public class string : Dova.Value {
 		}
 	}
 
-	public new string to_string () {
+	public override string to_string () {
 		return this;
 	}
 
-	public bool equals (string other) {
-		return OS.strcmp (data, other.data) == 0;
+	public override bool equals (any other) {
+		return OS.strcmp (data, ((string) other).data) == 0;
 	}
 
 	// index in bytes
@@ -384,7 +357,7 @@ public class string : Dova.Value {
 		return last_index_of (c.to_string (), start_index, end_index);
 	}
 
-	public int hash () {
+	public override uint hash () {
 		// based on code from GLib
 
 		byte *p = data;
@@ -396,7 +369,7 @@ public class string : Dova.Value {
 			}
 		}
 
-		return (int) h;
+		return h;
 	}
 
 	public string to_lower () {

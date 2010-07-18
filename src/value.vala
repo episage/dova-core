@@ -1,6 +1,6 @@
 /* value.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,8 +20,37 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public abstract class Dova.Value : Object {
+public abstract class Dova.Value : any {
+	volatile int ref_count;
+
 	protected Value () {
+	}
+
+	public virtual void finalize () {
+	}
+
+	public static Value* alloc (Type type, int extra_size = 0) {
+		result = OS.calloc (1, type.object_size + extra_size);
+		result.type = type;
+		result.ref_count = 1;
+	}
+
+	public static void* ref (void* object) {
+		if (object == null) {
+			return null;
+		}
+		OS.atomic_int32_fetch_add (&((Value*) object).ref_count, 1);
+		return object;
+	}
+
+	public static void unref (void* object) {
+		if (object == null) {
+			return;
+		}
+		if (OS.atomic_int32_fetch_sub (&((Value*) object).ref_count, 1) == 1) {
+			((Value*) object).finalize ();
+			OS.free (object);
+		}
 	}
 }
 

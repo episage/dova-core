@@ -66,7 +66,7 @@ public class Dova.Object : any {
 		OS.atomic_int32_fetch_add (&((Object*) object).ref_count, 1);
 		return object;
 	}
-	
+
 	public static void unref (void* object) {
 		if (object == null) {
 			return;
@@ -104,12 +104,12 @@ public abstract class Dova.Type {
 
 	public new static void alloc (Type base_type, int object_size, int type_size, out Type* result, out int object_offset, out int type_offset) {
 		result = OS.calloc (1, base_type.type_size + type_size);
-		result.type = typeof (Type);
 		result.base_type = base_type;
 		object_offset = base_type.object_size;
 		result.object_size = base_type.object_size + object_size;
 		type_offset = base_type.type_size;
 		result.type_size = base_type.type_size + type_size;
+		result.type = typeof (Type);
 	}
 
 	public void insert_type (Type type) {
