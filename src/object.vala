@@ -45,6 +45,7 @@ public abstract class any {
 
 public class Dova.Object : any {
 	volatile int ref_count;
+	volatile int weak_count;
 
 	public virtual void finalize () {
 	}
@@ -66,6 +67,7 @@ public class Dova.Object : any {
 		result = OS.calloc (1, type.object_size);
 		result.type = type;
 		result.ref_count = 1;
+		result.weak_count = 1;
 	}
 
 	public static void* ref (void* object) {
@@ -82,6 +84,39 @@ public class Dova.Object : any {
 		}
 		if (OS.atomic_int32_fetch_sub (&((Object*) object).ref_count, 1) == 1) {
 			((Object*) object).finalize ();
+			weak_unref (object);
+		}
+	}
+
+	public static void* weak_get (void* object) {
+		if (object == null) {
+			return null;
+		}
+		while (true) {
+			int ref_count = ((Object*) object).ref_count;
+			if (ref_count == 0) {
+				return null;
+			}
+			if (OS.atomic_int32_compare_exchange (&((Object*) object).ref_count, &ref_count, ref_count + 1)) {
+				// successfully obtained strong reference
+				return object;
+			}
+		}
+	}
+
+	public static void* weak_ref (void* object) {
+		if (object == null) {
+			return null;
+		}
+		OS.atomic_int32_fetch_add (&((Object*) object).weak_count, 1);
+		return object;
+	}
+
+	public static void weak_unref (void* object) {
+		if (object == null) {
+			return;
+		}
+		if (OS.atomic_int32_fetch_sub (&((Object*) object).weak_count, 1) == 1) {
 			OS.free (object);
 		}
 	}

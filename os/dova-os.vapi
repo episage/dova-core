@@ -42,6 +42,7 @@
 namespace OS {
 	public void atomic_int32_store (volatile int* atomic, int desired);
 	public int atomic_int32_load (volatile int* atomic);
+	public bool atomic_int32_compare_exchange (volatile int* atomic, int* expected, int desired);
 	public int atomic_int32_fetch_add (volatile int* atomic, int operand);
 	public int atomic_int32_fetch_sub (volatile int* atomic, int operand);
 

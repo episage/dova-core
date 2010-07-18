@@ -33,6 +33,10 @@ static inline int32_t atomic_int32_load (volatile int32_t *atomic) {
 	return *atomic;
 }
 
+static inline bool atomic_int32_compare_exchange (volatile int32_t *atomic, int32_t* expected, int32_t desired) {
+	return __sync_bool_compare_and_swap (atomic, *expected, desired);
+}
+
 static inline int32_t atomic_int32_fetch_add (volatile int32_t *atomic, int32_t operand) {
 	return __sync_fetch_and_add (atomic, operand);
 }
