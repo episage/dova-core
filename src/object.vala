@@ -32,6 +32,15 @@ public abstract class any {
 	public bool is_a (Type type) {
 		return this.type.is_subtype_of (type);
 	}
+
+	public static void* ref (void* object) {
+		result = null;
+		((any) object).type.value_copy (&result, 0, &object, 0);
+	}
+
+	public static void unref (void* object) {
+		((any) object).type.value_copy (&object, 0, null, 0);
+	}
 }
 
 public class Dova.Object : any {
