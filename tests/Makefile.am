@@ -1,7 +1,8 @@
 NULL =
 
 AM_CPPFLAGS = \
-	-I$(srcdir)/../src \
+	-I$(top_srcdir)/types \
+	-I$(top_srcdir)/src \
 	$(NULL)
 
 check_PROGRAMS = \
