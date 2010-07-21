@@ -194,21 +194,23 @@ public abstract class Dova.Type {
 	}
 
 	public void* get_interface (Type* interface_type) {
-		int l, r, m;
+		int l, r;
 
 		// use binary search, interface array is sorted by interface type pointer
 
 		l = 0;
 		r = this.n_interfaces - 1;
-		m = 0;
 
 		if (r == -1) {
 			return null;
 		}
 
-		while (r > l && this.interfaces[m].interface_type != interface_type) {
-			m = (l + r) / 2;
-			if (interface_type < this.interfaces[m].interface_type) {
+		while (r >= l) {
+			int m = (l + r) / 2;
+
+			if (interface_type == this.interfaces[m].interface_type) {
+				return this.interfaces[m].vtable;
+			} else if (interface_type < this.interfaces[m].interface_type) {
 				// left half
 				r = m - 1;
 			} else {
@@ -216,11 +218,8 @@ public abstract class Dova.Type {
 				l = m + 1;
 			}
 		}
-		if (this.interfaces[m].interface_type == interface_type) {
-			return this.interfaces[m].vtable;
-		} else {
-			return null;
-		}
+
+		return null;
 	}
 
 	public extern void value_copy (void* dest, int dest_index, void* src, int src_index);
