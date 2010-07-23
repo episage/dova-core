@@ -23,10 +23,13 @@
 public abstract class any {
 	public Type type;
 
-	public abstract bool equals (any other);
+	// allow nullable this
+	public abstract bool equals (any? other);
 
+	// allow nullable this
 	public abstract uint hash ();
 
+	// allow nullable this
 	public abstract string to_string ();
 
 	public bool is_a (Type type) {
@@ -50,7 +53,7 @@ public class Dova.Object : any {
 	public virtual void finalize () {
 	}
 
-	public override sealed bool equals (any other) {
+	public override sealed bool equals (any? other) {
 		return (this == other);
 	}
 

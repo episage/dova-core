@@ -178,8 +178,12 @@ public class string : Dova.Value {
 		return this;
 	}
 
-	public override bool equals (any other) {
-		return OS.strcmp (data, ((string) other).data) == 0;
+	public override bool equals (any? other) {
+		if (other == null) {
+			return false;
+		} else {
+			return OS.strcmp (data, ((string) other).data) == 0;
+		}
 	}
 
 	// index in bytes
