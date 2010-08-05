@@ -144,7 +144,6 @@ dovaincludedir = $(includedir)/dova-core-0.1
 
 dovainclude_HEADERS = \
 	dova-base.h \
-	dova-core.h \
 	dova-file.h \
 	dova-io.h \
 	dova-model.h \
