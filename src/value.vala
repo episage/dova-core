@@ -20,7 +20,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public abstract class Dova.Value : any {
+public /* abstract */ class Dova.Value : any {
 	volatile int ref_count;
 
 	protected Value () {
@@ -51,6 +51,18 @@ public abstract class Dova.Value : any {
 			((Value*) object).finalize ();
 			OS.free (object);
 		}
+	}
+
+	public override bool equals (any? other) {
+		return false;
+	}
+
+	public override uint hash () {
+		return 0;
+	}
+
+	public override string to_string () {
+		return "";
 	}
 }
 

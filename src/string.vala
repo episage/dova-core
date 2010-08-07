@@ -1,6 +1,6 @@
 /* string.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2010  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,19 +20,77 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
+[CCode (cname = "string_t", ref_function = "string_ref", unref_function = "string_unref")]
 public class string : Dova.Value {
+	struct StringData {
+		Type* type;
+		int ref_count;
+		int length;
+	}
+
+	static inline StringData* real (void* s) {
+		return (StringData*) ((byte*) s - (sizeof (StringData) + 1));
+	}
+
+	int _length;
+
 	// length in bytes
-	public int length { get; private set; }
-	byte _data[];
-	public byte* data { get { return _data; } }
+	public int length {
+		get {
+			if (data[-1] == 0) {
+				return (int) OS.strlen (data);
+			} else {
+				return real (this).length;
+			}
+		}
+		private set {
+			real (this).length = value;
+		}
+	}
+	public byte* data { get { return (byte*) this; } }
 
 	public byte[] get_utf8_bytes () {
 		result = new byte[this.length];
 		OS.memcpy (((Array<byte>) result).data, this.data, this.length);
 	}
 
+	public static void* ref (void* object) {
+		if (object == null) {
+			return null;
+		}
+		if (((string) object).data[-1] != 0) {
+			OS.atomic_int32_fetch_add (&(real (object)).ref_count, 1);
+		}
+		return object;
+	}
+
+	public static void unref (void* object) {
+		if (object == null) {
+			return;
+		}
+		if (((string) object).data[-1] != 0) {
+			StringData* r = real (object);
+			if (OS.atomic_int32_fetch_sub (&r.ref_count, 1) == 1) {
+				OS.free (r);
+			}
+		}
+	}
+
+	static string from_any (any any_) {
+		return (string) ((byte*) any_ + sizeof (StringData) + 1);
+	}
+
+	static any to_any (string s) {
+		if (s.data[-1] == 0) {
+			return string.to_any (create_from_cstring ((byte*) s));
+		} else {
+			return (any) real (s);
+		}
+	}
+
 	public static string create (int length) {
-		string* str = (string*) Value.alloc (typeof (string), length + 1);
+		string* str = (string*) ((byte*) Value.alloc (typeof (string), 1 + length + 1) + sizeof (StringData) + 1);
+		str.data[-1] = 0xff;
 		str.length = length;
 		return (owned) str;
 	}
@@ -174,15 +232,17 @@ public class string : Dova.Value {
 		}
 	}
 
-	public override string to_string () {
+	public string to_string () {
 		return this;
 	}
 
-	public override bool equals (any? other) {
-		if (other == null) {
+	public static bool equals (string? a, string? b) {
+		if ((void*) a == null) {
+			return ((void*) b == null);
+		} else if ((void*) b == null) {
 			return false;
 		} else {
-			return OS.strcmp (data, ((string) other).data) == 0;
+			return OS.strcmp (a.data, b.data) == 0;
 		}
 	}
 
@@ -361,7 +421,7 @@ public class string : Dova.Value {
 		return last_index_of (c.to_string (), start_index, end_index);
 	}
 
-	public override uint hash () {
+	public uint hash () {
 		// based on code from GLib
 
 		byte *p = data;
