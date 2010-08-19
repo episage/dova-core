@@ -164,6 +164,7 @@ public abstract class Dova.Type {
 		next_type = type;
 	}
 
+	[NoThrow]
 	public bool is_subtype_of (Type type) {
 		if (this == type) {
 			return true;
@@ -196,6 +197,7 @@ public abstract class Dova.Type {
 		this.interfaces[index].vtable = vtable;
 	}
 
+	[NoThrow]
 	public void* get_interface (Type* interface_type) {
 		int l, r;
 
