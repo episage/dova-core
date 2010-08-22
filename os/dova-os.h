@@ -63,6 +63,8 @@
 #include <sys/un.h>
 #include <ucontext.h>
 #include <unistd.h>
+#else
+#include "dova-io-win32.h"
 #endif
 
 char **getargv (void);
