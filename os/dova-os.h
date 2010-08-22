@@ -25,33 +25,41 @@
 
 #include <dova-types.h>
 
-#include <arpa/inet.h>
 #include <assert.h>
-#include <dlfcn.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <math.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <sched.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
+
+#ifdef __GNUC__
+#include "dova-atomic-gcc.h"
+#endif
+
+#ifndef _WIN32
+#include "dova-threads-pthread.h"
+#endif
+
+#ifndef _WIN32
+#include <arpa/inet.h>
+#include <dlfcn.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sched.h>
 #include <sys/epoll.h>
 #include <sys/mman.h>
 #include <sys/socket.h>
-#include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/timerfd.h>
-#include <sys/types.h>
 #include <sys/un.h>
-#include <time.h>
 #include <ucontext.h>
 #include <unistd.h>
-
-#include "dova-atomic-gcc.h"
-#include "dova-threads-pthread.h"
+#endif
 
 char **getargv (void);
 void setargv (char **argv);
