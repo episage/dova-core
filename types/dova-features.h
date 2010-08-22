@@ -27,6 +27,11 @@
 #define _GNU_SOURCE
 #define _FILE_OFFSET_BITS 64
 
+#ifdef _MSC_VER
+#define inline __inline
+#define thread_local __declspec(thread)
+#else
 #define thread_local __thread
+#endif
 
 #endif
