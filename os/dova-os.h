@@ -39,6 +39,8 @@
 
 #ifdef __GNUC__
 #include "dova-atomic-gcc.h"
+#elif defined(_MSC_VER)
+#include "dova-atomic-msc.h"
 #endif
 
 #ifndef _WIN32

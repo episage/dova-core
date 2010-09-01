@@ -10,6 +10,7 @@ noinst_LTLIBRARIES = \
 
 libdova_os_la_SOURCES = \
 	dova-atomic-gcc.h \
+	dova-atomic-msc.h \
 	dova-os.c \
 	dova-os.h \
 	dova-threads-pthread.h \
