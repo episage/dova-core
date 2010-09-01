@@ -25,4 +25,9 @@
 
 #include <io.h>
 
+static int _dova_open (const char *pathname, int flags, unsigned int mode) {
+	return open (pathname, flags | O_BINARY, mode);
+}
+#define open _dova_open
+
 #endif
