@@ -31,7 +31,6 @@
 #include <sys/epoll.h>
 #include <sys/mman.h>
 #include <sys/socket.h>
-#include <sys/time.h>
 #include <sys/timerfd.h>
 #include <sys/un.h>
 #include <unistd.h>
