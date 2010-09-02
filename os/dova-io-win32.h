@@ -77,6 +77,13 @@ struct _dova_epoll_fd {
 	WSAEVENT event_handle;
 };
 
+#define UNIX_PATH_MAX 108
+
+struct sockaddr_un {
+	uint16_t sun_family;
+	char sun_path[UNIX_PATH_MAX];
+};
+
 struct timespec {
 	time_t tv_sec;
 	long tv_nsec;
