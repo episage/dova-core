@@ -254,6 +254,9 @@ namespace OS {
 	public intptr pathconf (byte* path, int name);
 
 
+	public struct epoll_t {
+	}
+
 	public struct epoll_data_t {
 		public void* ptr;
 		public int fd;
@@ -274,11 +277,10 @@ namespace OS {
 	public const int EPOLLIN;
 	public const int EPOLLOUT;
 
-	public int epoll_create1 (int flags);
-
-	public int epoll_ctl (int epfd, int op, int fd, epoll_event* event);
-
-	public int epoll_wait (int epfd, epoll_event* events, int maxevents, int timeout);
+	public epoll_t epoll_create1 (int flags);
+	public int epoll_ctl (epoll_t epfd, int op, int fd, epoll_event* event);
+	public int epoll_wait (epoll_t epfd, epoll_event* events, int maxevents, int timeout);
+	public void epoll_destroy (epoll_t epfd);
 
 	public int timerfd_create (int clockid, int flags);
 	public int timerfd_settime (int fd, int flags, itimerspec* new_value, itimerspec* old_value);

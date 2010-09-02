@@ -1,4 +1,4 @@
-/* dova-os.h
+/* dova-io-linux.h
  *
  * Copyright (C) 2010  Jürg Billeter
  *
@@ -20,42 +20,38 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-#ifndef __DOVA_OS_H__
-#define __DOVA_OS_H_
+#ifndef __DOVA_IO_LINUX_H__
+#define __DOVA_IO_LINUX_H_
 
-#include <dova-types.h>
+#include <arpa/inet.h>
+#include <dlfcn.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sched.h>
+#include <sys/epoll.h>
+#include <sys/mman.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/timerfd.h>
+#include <sys/un.h>
+#include <ucontext.h>
+#include <unistd.h>
 
-#include <assert.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <math.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <time.h>
+typedef int epoll_t;
 
-#ifdef __GNUC__
-#include "dova-atomic-gcc.h"
-#elif defined(_MSC_VER)
-#include "dova-atomic-msc.h"
-#endif
-
-#ifndef _WIN32
-#include "dova-threads-pthread.h"
-#else
-#include "dova-threads-win32.h"
-#endif
-
-#ifndef _WIN32
-#include "dova-io-linux.h"
-#else
-#include "dova-io-win32.h"
-#endif
-
-char **getargv (void);
-void setargv (char **argv);
+static inline void epoll_destroy (epoll_t epfd) {
+	while (true) {
+		int res = close (epfd);
+		if (res < 0) {
+			if (errno == EINTR) {
+				/* just restart syscall */
+			} else {
+				break;
+			}
+		} else {
+			break;
+		}
+	}
+}
 
 #endif

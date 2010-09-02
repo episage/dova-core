@@ -35,7 +35,7 @@ namespace Dova.TaskPriority {
 }
 
 class Dova.TaskScheduler {
-	int epfd;
+	OS.epoll_t epfd;
 	Task?[] runqueues;
 	internal Task main_task { get; set; }
 	internal Task cleanup_task { get; set; }
