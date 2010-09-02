@@ -1,4 +1,4 @@
-/* dova-os.c
+/* dova-ucontext-win32.h
  *
  * Copyright (C) 2010  Jürg Billeter
  *
@@ -20,18 +20,33 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-#include <dova-os.h>
+#ifndef __DOVA_UCONTEXT_WIN32_H__
+#define __DOVA_UCONTEXT_WIN32_H_
 
-static char **argv = NULL;
+#include <windows.h>
 
-#ifdef _WIN32
-bool _dova_fiber_initialized = false;
+typedef LPVOID ucontext_t;
+
+#define _DOVA_STACK_SIZE (1024 * 1024)
+
+extern bool _dova_fiber_initialized;
+
+static inline void makecontext (ucontext_t *ucp, void (*func) (void)) {
+	*ucp = CreateFiber (_DOVA_STACK_SIZE, (LPFIBER_START_ROUTINE) func, NULL);
+}
+
+static inline int swapcontext (ucontext_t *oucp, ucontext_t *ucp) {
+	if (!_dova_fiber_initialized) {
+		*oucp = ConvertThreadToFiber (NULL);
+		_dova_fiber_initialized = true;
+	}
+
+	SwitchToFiber (*ucp);
+	return 0;
+}
+
+static inline void freecontext (ucontext_t *ucp) {
+	DeleteFiber (*ucp);
+}
+
 #endif
-
-char **getargv (void) {
-	return argv;
-}
-
-void setargv (char **argv_) {
-	argv = argv_;
-}

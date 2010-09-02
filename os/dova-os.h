@@ -68,6 +68,8 @@
 #include "dova-ucontext-x86.h"
 #else
 #include "dova-ucontext-posix.h"
+#else
+#include "dova-ucontext-win32.h"
 #endif
 #endif
 
