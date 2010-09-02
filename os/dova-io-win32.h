@@ -86,6 +86,28 @@ static int _dova_open (const char *pathname, int flags, unsigned int mode) {
 }
 #define open _dova_open
 
+struct _dova_stat {
+	uint32_t st_mode;
+	int64_t st_size;
+	struct timespec st_mtim;
+};
+
+static int _dova_stat (const char *path, struct _dova_stat *buf) {
+	struct stat st;
+
+	if (stat (path, &st) < 0) {
+		return -1;
+	}
+
+	buf->st_mode = st.st_mode;
+	buf->st_size = st.st_size;
+	buf->st_mtim.tv_sec = st.st_mtime;
+	buf->st_mtim.tv_nsec = 0;
+
+	return 0;
+}
+#define stat _dova_stat
+
 static inline int _dova_socket (int domain, int type, int protocol) {
 	SOCKET s;
 	WSADATA wsadata;
