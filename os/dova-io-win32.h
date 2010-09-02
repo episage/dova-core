@@ -31,6 +31,10 @@
 #define SOCK_CLOEXEC 02000000
 #define SOCK_NONBLOCK 04000
 
+enum {
+	_PC_PATH_MAX
+};
+
 #ifndef AI_ADDRCONFIG
 #define AI_ADDRCONFIG 1024
 #endif
@@ -96,6 +100,15 @@ struct itimerspec {
 	struct timespec it_interval;
 	struct timespec it_value;
 };
+
+static inline intptr_t pathconf (const char *path, int name) {
+	switch (name) {
+	case _PC_PATH_MAX:
+		return MAX_PATH;
+	}
+
+	return -1;
+}
 
 static int _dova_open (const char *pathname, int flags, unsigned int mode) {
 	return open (pathname, flags | O_BINARY, mode);
