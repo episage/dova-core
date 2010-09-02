@@ -24,6 +24,7 @@
 #define __DOVA_IO_WIN32_H_
 
 #include <io.h>
+#include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
@@ -47,6 +48,9 @@ typedef struct _dova_epoll *epoll_t;
 #define EPOLL_CLOEXEC 02000000
 #define EPOLL_NONBLOCK 04000
 
+#define TFD_CLOEXEC 02000000
+#define TFD_NONBLOCK 04000
+
 typedef union epoll_data {
 	void *ptr;
 	int fd;
@@ -65,6 +69,16 @@ struct _dova_epoll_fd {
 	int fd;
 	struct epoll_event event;
 	WSAEVENT event_handle;
+};
+
+struct timespec {
+	time_t tv_sec;
+	long tv_nsec;
+};
+
+struct itimerspec {
+	struct timespec it_interval;
+	struct timespec it_value;
 };
 
 static int _dova_open (const char *pathname, int flags, unsigned int mode) {
@@ -245,6 +259,27 @@ static inline int epoll_wait (epoll_t epfd, struct epoll_event *events, int maxe
 
 static inline void epoll_destroy (epoll_t epfd) {
 	free (epfd);
+}
+
+static inline int timerfd_create (int clockid, int flags) {
+	HANDLE h;
+
+	h = CreateWaitableTimer (NULL, TRUE, NULL);
+
+	return _open_osfhandle ((intptr_t) h, 0);
+}
+
+static inline int timerfd_settime (int fd, int flags, const struct itimerspec *new_value, struct itimerspec *old_value) {
+	LARGE_INTEGER due_time;
+
+	due_time.QuadPart = -((int64_t) new_value->it_value.tv_sec * 10000000 + new_value->it_value.tv_nsec / 100);
+
+	if (!SetWaitableTimer ((HANDLE) _get_osfhandle (fd), &due_time, 0, NULL, NULL, FALSE)) {
+		/* TODO: map error */
+		return -1;
+	}
+
+	return 0;
 }
 
 #endif
