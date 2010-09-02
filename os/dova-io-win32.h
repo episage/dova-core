@@ -36,6 +36,9 @@
 #endif
 
 #define EWOULDBLOCK EAGAIN
+#ifndef EINPROGRESS
+#define EINPROGRESS EAGAIN
+#endif
 
 struct _dova_epoll {
 	int n_fds;
