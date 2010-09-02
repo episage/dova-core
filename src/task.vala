@@ -242,13 +242,10 @@ public class Dova.Task {
 	internal Task? prev { get; set; }
 	internal Task? next { get; set; }
 	OS.ucontext_t ucontext;
-	void* stack;
 
 	internal int wait_fd;
 
 	// TODO add cancellation / termination support
-
-	const int STACK_SIZE = 1024 * 1024;
 
 	internal Task () {
 		scheduler = TaskScheduler.main;
@@ -257,8 +254,8 @@ public class Dova.Task {
 	}
 
 	~Task () {
-		if (stack != null) {
-			OS.munmap (stack, STACK_SIZE);
+		if (func != null) {
+			OS.freecontext (&ucontext);
 		}
 	}
 
@@ -286,11 +283,7 @@ public class Dova.Task {
 		result.priority = current.priority;
 
 		result.func = func;
-		result.stack = OS.mmap (null, STACK_SIZE, OS.PROT_READ | OS.PROT_WRITE, OS.MAP_PRIVATE | OS.MAP_ANONYMOUS, -1, 0);
-		OS.getcontext (&result.ucontext);
-		result.ucontext.uc_stack.ss_sp = result.stack;
-		result.ucontext.uc_stack.ss_size = STACK_SIZE;
-		OS.makecontext (&result.ucontext, (void*) task_func, 0);
+		OS.makecontext (&result.ucontext, (void*) task_func);
 		result.resume ();
 	}
 

@@ -239,13 +239,11 @@ namespace OS {
 	public const int CLOCK_MONOTONIC;
 
 	public struct ucontext_t {
-		ucontext_t* uc_link;
-		stack_t uc_stack;
 	}
 
-	public void getcontext (ucontext_t* ucp);
-	public void makecontext (ucontext_t* ucp, void* func, int argc, ...);
+	public void makecontext (ucontext_t* ucp, void* func);
 	public int swapcontext (ucontext_t* oucp, ucontext_t* ucp);
+	public void freecontext (ucontext_t* ucp);
 
 	public const int _PC_PATH_MAX;
 

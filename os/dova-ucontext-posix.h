@@ -1,4 +1,4 @@
-/* dova-os.h
+/* dova-ucontext-posix.h
  *
  * Copyright (C) 2010  Jürg Billeter
  *
@@ -20,46 +20,25 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-#ifndef __DOVA_OS_H__
-#define __DOVA_OS_H_
+#ifndef __DOVA_UCONTEXT_POSIX_H__
+#define __DOVA_UCONTEXT_POSIX_H_
 
-#include <dova-types.h>
+#include <ucontext.h>
 
-#include <assert.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <math.h>
-#include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <time.h>
+#define _DOVA_STACK_SIZE (1024 * 1024)
 
-#ifdef __GNUC__
-#include "dova-atomic-gcc.h"
-#elif defined(_MSC_VER)
-#include "dova-atomic-msc.h"
-#endif
+static inline void _dova_makecontext (ucontext_t *ucp, void (*func) (void)) {
+	getcontext (ucp);
 
-#ifndef _WIN32
-#include "dova-threads-pthread.h"
-#else
-#include "dova-threads-win32.h"
-#endif
+	ucp->uc_stack.ss_sp = mmap (NULL, _DOVA_STACK_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	ucp->uc_stack.ss_size = _DOVA_STACK_SIZE;
 
-#ifndef _WIN32
-#include "dova-io-linux.h"
-#else
-#include "dova-io-win32.h"
-#endif
+	makecontext (ucp, func, 0);
+}
+#define makecontext _dova_makecontext
 
-#ifndef _WIN32
-#include "dova-ucontext-posix.h"
-#endif
-
-char **getargv (void);
-void setargv (char **argv);
+static inline void freecontext (ucontext_t *ucp) {
+	munmap (ucp->uc_stack.ss_sp, ucp->uc_stack.ss_size);
+}
 
 #endif

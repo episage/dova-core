@@ -34,7 +34,6 @@
 #include <sys/time.h>
 #include <sys/timerfd.h>
 #include <sys/un.h>
-#include <ucontext.h>
 #include <unistd.h>
 
 typedef int epoll_t;

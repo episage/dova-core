@@ -17,4 +17,5 @@ libdova_os_la_SOURCES = \
 	dova-os.h \
 	dova-threads-pthread.h \
 	dova-threads-win32.h \
+	dova-ucontext-posix.h \
 	$(NULL)
