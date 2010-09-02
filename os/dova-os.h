@@ -56,7 +56,13 @@
 #endif
 
 #ifndef _WIN32
+#if defined(__x86_64__)
+#include "dova-ucontext-x86_64.h"
+#elif defined(__i386__)
+#include "dova-ucontext-x86.h"
+#else
 #include "dova-ucontext-posix.h"
+#endif
 #endif
 
 char **getargv (void);
