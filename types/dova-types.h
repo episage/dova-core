@@ -37,9 +37,10 @@ typedef unsigned char _Bool;
 #include <stdbool.h>
 #endif
 
-#ifdef _MSC_VER
-typedef double _Decimal128;
-#endif
+#if !defined(_MSC_VER) && !defined(_WIN32)
 #define decimal128 _Decimal128
+#else
+#define decimal128 double
+#endif
 
 #endif
