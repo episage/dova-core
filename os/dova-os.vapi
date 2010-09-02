@@ -158,6 +158,7 @@ namespace OS {
 	public int socket (int domain, int type, int protocol);
 	public const int AF_INET;
 	public const int AF_UNIX;
+	public const int SOCK_NONBLOCK;
 	public const int SOCK_STREAM;
 
 	[CCode (cname = "struct sockaddr")]

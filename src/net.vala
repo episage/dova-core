@@ -54,11 +54,7 @@ public class Dova.TcpClient {
 
 		OS.addrinfo* addr = addrs;
 		while (addr != null) {
-			int fd = OS.socket (addr.ai_family, addr.ai_socktype, addr.ai_protocol);
-
-			// no blocking
-			int flags = OS.fcntl (fd, OS.F_GETFL, 0);
-			OS.fcntl (fd, OS.F_SETFL, flags | OS.O_NONBLOCK);
+			int fd = OS.socket (addr.ai_family, addr.ai_socktype | OS.SOCK_NONBLOCK, addr.ai_protocol);
 
 			int res = OS.connect (fd, addr.ai_addr, addr.ai_addrlen);
 
@@ -94,11 +90,7 @@ public class Dova.TcpServer {
 	public TcpServerFunc handler { get; set; }
 
 	public void add_local_endpoint (TcpEndpoint endpoint) {
-		fd = OS.socket (OS.AF_INET, OS.SOCK_STREAM, OS.IPPROTO_TCP);
-
-		// no blocking
-		int flags = OS.fcntl (fd, OS.F_GETFL, 0);
-		OS.fcntl (fd, OS.F_SETFL, flags | OS.O_NONBLOCK);
+		fd = OS.socket (OS.AF_INET, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, OS.IPPROTO_TCP);
 
 		var addr = OS.sockaddr_in ();
 		addr.sin_family = OS.AF_INET;
@@ -200,11 +192,7 @@ public class Dova.UnixEndpoint {
 
 public class Dova.UnixClient {
 	public UnixStream connect (UnixEndpoint endpoint) {
-		int fd = OS.socket (OS.AF_UNIX, OS.SOCK_STREAM, 0);
-
-		// no blocking
-		int flags = OS.fcntl (fd, OS.F_GETFL, 0);
-		OS.fcntl (fd, OS.F_SETFL, flags | OS.O_NONBLOCK);
+		int fd = OS.socket (OS.AF_UNIX, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, 0);
 
 		var addr = OS.sockaddr_un ();
 		addr.sun_family = OS.AF_UNIX;
