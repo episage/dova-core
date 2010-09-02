@@ -31,6 +31,10 @@
 #define SOCK_CLOEXEC 02000000
 #define SOCK_NONBLOCK 04000
 
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG 1024
+#endif
+
 struct _dova_epoll {
 	int n_fds;
 	struct _dova_epoll_fd *fds;
