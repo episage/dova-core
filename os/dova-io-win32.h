@@ -35,6 +35,8 @@
 #define AI_ADDRCONFIG 1024
 #endif
 
+#define EWOULDBLOCK EAGAIN
+
 struct _dova_epoll {
 	int n_fds;
 	struct _dova_epoll_fd *fds;
