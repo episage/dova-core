@@ -130,7 +130,7 @@ namespace OS {
 	public int strncmp (void* s1, void* s2, uintptr n);
 
 	public int fcntl (int fd, int cmd, ...);
-	public int open (char* path, int oflag, int mode);
+	public int open (byte* path, int oflag, int mode);
 	public int close (int fd);
 	public int dup (int oldfd);
 	public intptr read (int fd, void* buf, uintptr count);
