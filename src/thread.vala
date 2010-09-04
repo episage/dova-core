@@ -35,10 +35,10 @@ public class Dova.Thread {
 	}
 
 	public static void sleep (Time time) {
-		var ts = OS.timespec ();
-		ts.tv_sec = time.ticks / 10000000;
-		ts.tv_nsec = time.ticks % 10000000 * 100;
-		OS.nanosleep (&ts, null);
+		var xt = OS.xtime ();
+		xt.sec = time.ticks / 10000000;
+		xt.nsec = time.ticks % 10000000 * 100;
+		OS.thrd_sleep (&xt);
 	}
 
 	public static void yield () {

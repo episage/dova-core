@@ -87,9 +87,15 @@ namespace OS {
 	public struct mtx_t {
 	}
 
+	public struct xtime {
+		intptr sec;
+		intptr nsec;
+	}
+
 	public int thrd_create (thrd_t* thread, void* start_routine, void* arg);
 	public int thrd_yield ();
 	public int thrd_join (thrd_t thr, int* res);
+	public void thrd_sleep (xtime* xt);
 	public void thrd_exit (int res);
 	public int mtx_init (mtx_t* mtx, int type);
 	public void mtx_destroy (mtx_t* mtx);
@@ -219,8 +225,6 @@ namespace OS {
 		intptr tv_sec;
 		intptr tv_nsec;
 	}
-
-	public int nanosleep (timespec* req, timespec* rem);
 
 	[CCode (cname = "struct tm")]
 	public struct tm {
