@@ -287,7 +287,7 @@ public struct Dova.DateTime {
 		this.utc = utc;
 		var ltm = OS.tm ();
 		long seconds = utc.total_seconds;
-		intptr unix_time = seconds - UNIX_SECONDS;
+		OS.time_t unix_time = (OS.time_t) (seconds - UNIX_SECONDS);
 		OS.localtime_r (&unix_time, &ltm);
 		DateTime local = DateTime (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), Time (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Time ());
 		this.offset = Time (0, 0, (int) (local.utc.total_seconds - seconds));

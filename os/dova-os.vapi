@@ -226,6 +226,9 @@ namespace OS {
 		intptr tv_nsec;
 	}
 
+	public struct time_t {
+	}
+
 	[CCode (cname = "struct tm")]
 	public struct tm {
 		public int tm_sec;
@@ -238,7 +241,7 @@ namespace OS {
 		public int tm_yday;
 		public int tm_isdst;
 	}
-	public tm* localtime_r (intptr* timep, tm* res);
+	public tm* localtime_r (time_t* timep, tm* res);
 	public int clock_gettime (int clk_id, timespec* tp);
 
 	public const int CLOCK_MONOTONIC;
