@@ -101,7 +101,7 @@ public class string : Dova.Value {
 		}
 
 		result = create (length);
-		OS.memcpy (result.data, ((Array<byte>) b).data + offset, length);
+		OS.memcpy (result.data, (byte*) ((Array<byte>) b).data + offset, length);
 	}
 
 	public static string create_from_cstring (byte* cstring) {

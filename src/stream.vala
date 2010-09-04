@@ -78,7 +78,7 @@ public class Dova.MemoryStream : Stream {
 		if (length > this.length) {
 			length = this.length;
 		}
-		OS.memcpy (b.data + offset, this.buffer.data + this.offset, length);
+		OS.memcpy ((byte*) b.data + offset, (byte*) this.buffer.data + this.offset, length);
 		this.offset += length;
 		this.length -= length;
 		result = length;
@@ -95,7 +95,7 @@ public class Dova.MemoryStream : Stream {
 		if (length == 0) {
 			// no space, throw error
 		}
-		OS.memcpy (this.buffer.data + this.offset, b.data + offset, length);
+		OS.memcpy ((byte*) this.buffer.data + this.offset, (byte*) b.data + offset, length);
 		this.offset += length;
 		this.length -= length;
 		result = length;
