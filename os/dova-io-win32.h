@@ -24,6 +24,7 @@
 #define __DOVA_IO_WIN32_H_
 
 #include <io.h>
+#include <stdio.h>
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -34,6 +35,8 @@
 enum {
 	_PC_PATH_MAX
 };
+
+#define snprintf _snprintf
 
 #define S_ISDIR(mode) (((mode) & S_IFMT) == (S_IFDIR))
 #define S_ISREG(mode) (((mode) & S_IFMT) == (S_IFREG))
