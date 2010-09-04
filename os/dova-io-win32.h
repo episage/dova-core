@@ -110,8 +110,35 @@ static inline intptr_t pathconf (const char *path, int name) {
 	return -1;
 }
 
-static int _dova_open (const char *pathname, int flags, unsigned int mode) {
-	return open (pathname, flags | O_BINARY, mode);
+static wchar_t *_dova_u8_to_u16 (const char *u8) {
+	int len;
+	wchar_t *u16;
+
+	len = MultiByteToWideChar (CP_UTF8, MB_ERR_INVALID_CHARS, u8, -1, NULL, 0);
+	if (len == 0) {
+		return NULL;
+	}
+
+	u16 = malloc (len * sizeof (wchar_t));
+
+	len = MultiByteToWideChar (CP_UTF8, MB_ERR_INVALID_CHARS, u8, -1, u16, len);
+	if (len == 0) {
+		free (u16);
+		return NULL;
+	}
+
+	return u16;
+}
+
+static int _dova_open (const char *path, int flags, unsigned int mode) {
+	wchar_t *wpath;
+	int ret;
+
+	wpath = _dova_u8_to_u16 (path);
+	ret = _wopen (wpath, flags | O_BINARY, mode);
+	free (wpath);
+
+	return ret;
 }
 #define open _dova_open
 
@@ -123,10 +150,15 @@ struct _dova_stat {
 
 static int _dova_stat (const char *path, struct _dova_stat *buf) {
 	struct stat st;
+	wchar_t *wpath;
+	int ret;
 
-	if (stat (path, &st) < 0) {
+	wpath = _dova_u8_to_u16 (path);
+	if (_wstat (path, &st) < 0) {
+		free (wpath);
 		return -1;
 	}
+	free (wpath);
 
 	buf->st_mode = st.st_mode;
 	buf->st_size = st.st_size;
