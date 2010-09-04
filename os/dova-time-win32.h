@@ -85,4 +85,11 @@ static inline int gettimeofday (struct timeval *tv, struct timezone *tz) {
 	return 0;
 }
 
+static inline struct tm *localtime_r (const time_t *timep, struct tm *result) {
+	/* FIXME: Not thread-safe */
+
+	memcpy (result, localtime (timep), sizeof (struct tm));
+	return result;
+}
+
 #endif
