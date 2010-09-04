@@ -35,6 +35,10 @@ enum {
 	_PC_PATH_MAX
 };
 
+#define S_ISDIR(mode) (((mode) & S_IFMT) == (S_IFDIR))
+#define S_ISREG(mode) (((mode) & S_IFMT) == (S_IFREG))
+#define S_ISLNK(mode) false
+
 #ifndef AI_ADDRCONFIG
 #define AI_ADDRCONFIG 1024
 #endif
