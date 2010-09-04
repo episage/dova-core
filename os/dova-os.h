@@ -65,6 +65,10 @@
 #include "dova-io-win32.h"
 #endif
 
+#ifdef _WIN32
+#include "dova-dlfcn-win32.h"
+#endif
+
 #ifndef _WIN32
 #if defined(__x86_64__)
 #include "dova-ucontext-x86_64.h"
