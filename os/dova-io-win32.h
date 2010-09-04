@@ -91,11 +91,6 @@ struct sockaddr_un {
 	char sun_path[UNIX_PATH_MAX];
 };
 
-struct timespec {
-	time_t tv_sec;
-	long tv_nsec;
-};
-
 struct itimerspec {
 	struct timespec it_interval;
 	struct timespec it_value;

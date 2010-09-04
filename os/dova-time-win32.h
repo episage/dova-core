@@ -34,10 +34,30 @@
 /* total seconds since epoch until start of unix time (january 1, 1970 00:00 UTC) */
 #define _DOVA_UNIX_SECONDS 11644473600
 
+struct timespec {
+	time_t tv_sec;
+	long tv_nsec;
+};
+
 struct timezone {
 	int tz_minuteswest; /* minutes W of Greenwich */
 	int tz_dsttime;     /* type of DST correction */
 };
+
+static int clock_gettime (int clockid, struct timespec *tp) {
+	FILETIME ft;
+	ULARGE_INTEGER t64;
+
+	GetSystemTimeAsFileTime (&ft);
+
+	t64.LowPart = ft.dwLowDateTime;
+	t64.HighPart = ft.dwHighDateTime;
+
+	tp->tv_sec = t64.QuadPart / 10000000 - _DOVA_UNIX_SECONDS;
+	tp->tv_nsec = t64.QuadPart % 10000000 * 100;
+
+	return 0;
+}
 
 static inline int gettimeofday (struct timeval *tv, struct timezone *tz) {
 	if (tv) {
