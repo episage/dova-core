@@ -37,6 +37,10 @@
 #include <sys/types.h>
 #include <time.h>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#endif
+
 #ifdef __GNUC__
 #include "dova-atomic-gcc.h"
 #elif defined(_MSC_VER)
