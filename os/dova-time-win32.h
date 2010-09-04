@@ -26,6 +26,7 @@
 #define __DOVA_TIME_WIN32_H_
 
 #include <windows.h>
+#include <winsock2.h>
 
 #define CLOCK_REALTIME 0
 #define CLOCK_MONOTONIC 1
