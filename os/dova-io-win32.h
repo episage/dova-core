@@ -364,4 +364,9 @@ static inline int timerfd_settime (int fd, int flags, const struct itimerspec *n
 	return 0;
 }
 
+static inline int getuid (void) {
+	/* TODO */
+	return 0;
+}
+
 #endif
