@@ -35,6 +35,7 @@ public class Dova.TcpEndpoint /* : Dova.Value */ {
 
 public class Dova.TcpClient {
 	// TODO add proxy and tls support
+	// support specifying local ip/port
 
 	public TcpClient () {
 	}
