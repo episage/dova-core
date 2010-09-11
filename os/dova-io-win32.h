@@ -179,7 +179,7 @@ static inline int _dova_socket (int domain, int type, int protocol) {
 		return -1;
 	}
 
-	s = socket (domain, type, protocol);
+	s = socket (domain, type & ~SOCK_NONBLOCK, protocol);
 	if (s == INVALID_SOCKET) {
 		return -1;
 	}
@@ -205,6 +205,12 @@ static inline int _dova_bind (int sockfd, const struct sockaddr *addr, socklen_t
 
 static inline int _dova_connect (int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	if (connect (_get_osfhandle (sockfd), addr, addrlen) == SOCKET_ERROR) {
+		int err = WSAGetLastError ();
+		switch (err) {
+		case WSAEWOULDBLOCK:
+			errno = EINPROGRESS;
+			break;
+		}
 		return -1;
 	}
 
