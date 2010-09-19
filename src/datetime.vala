@@ -168,7 +168,7 @@ public struct Dova.Date {
 
 	public DayOfWeek day_of_week {
 		get {
-			return (DayOfWeek) (days % 7);
+			return (DayOfWeek) (days % 7 + 1);
 		}
 	}
 
@@ -301,13 +301,13 @@ public struct Dova.DateTime {
 }
 
 public enum Dova.DayOfWeek {
-	MONDAY,
-	TUESDAY,
-	WEDNESDAY,
-	THURSDAY,
-	FRIDAY,
-	SATURDAY,
-	SUNDAY;
+	MONDAY = 1,
+	TUESDAY = 2,
+	WEDNESDAY = 3,
+	THURSDAY = 4,
+	FRIDAY = 5,
+	SATURDAY = 6,
+	SUNDAY = 7;
 
 	public string to_string () {
 		switch (this) {
