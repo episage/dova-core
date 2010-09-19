@@ -27,9 +27,6 @@ public struct Dova.Time {
 	// 100 nanosecond ticks
 	public long ticks;
 
-	// total seconds since epoch until start of unix time (january 1, 1970 00:00 UTC)
-	const long UNIX_SECONDS = 62135596800;
-
 	public Time (int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
 		ticks = (((((long) hours * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
 	}
@@ -40,22 +37,6 @@ public struct Dova.Time {
 
 	public Time.with_ticks (long ticks) {
 		this.ticks = ticks;
-	}
-
-	public DateTime local {
-		get {
-			var ltm = OS.tm ();
-			long seconds = ticks / 10000000;
-			intptr unix_time = seconds - UNIX_SECONDS;
-			OS.localtime_r (&unix_time, &ltm);
-			DateTime local = DateTime.dt (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), Time (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Time ());
-			Time offset = Time.with_ticks ((local.utc.ticks / 10000000 - seconds) * 10000000);
-			return DateTime (this, offset);
-		}
-	}
-
-	public DateTime utc {
-		get { return DateTime (this, Time ()); }
 	}
 
 	public long total_milliseconds {
@@ -251,20 +232,46 @@ public struct Dova.DateTime {
 		get { return Time.with_ticks ((utc.ticks + offset.ticks) % ((long) 24 * 3600 * 10000000)); }
 	}
 
-	public DateTime (Time utc, Time offset) {
+	public DateTime.from_utc (Time utc, Time offset) {
 		this.utc = utc;
 		this.offset = offset;
 	}
 
 	public DateTime.now () {
-		var local = Clock.UTC.get_time ().local;
-		this.utc = local.utc;
-		this.offset = local.offset;
+		var result = DateTime.local_from_utc (Clock.UTC.get_time ());
+		this.utc = result.utc;
+		this.offset = result.offset;
 	}
 
-	public DateTime.dt (Date date, Time time, Time offset) {
+	// total seconds since epoch until start of unix time (january 1, 1970 00:00 UTC)
+	const long UNIX_SECONDS = 62135596800;
+
+	public DateTime.local_from_utc (Time utc) {
+		this.utc = utc;
+		var ltm = OS.tm ();
+		long seconds = utc.total_seconds;
+		intptr unix_time = seconds - UNIX_SECONDS;
+		OS.localtime_r (&unix_time, &ltm);
+		DateTime local = DateTime (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), Time (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Time ());
+		this.offset = Time (0, 0, (int) (local.utc.total_seconds - seconds));
+	}
+
+	// create DateTime from local date and time and UTC offset
+	public DateTime (Date date, Time time, Time offset) {
 		this.utc = Time.with_ticks ((long) date.days * 24 * 3600 * 10000000 + time.ticks - offset.ticks);
 		this.offset = offset;
+	}
+
+	public DateTime to_local () {
+		return DateTime.local_from_utc (utc);
+	}
+
+	public DateTime to_utc () {
+		return DateTime.from_utc (utc, Time ());
+	}
+
+	public DateTime to_offset (Time offset) {
+		return DateTime.from_utc (utc, offset);
 	}
 
 	public static DateTime parse (string str) {
