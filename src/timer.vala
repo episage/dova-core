@@ -22,7 +22,7 @@
 
 public class Dova.Timer {
 	public bool running { get; private set; }
-	public Duration elapsed { get; private set; }
+	public Time elapsed { get; private set; }
 	OS.timespec begin;
 
 	public Timer () {
@@ -45,12 +45,12 @@ public class Dova.Timer {
 			end.tv_nsec += 1000000000;
 		}
 		long diff = (long) end.tv_sec * 10000000 + (long) end.tv_nsec / 100;
-		elapsed = Duration.with_ticks (elapsed.ticks + diff);
+		elapsed = Time.with_ticks (elapsed.ticks + diff);
 		running = false;
 	}
 
 	public void reset () {
 		assert (!running);
-		elapsed = Duration ();
+		elapsed = Time ();
 	}
 }

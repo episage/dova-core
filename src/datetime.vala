@@ -21,15 +21,18 @@
  */
 
 /**
- * Point in time.
+ * Time measured in 100 nanosecond ticks.
  */
 public struct Dova.Time {
-	// 100 nanosecond ticks since epoch (January 1, 0001 00:00 UTC)
-	// uses proleptic Gregorian calendar for dates before 1582
+	// 100 nanosecond ticks
 	public long ticks;
 
 	// total seconds since epoch until start of unix time (january 1, 1970 00:00 UTC)
 	const long UNIX_SECONDS = 62135596800;
+
+	public Time (int days = 0, int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
+		ticks = ((((((long) days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
+	}
 
 	public Time.now () {
 		OS.timeval tv;
@@ -41,24 +44,36 @@ public struct Dova.Time {
 		this.ticks = ticks;
 	}
 
-	public new string to_string () {
-		return utc.to_string ();
-	}
-
 	public DateTime local {
 		get {
 			var ltm = OS.tm ();
 			long seconds = ticks / 10000000;
 			intptr unix_time = seconds - UNIX_SECONDS;
 			OS.localtime_r (&unix_time, &ltm);
-			DateTime local = DateTime.dt (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), TimeOfDay (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Duration ());
-			Duration offset = Duration.with_ticks ((local.time.ticks / 10000000 - seconds) * 10000000);
+			DateTime local = DateTime.dt (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), TimeOfDay (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Time ());
+			Time offset = Time.with_ticks ((local.time.ticks / 10000000 - seconds) * 10000000);
 			return DateTime (this, offset);
 		}
 	}
 
 	public DateTime utc {
-		get { return DateTime (this, Duration ()); }
+		get { return DateTime (this, Time ()); }
+	}
+
+	public long total_milliseconds {
+		get { return ticks / 10000; }
+	}
+
+	public long total_seconds {
+		get { return ticks / 10000000; }
+	}
+
+	public string to_string () {
+		string ms = (total_milliseconds % 1000).to_string ();
+		while (ms.length < 3) {
+			ms = "0" + ms;
+		}
+		return "$(total_seconds).$(ms) s";
 	}
 }
 
@@ -180,8 +195,11 @@ public struct Dova.Date {
 }
 
 public struct Dova.DateTime {
+	// time since epoch (January 1, 0001 00:00 UTC)
+	// uses proleptic Gregorian calendar for dates before 1582
 	public Time time;
-	public Duration offset;
+
+	public Time offset;
 
 	public int year {
 		get { return date.year; }
@@ -219,7 +237,7 @@ public struct Dova.DateTime {
 		get { return TimeOfDay.with_ticks ((time.ticks + offset.ticks) % ((long) 24 * 3600 * 10000000)); }
 	}
 
-	public DateTime (Time time, Duration offset) {
+	public DateTime (Time time, Time offset) {
 		this.time = time;
 		this.offset = offset;
 	}
@@ -230,7 +248,7 @@ public struct Dova.DateTime {
 		this.offset = local.offset;
 	}
 
-	public DateTime.dt (Date date, TimeOfDay time_of_day, Duration offset) {
+	public DateTime.dt (Date date, TimeOfDay time_of_day, Time offset) {
 		this.time = Time.with_ticks ((long) date.days * 24 * 3600 * 10000000 + time_of_day.ticks - offset.ticks);
 		this.offset = offset;
 	}
@@ -295,34 +313,6 @@ public enum Dova.DayOfWeek {
 			return "Sunday";
 		}
 		return "(invalid)";
-	}
-}
-
-public struct Dova.Duration {
-	public long ticks;
-
-	public long total_milliseconds {
-		get { return ticks / 10000; }
-	}
-
-	public long total_seconds {
-		get { return ticks / 10000000; }
-	}
-
-	public Duration (int days = 0, int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
-		ticks = ((((((long) days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
-	}
-
-	internal Duration.with_ticks (long ticks) {
-		this.ticks = ticks;
-	}
-
-	public string to_string () {
-		string ms = (total_milliseconds % 1000).to_string ();
-		while (ms.length < 3) {
-			ms = "0" + ms;
-		}
-		return "PT$(total_seconds).$(ms)S";
 	}
 }
 

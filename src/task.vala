@@ -193,12 +193,12 @@ class Dova.TaskScheduler {
 		sched ();
 	}
 
-	internal void sleep (Task task, Duration duration) {
+	internal void sleep (Task task, Time time) {
 		assert (true && task.state == TaskState.RUNNING);
 
 		var its = OS.itimerspec ();
-		its.it_value.tv_nsec = duration.ticks % 10000000 * 100;
-		its.it_value.tv_sec = duration.total_seconds;
+		its.it_value.tv_nsec = time.ticks % 10000000 * 100;
+		its.it_value.tv_sec = time.total_seconds;
 
 		int tfd = OS.timerfd_create (OS.CLOCK_MONOTONIC, OS.TFD_CLOEXEC);
 		OS.timerfd_settime (tfd, 0, &its, null);
@@ -314,8 +314,8 @@ public class Dova.Task {
 		current.scheduler.yield (current);
 	}
 
-	public static void sleep (Duration duration) {
-		current.scheduler.sleep (current, duration);
+	public static void sleep (Time time) {
+		current.scheduler.sleep (current, time);
 	}
 
 	public void resume () {

@@ -34,10 +34,10 @@ public class Dova.Thread {
 		OS.thrd_create (&native, (void*) start_routine, (void*) func);
 	}
 
-	public static void sleep (Duration duration) {
+	public static void sleep (Time time) {
 		var ts = OS.timespec ();
-		ts.tv_sec = duration.ticks / 10000000;
-		ts.tv_nsec = duration.ticks % 10000000 * 100;
+		ts.tv_sec = time.ticks / 10000000;
+		ts.tv_nsec = time.ticks % 10000000 * 100;
 		OS.nanosleep (&ts, null);
 	}
 
