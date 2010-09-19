@@ -54,8 +54,8 @@ public struct Dova.Time {
 			long seconds = ticks / 10000000;
 			intptr unix_time = seconds - UNIX_SECONDS;
 			OS.localtime_r (&unix_time, &ltm);
-			DateTime local = DateTime.dt (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), TimeOfDay (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Time ());
-			Time offset = Time.with_ticks ((local.time.ticks / 10000000 - seconds) * 10000000);
+			DateTime local = DateTime.dt (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), Time (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Time ());
+			Time offset = Time.with_ticks ((local.utc.ticks / 10000000 - seconds) * 10000000);
 			return DateTime (this, offset);
 		}
 	}
@@ -72,8 +72,24 @@ public struct Dova.Time {
 		get { return ticks / 10000000; }
 	}
 
+	public int hours {
+		get { return (int) (ticks / 10000000 / 3600); }
+	}
+
+	public int minutes {
+		get { return (int) (ticks / 10000000 / 60 % 60); }
+	}
+
+	public int seconds {
+		get { return (int) (ticks / 10000000 % 60); }
+	}
+
+	public int milliseconds {
+		get { return (int) (ticks / 10000 % 1000); }
+	}
+
 	public string to_string () {
-		string ms = (total_milliseconds % 1000).to_string ();
+		string ms = milliseconds.to_string ();
 		while (ms.length < 3) {
 			ms = "0" + ms;
 		}
@@ -201,7 +217,7 @@ public struct Dova.Date {
 public struct Dova.DateTime {
 	// time since epoch (January 1, 0001 00:00 UTC)
 	// uses proleptic Gregorian calendar for dates before 1582
-	public Time time;
+	public Time utc;
 
 	public Time offset;
 
@@ -218,42 +234,42 @@ public struct Dova.DateTime {
 	}
 
 	public Date date {
-		get { return Date.with_days ((int) ((time.ticks + offset.ticks) / 10000000 / 3600 / 24)); }
+		get { return Date.with_days ((int) ((utc.ticks + offset.ticks) / 10000000 / 3600 / 24)); }
 	}
 
 	public int hour {
-		get { return time_of_day.hour; }
+		get { return time.hours; }
 	}
 
 	public int minute {
-		get { return time_of_day.minute; }
+		get { return time.minutes; }
 	}
 
 	public int second {
-		get { return time_of_day.second; }
+		get { return time.seconds; }
 	}
 
 	public int millisecond {
-		get { return time_of_day.millisecond; }
+		get { return time.milliseconds; }
 	}
 
-	public TimeOfDay time_of_day {
-		get { return TimeOfDay.with_ticks ((time.ticks + offset.ticks) % ((long) 24 * 3600 * 10000000)); }
+	public Time time {
+		get { return Time.with_ticks ((utc.ticks + offset.ticks) % ((long) 24 * 3600 * 10000000)); }
 	}
 
-	public DateTime (Time time, Time offset) {
-		this.time = time;
+	public DateTime (Time utc, Time offset) {
+		this.utc = utc;
 		this.offset = offset;
 	}
 
 	public DateTime.now () {
 		var local = Time.now ().local;
-		this.time = local.time;
+		this.utc = local.utc;
 		this.offset = local.offset;
 	}
 
-	public DateTime.dt (Date date, TimeOfDay time_of_day, Time offset) {
-		this.time = Time.with_ticks ((long) date.days * 24 * 3600 * 10000000 + time_of_day.ticks - offset.ticks);
+	public DateTime.dt (Date date, Time time, Time offset) {
+		this.utc = Time.with_ticks ((long) date.days * 24 * 3600 * 10000000 + time.ticks - offset.ticks);
 		this.offset = offset;
 	}
 
@@ -273,7 +289,7 @@ public struct Dova.DateTime {
 	}
 
 	public string to_string () {
-		result = date.to_string () + "T" + time_of_day.to_string ();
+		result = date.to_string () + "T" + format_number (hour, 2) + ":" + format_number (minute, 2) + ":" + format_number (second, 2);
 		int offset = (int) (offset.ticks / 10000000 / 60);
 		if (offset == 0) {
 			result += "Z";
@@ -317,52 +333,5 @@ public enum Dova.DayOfWeek {
 			return "Sunday";
 		}
 		return "(invalid)";
-	}
-}
-
-/**
- * Time of day.
- */
-public struct Dova.TimeOfDay {
-	// 100 nanosecond ticks since 00:00
-	public long ticks;
-
-	public int hour {
-		get { return (int) (ticks / 10000000 / 3600); }
-	}
-
-	public int minute {
-		get { return (int) (ticks / 10000000 / 60 % 60); }
-	}
-
-	public int second {
-		get { return (int) (ticks / 10000000 % 60); }
-	}
-
-	public int millisecond {
-		get { return (int) (ticks / 10000 % 1000); }
-	}
-
-	public TimeOfDay (int hour, int minute, int second, int millisecond = 0) {
-		int minutes = hour * 60 + minute;
-		int seconds = minutes * 60 + second;
-		int milliseconds = seconds * 1000 + millisecond;
-		ticks = (long) milliseconds * 10000;
-	}
-
-	internal TimeOfDay.with_ticks (long ticks) {
-		this.ticks = ticks;
-	}
-
-	static string format_number (int number, int digits) {
-		result = number.to_string ();
-		while (result.length < digits) {
-			result = "0" + result;
-		}
-		return;
-	}
-
-	public new string to_string () {
-		return format_number (hour, 2) + ":" + format_number (minute, 2) + ":" + format_number (second, 2);
 	}
 }
