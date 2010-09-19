@@ -147,6 +147,43 @@ public struct Dova.Date {
 		}
 	}
 
+	int weeks {
+		get {
+			return days / 7;
+		}
+	}
+
+	void get_week_date (out int year, out int week) {
+		// thursday of the same week defines ISO week-numbering year
+		var thursday = Date.with_days (weeks * 7 + 3);
+		year = thursday.year;
+
+		var january1 = Date (year, 1, 1);
+		if (january1.days % 7 <= 3 /* thursday */) {
+			// january 1 is in week 1
+			week = (weeks - january1.weeks) + 1;
+		} else {
+			// january 1 is in the preceding ISO week-numbering year
+			week = weeks - january1.weeks;
+		}
+	}
+
+	public int week_year {
+		get {
+			int year, week;
+			get_week_date (out year, out week);
+			return year;
+		}
+	}
+
+	public int week {
+		get {
+			int year, week;
+			get_week_date (out year, out week);
+			return week;
+		}
+	}
+
 	public DayOfWeek day_of_week {
 		get {
 			return (DayOfWeek) (days % 7 + 1);
