@@ -30,7 +30,11 @@ public struct Dova.Time {
 	// total seconds since epoch until start of unix time (january 1, 1970 00:00 UTC)
 	const long UNIX_SECONDS = 62135596800;
 
-	public Time (int days = 0, int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
+	public Time (int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
+		ticks = (((((long) hours * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
+	}
+
+	public Time.days (int days, int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
 		ticks = ((((((long) days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
 	}
 
