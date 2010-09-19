@@ -38,12 +38,6 @@ public struct Dova.Time {
 		ticks = ((((((long) days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
 	}
 
-	public Time.now () {
-		OS.timeval tv;
-		OS.gettimeofday (out tv, null);
-		ticks = ((UNIX_SECONDS + tv.tv_sec) * 10000000 + tv.tv_usec * 10);
-	}
-
 	public Time.with_ticks (long ticks) {
 		this.ticks = ticks;
 	}
@@ -263,7 +257,7 @@ public struct Dova.DateTime {
 	}
 
 	public DateTime.now () {
-		var local = Time.now ().local;
+		var local = Clock.UTC.get_time ().local;
 		this.utc = local.utc;
 		this.offset = local.offset;
 	}

@@ -51,7 +51,7 @@ public class Dova.Random {
 			}
 		}
 		if (fd < 0) {
-			seed = (int) (Time.now ().ticks % 0x100000000);
+			seed = (int) (Clock.MONOTONIC.get_time ().ticks % 0x100000000);
 		}
 		this.with_seed (seed);
 	}
