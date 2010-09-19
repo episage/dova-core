@@ -23,29 +23,22 @@
 public class Dova.Timer {
 	public bool running { get; private set; }
 	public Time elapsed { get; private set; }
-	OS.timespec begin;
+	Time begin;
 
 	public Timer () {
 	}
 
 	public void start () {
 		assert (!running);
-		OS.clock_gettime (OS.CLOCK_MONOTONIC, &begin);
+		begin = Clock.MONOTONIC.get_time ();
 		running = true;
 	}
 
 	public void stop () {
 		assert (running);
-		var end = OS.timespec ();
-		OS.clock_gettime (OS.CLOCK_MONOTONIC, &end);
-		end.tv_sec -= begin.tv_sec;
-		end.tv_nsec -= begin.tv_nsec;
-		if (end.tv_nsec < 0) {
-			end.tv_sec--;
-			end.tv_nsec += 1000000000;
-		}
-		long diff = (long) end.tv_sec * 10000000 + (long) end.tv_nsec / 100;
-		elapsed = Time.with_ticks (elapsed.ticks + diff);
+		var end = Clock.MONOTONIC.get_time ();
+		Time diff = Time.with_ticks (end.ticks - begin.ticks);
+		elapsed = Time.with_ticks (elapsed.ticks + diff.ticks);
 		running = false;
 	}
 
