@@ -335,3 +335,27 @@ public enum Dova.DayOfWeek {
 		return "(invalid)";
 	}
 }
+
+public enum Dova.Clock {
+	UTC,
+	MONOTONIC;
+
+	// total seconds since epoch until start of unix time (january 1, 1970 00:00 UTC)
+	const long UNIX_SECONDS = 62135596800;
+
+	public Time get_time () {
+		switch (this) {
+		case UTC:
+			OS.timeval tv;
+			OS.gettimeofday (out tv, null);
+			return Time.with_ticks ((UNIX_SECONDS + tv.tv_sec) * 10000000 + tv.tv_usec * 10);
+		case MONOTONIC:
+			var ts = OS.timespec ();
+			OS.clock_gettime (OS.CLOCK_MONOTONIC, &ts);
+			return Time.with_ticks ((long) ts.tv_sec * 10000000 + (long) ts.tv_nsec / 100);
+		default:
+			// throw error
+			return Time ();
+		}
+	}
+}
