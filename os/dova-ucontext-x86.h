@@ -31,6 +31,11 @@ typedef void **_dova_ucontext_t;
 static inline void _dova_makecontext (ucontext_t *ucp, void (*func) (void)) {
 	void **stack;
 	stack = mmap (NULL, _DOVA_STACK_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0) + _DOVA_STACK_SIZE;
+
+	/* return address for func, must never be called, however,
+	   space must be reserved to satisfy alignment requirements of SSE */
+	*(--stack) = NULL;
+
 	/* return address of swapcontext is func */
 	*(--stack) = func;
 	/* ebp */
