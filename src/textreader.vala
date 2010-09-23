@@ -44,11 +44,16 @@ public class Dova.TextReader : Object {
 		result = "";
 		byte[] buffer = new byte[1];
 		while (this.stream.read (buffer, 0, 1) > 0) {
-			if (*((byte*) ((Array<byte>) buffer).data) == '\n') {
+			if (buffer[0] == '\r') {
+				if (this.stream.read (buffer, 0, 1) == 0) {
+					return;
+				}
+			}
+			if (buffer[0] == '\n') {
 				break;
 			}
 			string tmp = string.create (1);
-			((byte*) tmp.data)[0] = *((byte*) ((Array<byte>) buffer).data);
+			((byte*) tmp.data)[0] = buffer[0];
 			result = ((!) result) + tmp;
 		}
 		return;
