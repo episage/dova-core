@@ -33,17 +33,17 @@ static inline void _dova_makecontext (ucontext_t *ucp, void (*func) (void)) {
 	stack = mmap (NULL, _DOVA_STACK_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0) + _DOVA_STACK_SIZE;
 	/* return address of swapcontext is func */
 	*(--stack) = func;
-	/* r15 */
-	*(--stack) = NULL;
-	/* r14 */
-	*(--stack) = NULL;
-	/* r13 */
-	*(--stack) = NULL;
-	/* r12 */
+	/* rbp */
 	*(--stack) = NULL;
 	/* rbx */
 	*(--stack) = NULL;
-	/* rbp */
+	/* r12 */
+	*(--stack) = NULL;
+	/* r13 */
+	*(--stack) = NULL;
+	/* r14 */
+	*(--stack) = NULL;
+	/* r15 */
 	*(--stack) = NULL;
 	*ucp = stack;
 }
