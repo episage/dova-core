@@ -95,6 +95,9 @@ public class Dova.TcpServer {
 	public void add_local_endpoint (TcpEndpoint endpoint) {
 		int fd = OS.socket (OS.AF_INET, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, OS.IPPROTO_TCP);
 
+		int value = 1;
+		OS.setsockopt (fd, OS.SOL_SOCKET, OS.SO_REUSEADDR, &value, (uint) sizeof (int));
+
 		var addr = OS.sockaddr_in ();
 		addr.sin_family = OS.AF_INET;
 		addr.sin_port = OS.htons (endpoint.port);

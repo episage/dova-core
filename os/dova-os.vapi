@@ -162,10 +162,13 @@ namespace OS {
 	public int connect (int sockfd, sockaddr* addr, uintptr addrlen);
 	public int listen (int sockfd, int backlog);
 	public int socket (int domain, int type, int protocol);
+	public int setsockopt (int socket, int level, int option_name, void* option_value, uint option_len);
 	public const int AF_INET;
 	public const int AF_UNIX;
 	public const int SOCK_NONBLOCK;
 	public const int SOCK_STREAM;
+	public const int SOL_SOCKET;
+	public const int SO_REUSEADDR;
 
 	[CCode (cname = "struct sockaddr")]
 	public struct sockaddr {
