@@ -84,26 +84,35 @@ public class Dova.TcpClient {
 public delegate void TcpServerFunc (NetworkStream stream);
 
 public class Dova.TcpServer {
-	// TODO support multiple sockets
-	int fd;
+	List<int> fds;
 
 	public TcpServerFunc handler { get; set; }
 
+	public TcpServer () {
+		fds = [];
+	}
+
 	public void add_local_endpoint (TcpEndpoint endpoint) {
-		fd = OS.socket (OS.AF_INET, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, OS.IPPROTO_TCP);
+		int fd = OS.socket (OS.AF_INET, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, OS.IPPROTO_TCP);
 
 		var addr = OS.sockaddr_in ();
 		addr.sin_family = OS.AF_INET;
 		addr.sin_port = OS.htons (endpoint.port);
 		int res = OS.bind (fd, (OS.sockaddr*) (&addr), sizeof (OS.sockaddr_in));
 		OS.listen (fd, 8);
+
+		fds += [fd];
 	}
 
 	public void start () {
-		Task.run (run);
+		foreach (int fd in fds) {
+			Task.run (() => {
+				run (fd);
+			});
+		}
 	}
 
-	void run () {
+	void run (int fd) {
 		while (true) {
 			int res = OS.accept (fd, null, null);
 			if (res < 0) {
