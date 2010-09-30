@@ -1,4 +1,4 @@
-/* textreader.vala
+/* text.vala
  *
  * Copyright (C) 2009  Jürg Billeter
  *
@@ -60,3 +60,22 @@ public class Dova.TextReader : Object {
 	}
 }
 
+public class Dova.TextWriter : Object {
+	Stream stream;
+
+	// TODO: support alternative encodings / line terminators
+
+	public TextWriter (Stream stream) {
+		this.stream = stream;
+	}
+
+	public void write (string s) {
+		byte[] b = s.get_utf8_bytes ();
+		this.stream.write_all (b, 0, b.length);
+	}
+
+	public void write_line (string s) {
+		write (s);
+		write ("\n");
+	}
+}

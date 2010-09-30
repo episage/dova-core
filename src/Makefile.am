@@ -21,6 +21,7 @@ noinst_LTLIBRARIES = \
 	libdova-module.la \
 	libdova-net.la \
 	libdova-task.la \
+	libdova-text.la \
 	libdova-thread.la \
 	$(NULL)
 
@@ -77,13 +78,19 @@ $(srcdir)/libdova_task_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
 
 libdova_io_la_SOURCES = \
 	stream.vala \
-	textreader.vala \
-	textwriter.vala \
 	$(NULL)
 
 libdova_io_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi -H dova-io.h --vapi dova-io-0.1.vapi
 
 $(srcdir)/libdova_io_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
+
+libdova_text_la_SOURCES = \
+	text.vala \
+	$(NULL)
+
+libdova_text_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi dova-io-0.1.vapi -H dova-text.h --vapi dova-text-0.1.vapi
+
+$(srcdir)/libdova_text_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
 
 libdova_file_la_SOURCES = \
 	file.vala \
@@ -130,9 +137,9 @@ libdova_app_la_SOURCES = \
 	app.vala \
 	$(NULL)
 
-libdova_app_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-task-0.1.vapi -H dova-app.h --vapi dova-app-0.1.vapi
+libdova_app_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-task-0.1.vapi dova-text-0.1.vapi -H dova-app.h --vapi dova-app-0.1.vapi
 
-$(srcdir)/libdova_app_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-task-0.1.vapi
+$(srcdir)/libdova_app_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-task-0.1.vapi $(srcdir)/dova-text-0.1.vapi
 
 libdova_core_la_SOURCES = \
 	$(NULL)
@@ -146,6 +153,7 @@ libdova_core_la_LIBADD = \
 	libdova-module.la \
 	libdova-net.la \
 	libdova-task.la \
+	libdova-text.la \
 	libdova-thread.la \
 	libdova-app.la \
 	-lm \
@@ -163,6 +171,7 @@ dovainclude_HEADERS = \
 	dova-module.h \
 	dova-net.h \
 	dova-task.h \
+	dova-text.h \
 	dova-thread.h \
 	dova-app.h \
 	$(NULL)
@@ -179,6 +188,7 @@ dist_vapi_DATA = \
 	dova-module-0.1.vapi \
 	dova-net-0.1.vapi \
 	dova-task-0.1.vapi \
+	dova-text-0.1.vapi \
 	dova-thread-0.1.vapi \
 	dova-app-0.1.vapi \
 	$(NULL)
