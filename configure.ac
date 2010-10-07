@@ -13,6 +13,19 @@ AC_PROG_LIBTOOL
 
 AM_PROG_VALAC([0.9.1])
 
+case $host in
+*-*-mingw*)
+	dova_os_win32=yes
+	;;
+*-*-linux*)
+	dova_os_linux=yes
+	;;
+esac
+
+AM_CONDITIONAL(OS_POSIX, test "$dova_os_win32" != "yes")
+AM_CONDITIONAL(OS_LINUX, test "$dova_os_linux" = "yes")
+AM_CONDITIONAL(OS_WIN32, test "$dova_os_win32" = "yes")
+
 AC_SUBST(VALAFLAGS)
 AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)

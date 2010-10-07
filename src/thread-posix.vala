@@ -1,4 +1,4 @@
-/* thread.vala
+/* thread-posix.vala
  *
  * Copyright (C) 2009-2010  Jürg Billeter
  *
@@ -22,8 +22,8 @@
 
 public delegate int Dova.ThreadStart ();
 
-public class Dova.Thread {
-	OS.thrd_t native;
+public sealed class Dova.Thread {
+	OS.pthread_t native;
 
 	static int start_routine (void* data) {
 		var func = (ThreadStart) data;
@@ -31,27 +31,27 @@ public class Dova.Thread {
 	}
 
 	public Thread (ThreadStart func) {
-		OS.thrd_create (&native, (void*) start_routine, (void*) func);
+		OS.pthread_create (&native, null, (void*) start_routine, (void*) func);
 	}
 
 	public static void sleep (Time time) {
-		var xt = OS.xtime ();
-		xt.sec = time.ticks / 10000000;
-		xt.nsec = time.ticks % 10000000 * 100;
-		OS.thrd_sleep (&xt);
+		var ts = OS.timespec ();
+		ts.tv_sec = time.ticks / 10000000;
+		ts.tv_nsec = time.ticks % 10000000 * 100;
+		OS.nanosleep (&ts, null);
 	}
 
 	public static void yield () {
-		OS.thrd_yield ();
+		OS.sched_yield ();
 	}
 
-	public int join () {
+	public intptr join () {
 		result = 0;
-		OS.thrd_join (native, &result);
+		OS.pthread_join (native, (void**) (&result));
 	}
 
-	public static void exit (int retval) {
-		OS.thrd_exit (retval);
+	public static void exit (intptr retval) {
+		OS.pthread_exit ((void*) retval);
 	}
 }
 
@@ -62,28 +62,51 @@ public enum Dova.MutexType {
 	TRY = 1 << 3
 }
 
-public class Dova.Mutex {
-	OS.mtx_t native;
+public sealed class Dova.Mutex {
+	OS.pthread_mutex_t native;
 
 	public Mutex (MutexType type = MutexType.PLAIN) {
-		OS.mtx_init (&native, type);
+		OS.pthread_mutexattr_t attr;
+
+		OS.pthread_mutexattr_init (&attr);
+
+		switch (type) {
+		case MutexType.PLAIN:
+		case MutexType.TIMED:
+			OS.pthread_mutexattr_settype (&attr, OS.PTHREAD_MUTEX_NORMAL);
+			break;
+		case MutexType.TRY:
+			OS.pthread_mutexattr_settype (&attr, OS.PTHREAD_MUTEX_ERRORCHECK);
+			break;
+		case MutexType.PLAIN | MutexType.RECURSIVE:
+		case MutexType.TIMED | MutexType.RECURSIVE:
+		case MutexType.TRY | MutexType.RECURSIVE:
+			OS.pthread_mutexattr_settype (&attr, OS.PTHREAD_MUTEX_RECURSIVE);
+			break;
+		default:
+			// throw error
+			break;
+		}
+
+		OS.pthread_mutex_init (&native, &attr);
+		OS.pthread_mutexattr_destroy (&attr);
 	}
 
 	~Mutex () {
-		OS.mtx_destroy (&native);
+		OS.pthread_mutex_destroy (&native);
 	}
 
 	public void lock () {
-		OS.mtx_lock (&native);
+		OS.pthread_mutex_lock (&native);
 	}
 
 	public bool try_lock () {
-		int ret = OS.mtx_trylock (&native);
-		return (ret == OS.thrd_success);
+		int ret = OS.pthread_mutex_trylock (&native);
+		return (ret == 0);
 	}
 
 	public void unlock () {
-		OS.mtx_unlock (&native);
+		OS.pthread_mutex_unlock (&native);
 	}
 }
 

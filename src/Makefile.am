@@ -1,5 +1,12 @@
 NULL =
 
+if OS_POSIX
+os_vapis = \
+	$(top_srcdir)/os/dova-os.vapi \
+	$(top_srcdir)/os/posix.vapi \
+	$(NULL)
+endif
+
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/types \
 	-I$(top_srcdir)/os \
@@ -48,13 +55,15 @@ libdova_base_la_SOURCES = \
 	value.vala \
 	$(NULL)
 
-libdova_base_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi -H dova-base.h --vapi dova-base-0.1.vapi
+libdova_base_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) -H dova-base.h --vapi dova-base-0.1.vapi
 
+if OS_POSIX
 libdova_thread_la_SOURCES = \
-	thread.vala \
+	thread-posix.vala \
 	$(NULL)
+endif
 
-libdova_thread_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi -H dova-thread.h --vapi dova-thread-0.1.vapi
+libdova_thread_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi -H dova-thread.h --vapi dova-thread-0.1.vapi
 
 $(srcdir)/libdova_thread_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
 
@@ -62,7 +71,7 @@ libdova_task_la_SOURCES = \
 	task.vala \
 	$(NULL)
 
-libdova_task_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi -H dova-task.h --vapi dova-task-0.1.vapi
+libdova_task_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi -H dova-task.h --vapi dova-task-0.1.vapi
 
 $(srcdir)/libdova_task_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
 
@@ -72,7 +81,7 @@ libdova_io_la_SOURCES = \
 	textwriter.vala \
 	$(NULL)
 
-libdova_io_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi -H dova-io.h --vapi dova-io-0.1.vapi
+libdova_io_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi -H dova-io.h --vapi dova-io-0.1.vapi
 
 $(srcdir)/libdova_io_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
 
@@ -80,7 +89,7 @@ libdova_file_la_SOURCES = \
 	file.vala \
 	$(NULL)
 
-libdova_file_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi dova-io-0.1.vapi -H dova-file.h --vapi dova-file-0.1.vapi
+libdova_file_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi dova-io-0.1.vapi -H dova-file.h --vapi dova-file-0.1.vapi
 
 $(srcdir)/libdova_file_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
 
@@ -88,7 +97,7 @@ libdova_net_la_SOURCES = \
 	net.vala \
 	$(NULL)
 
-libdova_net_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi dova-io-0.1.vapi dova-task-0.1.vapi -H dova-net.h --vapi dova-net-0.1.vapi
+libdova_net_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi dova-io-0.1.vapi dova-task-0.1.vapi -H dova-net.h --vapi dova-net-0.1.vapi
 
 $(srcdir)/libdova_net_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-task-0.1.vapi
 
@@ -101,7 +110,7 @@ libdova_model_la_SOURCES = \
 	priorityqueue.vala \
 	$(NULL)
 
-libdova_model_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi -H dova-model.h --vapi dova-model-0.1.vapi
+libdova_model_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi -H dova-model.h --vapi dova-model-0.1.vapi
 
 $(srcdir)/libdova_model_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi
 
@@ -109,7 +118,7 @@ libdova_module_la_SOURCES = \
 	module.vala \
 	$(NULL)
 
-libdova_module_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi -H dova-module.h --vapi dova-module-0.1.vapi
+libdova_module_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi -H dova-module.h --vapi dova-module-0.1.vapi
 
 $(srcdir)/libdova_module_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi
 
@@ -117,7 +126,7 @@ libdova_app_la_SOURCES = \
 	app.vala \
 	$(NULL)
 
-libdova_app_la_VALAFLAGS = --profile dova --nostdpkg $(top_srcdir)/os/dova-os.vapi dova-base-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-task-0.1.vapi -H dova-app.h --vapi dova-app-0.1.vapi
+libdova_app_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi dova-file-0.1.vapi dova-io-0.1.vapi dova-task-0.1.vapi -H dova-app.h --vapi dova-app-0.1.vapi
 
 $(srcdir)/libdova_app_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-file-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-task-0.1.vapi
 
