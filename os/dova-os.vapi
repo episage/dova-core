@@ -169,18 +169,6 @@ namespace OS {
 	public ushort htons (ushort hostshort);
 	public int inet_pton (int af, byte* src, void* dst);
 
-	public int stat (byte* path, stat_t* buf);
-	[CCode (cname = "struct stat")]
-	public struct stat_t {
-		public uint st_mode;
-		public long st_size;
-		public timespec st_mtim;
-	}
-
-	public bool S_ISREG (uint m);
-	public bool S_ISDIR (uint m);
-	public bool S_ISLNK (uint m);
-
 	public int gettimeofday (out timeval tv, void* tz = null);
 	[CCode (cname = "struct timeval")]
 	public struct timeval {

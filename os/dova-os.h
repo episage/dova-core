@@ -45,8 +45,6 @@
 
 #ifndef _WIN32
 #include "dova-io-linux.h"
-#else
-#include "dova-io-win32.h"
 #endif
 
 #ifndef _WIN32

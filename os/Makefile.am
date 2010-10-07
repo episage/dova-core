@@ -12,7 +12,6 @@ libdova_os_la_SOURCES = \
 	dova-atomic-gcc.h \
 	dova-atomic-msc.h \
 	dova-io-linux.h \
-	dova-io-win32.h \
 	dova-os.c \
 	dova-os.h \
 	dova-ucontext-posix.h \

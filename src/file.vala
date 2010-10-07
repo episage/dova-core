@@ -60,77 +60,7 @@ public enum Dova.FileType {
 	SYMBOLIC_LINK
 }
 
-class Dova.LocalFile : File {
-	string _path;
-
-	public override string? path {
-		get { return _path; }
-	}
-
-	public LocalFile (string path) {
-		this._path = path;
-	}
-
-	public override FileStream read () {
-		int fd = OS.open (this._path.data, OS.O_RDONLY, 0777);
-		return new LocalFileStream (fd);
-	}
-
-	public override FileStream create () {
-		int fd = OS.open (this._path.data, OS.O_WRONLY | OS.O_CREAT, 0777);
-		return new LocalFileStream (fd);
-	}
-
-	const long UNIX_SECONDS = 62135596800;
-
-	public override FileInfo query_info () {
-		result = new FileInfo ();
-
-		var st = OS.stat_t ();
-		OS.stat (this._path.data, &st);
-
-		var type = FileType.UNKNOWN;
-		if (OS.S_ISREG (st.st_mode)) {
-			type = FileType.REGULAR;
-		} else if (OS.S_ISDIR (st.st_mode)) {
-			type = FileType.DIRECTORY;
-		} else if (OS.S_ISLNK (st.st_mode)) {
-			type = FileType.SYMBOLIC_LINK;
-		}
-
-		result["type"] = (Value) (int) type;
-		result["size"] = (Value) (long) st.st_size;
-		result["modified"] = (Value) Time.with_ticks ((UNIX_SECONDS + st.st_mtim.tv_sec) * 10000000 + (long) st.st_mtim.tv_nsec / 100);
-	}
-}
-
 public abstract class Dova.FileStream : Stream {
 	protected FileStream () {
-	}
-}
-
-class Dova.LocalFileStream : FileStream {
-	int fd;
-
-	public LocalFileStream (int fd) {
-		this.fd = fd;
-	}
-
-	public override int read (byte[] b, int offset, int length) {
-		if (length < 0) {
-			length = b.length - offset;
-		}
-		return (int) OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
-	}
-
-	public override int write (byte[] b, int offset, int length) {
-		if (length < 0) {
-			length = b.length - offset;
-		}
-		return (int) OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
-	}
-
-	public override void close () {
-		OS.close (this.fd);
 	}
 }

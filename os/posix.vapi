@@ -89,6 +89,22 @@ namespace OS {
 	[CCode (cheader_filename = "sched.h")]
 	public int sched_yield ();
 
+	[CCode (cheader_filename = "sys/stat.h")]
+	public int stat (byte* path, stat_t* buf);
+	[CCode (cname = "struct stat", cheader_filename = "sys/stat.h")]
+	public struct stat_t {
+		public uint st_mode;
+		public long st_size;
+		public timespec st_mtim;
+	}
+
+	[CCode (cheader_filename = "sys/stat.h")]
+	public bool S_ISREG (uint m);
+	[CCode (cheader_filename = "sys/stat.h")]
+	public bool S_ISDIR (uint m);
+	[CCode (cheader_filename = "sys/stat.h")]
+	public bool S_ISLNK (uint m);
+
 	[CCode (cheader_filename = "time.h")]
 	public int nanosleep (timespec* req, timespec* rem);
 }

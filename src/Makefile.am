@@ -89,6 +89,10 @@ libdova_file_la_SOURCES = \
 	file.vala \
 	$(NULL)
 
+if OS_POSIX
+libdova_file_la_SOURCES += file-posix.vala
+endif
+
 libdova_file_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.vapi dova-io-0.1.vapi -H dova-file.h --vapi dova-file-0.1.vapi
 
 $(srcdir)/libdova_file_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi
