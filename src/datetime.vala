@@ -25,25 +25,25 @@
  */
 public struct Dova.Time {
 	// 100 nanosecond ticks
-	public long ticks;
+	public int64 ticks;
 
 	public Time (int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
-		ticks = (((((long) hours * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
+		ticks = (((((int64) hours * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
 	}
 
 	public Time.days (int days, int hours = 0, int minutes = 0, int seconds = 0, int milliseconds = 0) {
-		ticks = ((((((long) days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
+		ticks = ((((((int64) days * 24 + hours) * 60 + minutes) * 60 + seconds) * 1000 + milliseconds) * 10000);
 	}
 
-	public Time.with_ticks (long ticks) {
+	public Time.with_ticks (int64 ticks) {
 		this.ticks = ticks;
 	}
 
-	public long total_milliseconds {
+	public int64 total_milliseconds {
 		get { return ticks / 10000; }
 	}
 
-	public long total_seconds {
+	public int64 total_seconds {
 		get { return ticks / 10000000; }
 	}
 
@@ -266,7 +266,7 @@ public struct Dova.DateTime {
 	}
 
 	public Time time {
-		get { return Time.with_ticks ((utc.ticks + offset.ticks) % ((long) 24 * 3600 * 10000000)); }
+		get { return Time.with_ticks ((utc.ticks + offset.ticks) % ((int64) 24 * 3600 * 10000000)); }
 	}
 
 	public DateTime.from_utc (Time utc, Time offset) {
@@ -281,13 +281,13 @@ public struct Dova.DateTime {
 	}
 
 	// total seconds since epoch until start of unix time (january 1, 1970 00:00 UTC)
-	const long UNIX_SECONDS = 62135596800;
+	const int64 UNIX_SECONDS = 62135596800;
 
 	public DateTime.local_from_utc (Time utc) {
 		this.utc = utc;
 		var ltm = OS.tm ();
-		long seconds = utc.total_seconds;
-		intptr unix_time = seconds - UNIX_SECONDS;
+		int64 seconds = utc.total_seconds;
+		int unix_time = seconds - UNIX_SECONDS;
 		OS.localtime_r (&unix_time, &ltm);
 		DateTime local = DateTime (Date (ltm.tm_year + 1900, ltm.tm_mon + 1, ltm.tm_mday), Time (ltm.tm_hour, ltm.tm_min, ltm.tm_sec), Time ());
 		this.offset = Time (0, 0, (int) (local.utc.total_seconds - seconds));
@@ -295,7 +295,7 @@ public struct Dova.DateTime {
 
 	// create DateTime from local date and time and UTC offset
 	public DateTime (Date date, Time time, Time offset) {
-		this.utc = Time.with_ticks ((long) date.days * 24 * 3600 * 10000000 + time.ticks - offset.ticks);
+		this.utc = Time.with_ticks ((int64) date.days * 24 * 3600 * 10000000 + time.ticks - offset.ticks);
 		this.offset = offset;
 	}
 
@@ -379,7 +379,7 @@ public enum Dova.Clock {
 	MONOTONIC;
 
 	// total seconds since epoch until start of unix time (january 1, 1970 00:00 UTC)
-	const long UNIX_SECONDS = 62135596800;
+	const int64 UNIX_SECONDS = 62135596800;
 
 	public Time get_time () {
 		switch (this) {
@@ -390,7 +390,7 @@ public enum Dova.Clock {
 		case MONOTONIC:
 			var ts = OS.timespec ();
 			OS.clock_gettime (OS.CLOCK_MONOTONIC, &ts);
-			return Time.with_ticks ((long) ts.tv_sec * 10000000 + (long) ts.tv_nsec / 100);
+			return Time.with_ticks ((int64) ts.tv_sec * 10000000 + (int64) ts.tv_nsec / 100);
 		default:
 			// throw error
 			return Time ();

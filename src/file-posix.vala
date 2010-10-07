@@ -32,16 +32,16 @@ class Dova.LocalFile : File {
 	}
 
 	public override FileStream read () {
-		int fd = OS.open (this._path.data, OS.O_RDONLY, 0777);
+		int32 fd = OS.open (this._path.data, OS.O_RDONLY, 0777);
 		return new LocalFileStream (fd);
 	}
 
 	public override FileStream create () {
-		int fd = OS.open (this._path.data, OS.O_WRONLY | OS.O_CREAT, 0777);
+		int32 fd = OS.open (this._path.data, OS.O_WRONLY | OS.O_CREAT, 0777);
 		return new LocalFileStream (fd);
 	}
 
-	const long UNIX_SECONDS = 62135596800;
+	const int64 UNIX_SECONDS = 62135596800;
 
 	public override FileInfo query_info () {
 		result = new FileInfo ();
@@ -59,15 +59,15 @@ class Dova.LocalFile : File {
 		}
 
 		result["type"] = (Value) (int) type;
-		result["size"] = (Value) (long) st.st_size;
-		result["modified"] = (Value) Time.with_ticks ((UNIX_SECONDS + st.st_mtim.tv_sec) * 10000000 + (long) st.st_mtim.tv_nsec / 100);
+		result["size"] = (Value) (int64) st.st_size;
+		result["modified"] = (Value) Time.with_ticks ((UNIX_SECONDS + st.st_mtim.tv_sec) * 10000000 + (int64) st.st_mtim.tv_nsec / 100);
 	}
 }
 
 class Dova.LocalFileStream : FileStream {
-	int fd;
+	int32 fd;
 
-	public LocalFileStream (int fd) {
+	public LocalFileStream (int32 fd) {
 		this.fd = fd;
 	}
 

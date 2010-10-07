@@ -24,8 +24,8 @@
 public class string : Dova.Value {
 	struct StringData {
 		Type* type;
-		int ref_count;
-		int length;
+		int32 ref_count;
+		int32 length;
 	}
 
 	static inline StringData* real (void* s) {
@@ -44,7 +44,7 @@ public class string : Dova.Value {
 			}
 		}
 		private set {
-			real (this).length = value;
+			real (this).length = (int32) value;
 		}
 	}
 	public byte* data { get { return (byte*) this; } }
@@ -335,7 +335,7 @@ public class string : Dova.Value {
 		byte* start = &data[start_index];
 
 		if (c < 0x80) {
-			byte* p = OS.memchr (start, (int) c, end_index - start_index);
+			byte* p = OS.memchr (start, (int32) c, end_index - start_index);
 			if (p == null) {
 				return -1;
 			} else {

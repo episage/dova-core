@@ -24,9 +24,9 @@ public class Dova.TcpEndpoint /* : Dova.Value */ {
 	// TODO also support creating TcpEndpoints for SRV entries (domain and service pair)
 
 	internal string host { get; private set; }
-	internal ushort port { get; private set; }
+	internal uint16 port { get; private set; }
 
-	public TcpEndpoint (string host_and_port, ushort default_port) {
+	public TcpEndpoint (string host_and_port, uint16 default_port) {
 		this.host = host_and_port;
 		this.port = default_port;
 	}
@@ -54,9 +54,9 @@ public class Dova.TcpClient {
 
 		OS.addrinfo* addr = addrs;
 		while (addr != null) {
-			int fd = OS.socket (addr.ai_family, addr.ai_socktype | OS.SOCK_NONBLOCK, addr.ai_protocol);
+			int32 fd = OS.socket (addr.ai_family, addr.ai_socktype | OS.SOCK_NONBLOCK, addr.ai_protocol);
 
-			int res = OS.connect (fd, addr.ai_addr, addr.ai_addrlen);
+			int32 res = OS.connect (fd, addr.ai_addr, addr.ai_addrlen);
 
 			if (res < 0) {
 				int err = OS.errno;
@@ -84,7 +84,7 @@ public class Dova.TcpClient {
 public delegate void TcpServerFunc (NetworkStream stream);
 
 public class Dova.TcpServer {
-	List<int> fds;
+	List<int32> fds;
 
 	public TcpServerFunc handler { get; set; }
 
@@ -93,31 +93,31 @@ public class Dova.TcpServer {
 	}
 
 	public void add_local_endpoint (TcpEndpoint endpoint) {
-		int fd = OS.socket (OS.AF_INET, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, OS.IPPROTO_TCP);
+		int32 fd = OS.socket (OS.AF_INET, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, OS.IPPROTO_TCP);
 
-		int value = 1;
-		OS.setsockopt (fd, OS.SOL_SOCKET, OS.SO_REUSEADDR, &value, (uint) sizeof (int));
+		int32 value = 1;
+		OS.setsockopt (fd, OS.SOL_SOCKET, OS.SO_REUSEADDR, &value, (uint32) sizeof (int32));
 
 		var addr = OS.sockaddr_in ();
 		addr.sin_family = OS.AF_INET;
 		addr.sin_port = OS.htons (endpoint.port);
-		int res = OS.bind (fd, (OS.sockaddr*) (&addr), sizeof (OS.sockaddr_in));
+		int32 res = OS.bind (fd, (OS.sockaddr*) (&addr), (uint32) sizeof (OS.sockaddr_in));
 		OS.listen (fd, 8);
 
 		fds += [fd];
 	}
 
 	public void start () {
-		foreach (int fd in fds) {
+		foreach (int32 fd in fds) {
 			Task.run (() => {
 				run (fd);
 			});
 		}
 	}
 
-	void run (int fd) {
+	void run (int32 fd) {
 		while (true) {
-			int res = OS.accept (fd, null, null);
+			int32 res = OS.accept (fd, null, null);
 			if (res < 0) {
 				int err = OS.errno;
 				if (err == OS.EINTR) {
@@ -141,9 +141,9 @@ public class Dova.TcpServer {
 }
 
 public class Dova.NetworkStream : Stream {
-	internal int fd { get; private set; }
+	internal int32 fd { get; private set; }
 
-	internal NetworkStream (int fd) {
+	internal NetworkStream (int32 fd) {
 		this.fd = fd;
 	}
 
@@ -204,12 +204,12 @@ public class Dova.UnixEndpoint {
 
 public class Dova.UnixClient {
 	public UnixStream connect (UnixEndpoint endpoint) {
-		int fd = OS.socket (OS.AF_UNIX, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, 0);
+		int32 fd = OS.socket (OS.AF_UNIX, OS.SOCK_STREAM | OS.SOCK_NONBLOCK, 0);
 
 		var addr = OS.sockaddr_un ();
 		addr.sun_family = OS.AF_UNIX;
 		OS.memcpy (addr.sun_path, endpoint.path.data, endpoint.path.length + 1);
-		int res = OS.connect (fd, (OS.sockaddr*) (&addr), 2 + endpoint.path.length);
+		int32 res = OS.connect (fd, (OS.sockaddr*) (&addr), 2 + endpoint.path.length);
 
 		if (res < 0) {
 			int err = OS.errno;
@@ -232,7 +232,7 @@ public class Dova.UnixClient {
 }
 
 public class Dova.UnixStream : NetworkStream {
-	internal UnixStream (int fd) {
+	internal UnixStream (int32 fd) {
 		base (fd);
 	}
 }

@@ -47,8 +47,8 @@ public abstract class any {
 }
 
 public class Dova.Object : any {
-	volatile int ref_count;
-	volatile int weak_count;
+	volatile int32 ref_count;
+	volatile int32 weak_count;
 
 	public virtual void finalize () {
 	}
@@ -59,7 +59,7 @@ public class Dova.Object : any {
 
 	public override sealed uint hash () {
 		void* ptr = this;
-		return (uint) (uintptr) ptr;
+		return (uint) ptr;
 	}
 
 	public override string to_string () {
@@ -96,7 +96,7 @@ public class Dova.Object : any {
 			return null;
 		}
 		while (true) {
-			int ref_count = ((Object*) object).ref_count;
+			int32 ref_count = ((Object*) object).ref_count;
 			if (ref_count == 0) {
 				return null;
 			}

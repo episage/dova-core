@@ -64,7 +64,7 @@ class Dova.TaskScheduler {
 				OS.epoll_event events[64];
 
 				while (true) {
-					int timeout = ready_count > 0 ? 0 : -1;
+					int32 timeout = ready_count > 0 ? 0 : -1;
 
 					int nfds = OS.epoll_wait (epfd, events, 64, timeout);
 					if (nfds < 0) {
@@ -147,7 +147,7 @@ class Dova.TaskScheduler {
 		sched ();
 	}
 
-	internal void wait_fd_in (Task task, int fd) {
+	internal void wait_fd_in (Task task, int32 fd) {
 		assert (true && task.state == TaskState.RUNNING);
 
 		// epoll doesn't support reigstering the same fd twice
@@ -155,7 +155,7 @@ class Dova.TaskScheduler {
 		// we need to either multiplex events from the fd ourselves
 		// or use dup() to register a duplicate of the fd for the second event
 
-		int dupfd = OS.dup (fd);
+		int32 dupfd = OS.dup (fd);
 
 		var event = OS.epoll_event ();
 		event.events = OS.EPOLLIN;
@@ -170,7 +170,7 @@ class Dova.TaskScheduler {
 		sched ();
 	}
 
-	internal void wait_fd_out (Task task, int fd) {
+	internal void wait_fd_out (Task task, int32 fd) {
 		assert (true && task.state == TaskState.RUNNING);
 
 		// epoll doesn't support reigstering the same fd twice
@@ -178,7 +178,7 @@ class Dova.TaskScheduler {
 		// we need to either multiplex events from the fd ourselves
 		// or use dup() to register a duplicate of the fd for the second event
 
-		int dupfd = OS.dup (fd);
+		int32 dupfd = OS.dup (fd);
 
 		var event = OS.epoll_event ();
 		event.events = OS.EPOLLOUT;
@@ -200,7 +200,7 @@ class Dova.TaskScheduler {
 		its.it_value.tv_nsec = time.ticks % 10000000 * 100;
 		its.it_value.tv_sec = time.total_seconds;
 
-		int tfd = OS.timerfd_create (OS.CLOCK_MONOTONIC, OS.TFD_CLOEXEC);
+		int32 tfd = OS.timerfd_create (OS.CLOCK_MONOTONIC, OS.TFD_CLOEXEC);
 		OS.timerfd_settime (tfd, 0, &its, null);
 
 		var event = OS.epoll_event ();
@@ -243,7 +243,7 @@ public class Dova.Task {
 	internal Task? next { get; set; }
 	OS.ucontext_t ucontext;
 
-	internal int wait_fd;
+	internal int32 wait_fd;
 
 	// TODO add cancellation / termination support
 
@@ -287,11 +287,11 @@ public class Dova.Task {
 		result.resume ();
 	}
 
-	public static void wait_fd_in (int fd) {
+	public static void wait_fd_in (int32 fd) {
 		current.scheduler.wait_fd_in (current, fd);
 	}
 
-	public static void wait_fd_out (int fd) {
+	public static void wait_fd_out (int32 fd) {
 		current.scheduler.wait_fd_out (current, fd);
 	}
 

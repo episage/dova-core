@@ -24,51 +24,51 @@
 // based on code from GLib
 public class Dova.Random {
 	/* Period parameters */
-	const int N = 624;
-	const int M = 397;
-	const uint MATRIX_A = 0x9908b0dfu; /* constant vector a */
-	const uint UPPER_MASK = 0x80000000u; /* most significant w-r bits */
-	const uint LOWER_MASK = 0x7fffffffu; /* least significant r bits */
+	const int32 N = 624;
+	const int32 M = 397;
+	const uint32 MATRIX_A = (uint32) 0x9908b0dfu; /* constant vector a */
+	const uint32 UPPER_MASK = (uint32) 0x80000000u; /* most significant w-r bits */
+	const uint32 LOWER_MASK = (uint32) 0x7fffffffu; /* least significant r bits */
 
 	/* Tempering parameters */
-	const uint TEMPERING_MASK_B = 0x9d2c5680u;
-	const uint TEMPERING_MASK_C = 0xefc60000u;
+	const uint32 TEMPERING_MASK_B = (uint32) 0x9d2c5680u;
+	const uint32 TEMPERING_MASK_C = (uint32) 0xefc60000u;
 
 	/* transform [0..2^32] -> [0..1] */
 	const double DOUBLE_TRANSFORM = 2.3283064365386962890625e-10;
 
-	uint mt[624 /* N */];
-	uint mti;
+	uint32 mt[624 /* N */];
+	uint32 mti;
 
 	public Random () {
-		int seed = 0;
-		int fd = OS.open ("/dev/urandom", OS.O_RDONLY, 0);
+		int32 seed = 0;
+		int32 fd = OS.open ("/dev/urandom", OS.O_RDONLY, 0);
 		if (fd >= 0) {
-			int len = (int) OS.read (fd, &seed, sizeof (uint));
+			int len = OS.read (fd, &seed, sizeof (uint));
 			OS.close (fd);
 			if (len < sizeof (uint)) {
 				fd = -1;
 			}
 		}
 		if (fd < 0) {
-			seed = (int) (Clock.MONOTONIC.get_time ().ticks % 0x100000000);
+			seed = (int32) (Clock.MONOTONIC.get_time ().ticks % 0x100000000);
 		}
 		this.with_seed (seed);
 	}
 
-	public Random.with_seed (int seed) {
+	public Random.with_seed (int32 seed) {
 		mt[0]= seed;
 		for (mti = 1; mti < N; mti++) {
-			mt[mti] = 1812433253u * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + mti;
+			mt[mti] = (uint32) 1812433253u * (mt[mti - 1] ^ (mt[mti - 1] >> 30)) + mti;
 		}
 	}
 
-	uint next_uint () {
-		uint y;
+	uint32 next_uint32 () {
+		uint32 y;
 
 		// generate N words at one time
 		if (mti >= N) {
-			int kk;
+			int32 kk;
 
 			for (kk = 0; kk < N - M; kk++) {
 				y = (mt[kk] & UPPER_MASK)|(mt[kk + 1] & LOWER_MASK);
@@ -90,41 +90,41 @@ public class Dova.Random {
 		y ^= (y << 15) & TEMPERING_MASK_C;
 		y ^= (y >> 18);
 
-		return (int) y;
+		return (int32) y;
 	}
 
-	public int next_int (int begin, int end) {
-		uint dist = end - begin;
-		uint random = 0;
+	public int32 next_int32 (int32 begin, int32 end) {
+		uint32 dist = end - begin;
+		uint32 random = 0;
 
 		if (dist == 0) {
 			random = 0;
 		} else {
-			uint maxvalue;
+			uint32 maxvalue;
 			if (dist <= 0x80000000u) { /* 2^31 */
 				/* maxvalue = 2^32 - 1 - (2^32 % dist) */
-				uint leftover = (0x80000000u % dist) * 2;
+				uint32 leftover = ((uint32) 0x80000000u % dist) * 2;
 				if (leftover >= dist) {
 					leftover -= dist;
 				}
-				maxvalue = 0xffffffffu - leftover;
+				maxvalue = (uint32) 0xffffffffu - leftover;
 			} else {
 				maxvalue = dist - 1;
 			}
 
 			do {
-				random = next_uint ();
+				random = next_uint32 ();
 			} while (random > maxvalue);
 
 			random %= dist;
 		}
 
-		return (int) (begin + random);
+		return (int32) (begin + random);
 	}
 
 	public double next_double (double begin = 0, double end = 1) {
-		result = next_uint () * DOUBLE_TRANSFORM;
-		result = (result + next_uint ()) * DOUBLE_TRANSFORM;
+		result = next_uint32 () * DOUBLE_TRANSFORM;
+		result = (result + next_uint32 ()) * DOUBLE_TRANSFORM;
 
 		if (result >= 1.0) {
 			return next_double (begin, end);

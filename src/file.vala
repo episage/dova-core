@@ -37,7 +37,7 @@ public class Dova.FileInfo {
 	Map<string,Value> attributes;
 
 	public FileType type { get { return (FileType) (int) this["type"]; } }
-	public long size { get { return (long) this["size"]; } }
+	public int64 size { get { return (int64) this["size"]; } }
 	public Time modification_time { get { return (Time) this["modified"]; } }
 
 	public FileInfo () {

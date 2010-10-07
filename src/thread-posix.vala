@@ -45,12 +45,12 @@ public sealed class Dova.Thread {
 		OS.sched_yield ();
 	}
 
-	public intptr join () {
+	public int join () {
 		result = 0;
 		OS.pthread_join (native, (void**) (&result));
 	}
 
-	public static void exit (intptr retval) {
+	public static void exit (int retval) {
 		OS.pthread_exit ((void*) retval);
 	}
 }

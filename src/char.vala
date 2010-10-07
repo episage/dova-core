@@ -178,7 +178,7 @@ public enum Dova.UnicodeScript {
 public struct char {
 	public UnicodeCategory category {
 		get {
-			ushort props = props_trie.get16 (this);
+			uint16 props = props_trie.get16 (this);
 			result = (UnicodeCategory) (props & 0x1f);
 		}
 	}
@@ -297,39 +297,39 @@ public struct char {
 	const int UCASE_UPPER = 2;
 	const int UCASE_TITLE = 3;
 
-	static int ucase_get_type (ushort props) {
+	static int ucase_get_type (uint16 props) {
 		return props & UCASE_TYPE_MASK;
 	}
 
-	const int UCASE_EXCEPTION = 8;
+	const int32 UCASE_EXCEPTION = 8;
 
 	// no exception: bits 15..6 are a 10-bit signed case mapping delta
-	const int UCASE_DELTA_SHIFT = 6;
-	const int UCASE_DELTA_MASK = 0xffc0;
-	const int UCASE_MAX_DELTA = 0x1ff;
-	const int UCASE_MIN_DELTA = (-UCASE_MAX_DELTA - 1);
+	const int32 UCASE_DELTA_SHIFT = 6;
+	const int32 UCASE_DELTA_MASK = 0xffc0;
+	const int32 UCASE_MAX_DELTA = 0x1ff;
+	const int32 UCASE_MIN_DELTA = (-UCASE_MAX_DELTA - 1);
 
-	static int ucase_get_delta (ushort props) {
-		return ((short) props >> UCASE_DELTA_SHIFT);
+	static int32 ucase_get_delta (uint16 props) {
+		return ((int16) props >> UCASE_DELTA_SHIFT);
 	}
 
-	const int UCASE_EXC_SHIFT = 4;
+	const int32 UCASE_EXC_SHIFT = 4;
 
-	const int UCASE_EXC_LOWER = 0;
-	const int UCASE_EXC_FOLD = 1;
-	const int UCASE_EXC_UPPER = 2;
-	const int UCASE_EXC_TITLE = 3;
-	const int UCASE_EXC_CLOSURE = 6;
-	const int UCASE_EXC_FULL_MAPPINGS = 7;
-	const int UCASE_EXC_ALL_SLOTS = 8;
+	const int32 UCASE_EXC_LOWER = 0;
+	const int32 UCASE_EXC_FOLD = 1;
+	const int32 UCASE_EXC_UPPER = 2;
+	const int32 UCASE_EXC_TITLE = 3;
+	const int32 UCASE_EXC_CLOSURE = 6;
+	const int32 UCASE_EXC_FULL_MAPPINGS = 7;
+	const int32 UCASE_EXC_ALL_SLOTS = 8;
 
-	const int UCASE_EXC_DOUBLE_SLOTS = 0x100;
+	const int32 UCASE_EXC_DOUBLE_SLOTS = 0x100;
 
-	static ushort* ucase_get_exceptions (ushort props) {
+	static uint16* ucase_get_exceptions (uint16 props) {
 		return case_props_singleton.exceptions + (props >> UCASE_EXC_SHIFT);
 	}
 
-	static bool ucase_props_has_exception (ushort props) {
+	static bool ucase_props_has_exception (uint16 props) {
 		return (props & UCASE_EXCEPTION) != 0;
 	}
 
@@ -353,15 +353,15 @@ public struct char {
 		4, 5, 5, 6, 5, 6, 6, 7, 5, 6, 6, 7, 6, 7, 7, 8
 	];
 
-	static bool ucase_has_slot (ushort flags, int idx) {
+	static bool ucase_has_slot (uint16 flags, int idx) {
 		return (flags & (1 << idx)) != 0;
 	}
 
-	static int ucase_slot_offset (ushort flags, int idx) {
+	static int32 ucase_slot_offset (uint16 flags, int idx) {
 		return ucase_flags_offset[flags & ((1 << idx) - 1)];
 	}
 
-	static uint ucase_get_slot_value (ushort exc_word, int idx, ushort* pexc16) {
+	static uint32 ucase_get_slot_value (uint16 exc_word, int idx, uint16* pexc16) {
 		if ((exc_word & UCASE_EXC_DOUBLE_SLOTS) == 0) {
 			pexc16 += ucase_slot_offset (exc_word, idx);
 			return *pexc16;
@@ -374,14 +374,14 @@ public struct char {
 	public char to_lower () {
 		result = this;
 
-		ushort props = case_props_singleton.trie.get16 (this);
+		uint16 props = case_props_singleton.trie.get16 (this);
 		if (!ucase_props_has_exception (props)) {
 			if (ucase_get_type (props) >= UCASE_UPPER) {
 				result += ucase_get_delta (props);
 			}
 		} else {
-			ushort* pe = ucase_get_exceptions (props);
-			ushort exc_word = *pe++;
+			uint16* pe = ucase_get_exceptions (props);
+			uint16 exc_word = *pe++;
 			if (ucase_has_slot (exc_word, UCASE_EXC_LOWER)) {
 				result = ucase_get_slot_value (exc_word, UCASE_EXC_LOWER, pe);
 			}
@@ -391,14 +391,14 @@ public struct char {
 	public char to_upper () {
 		result = this;
 
-		ushort props = case_props_singleton.trie.get16 (this);
+		uint16 props = case_props_singleton.trie.get16 (this);
 		if (!ucase_props_has_exception (props)) {
 			if (ucase_get_type (props) == UCASE_LOWER) {
 				result += ucase_get_delta (props);
 			}
 		} else {
-			ushort* pe = ucase_get_exceptions (props);
-			ushort exc_word = *pe++;
+			uint16* pe = ucase_get_exceptions (props);
+			uint16 exc_word = *pe++;
 			if (ucase_has_slot (exc_word, UCASE_EXC_UPPER)) {
 				result = ucase_get_slot_value (exc_word, UCASE_EXC_UPPER, pe);
 			}
@@ -424,18 +424,18 @@ public struct char {
 
 // based on code from ICU
 struct UTrie2 {
-	ushort* index;
+	uint16* index;
 	uint* data32;
 	int index_length;
 	int data_length;
-	ushort index_2_null_offset;
-	ushort data_null_offset;
+	uint16 index_2_null_offset;
+	uint16 data_null_offset;
 	uint initial_value;
 	uint error_value;
 	char high_start;
 	int high_value_index;
 
-	public UTrie2 (ushort* index, uint* data32, int index_length, int data_length, ushort index_2_null_offset, ushort data_null_offset, uint initial_value, uint error_value, char high_start, int high_value_index) {
+	public UTrie2 (uint16* index, uint* data32, int index_length, int data_length, uint16 index_2_null_offset, uint16 data_null_offset, uint initial_value, uint error_value, char high_start, int high_value_index) {
 		this.index = index;
 		this.data32 = data32;
 		this.index_length = index_length;
@@ -465,11 +465,11 @@ struct UTrie2 {
 	const int INDEX_1_OFFSET = UTF8_2B_INDEX_2_OFFSET + UTF8_2B_INDEX_2_LENGTH;
 	const int BAD_UTF8_DATA_OFFSET = 0x80;
 
-	int index_raw (int offset, ushort* trie_index, char c) {
+	int index_raw (int offset, uint16* trie_index, char c) {
 		return (int) ((trie_index[offset + c >> SHIFT_2] << INDEX_SHIFT) + (c & DATA_MASK));
 	}
 
-	int index_from_supp (ushort* trie_index, char c) {
+	int index_from_supp (uint16* trie_index, char c) {
 		return (int) ((trie_index[trie_index[INDEX_1_OFFSET - OMITTED_BMP_INDEX_1_LENGTH + (c >> SHIFT_1)] + ((c >> SHIFT_2) & INDEX_2_MASK)] << INDEX_SHIFT) + (c & DATA_MASK));
 	}
 
@@ -487,7 +487,7 @@ struct UTrie2 {
 		}
 	}
 
-	public ushort get16 (char c) {
+	public uint16 get16 (char c) {
 		return index[index_from_cp (index_length, c)];
 	}
 
@@ -498,12 +498,12 @@ struct UTrie2 {
 
 struct UCaseProps {
 	int* indexes;
-	ushort* exceptions;
-	ushort* unfold;
+	uint16* exceptions;
+	uint16* unfold;
 
 	UTrie2 trie;
 
-	public UCaseProps (int* indexes, ushort* exceptions, ushort* unfold, UTrie2 trie) {
+	public UCaseProps (int* indexes, uint16* exceptions, uint16* unfold, UTrie2 trie) {
 		this.indexes = indexes;
 		this.exceptions = exceptions;
 		this.unfold = unfold;

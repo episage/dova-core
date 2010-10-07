@@ -69,9 +69,9 @@ namespace Dova.Environment {
 }
 
 class Dova.LocalFileStream : FileStream {
-	int fd;
+	int32 fd;
 
-	public LocalFileStream (int fd) {
+	public LocalFileStream (int32 fd) {
 		this.fd = fd;
 	}
 
@@ -79,14 +79,14 @@ class Dova.LocalFileStream : FileStream {
 		if (length < 0) {
 			length = b.length - offset;
 		}
-		return (int) OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+		return OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
 	}
 
 	public override int write (byte[] b, int offset, int length) {
 		if (length < 0) {
 			length = b.length - offset;
 		}
-		return (int) OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+		return OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
 	}
 
 	public override void close () {

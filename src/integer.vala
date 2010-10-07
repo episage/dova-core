@@ -24,89 +24,114 @@
 [IntegerType (rank = 3, width = 8, signed = false)]
 public struct byte {
 	public string to_string () {
-		ulong l = (ulong) this;
+		uint64 l = (uint64) this;
 		return l.to_string ();
 	}
 }
 
 [CCode (cname = "int8_t")]
 [IntegerType (rank = 2, width = 8)]
-public struct sbyte {
+public struct int8 {
 	public string to_string () {
-		long l = (long) this;
+		int64 l = (int64) this;
+		return l.to_string ();
+	}
+}
+
+[CCode (cname = "uint8_t")]
+[IntegerType (rank = 3, width = 8, signed = false)]
+public struct uint8 {
+	public string to_string () {
+		uint64 l = (uint64) this;
 		return l.to_string ();
 	}
 }
 
 [CCode (cname = "int16_t")]
 [IntegerType (rank = 4, width = 16)]
-public struct short {
+public struct int16 {
 	public string to_string () {
-		long l = (long) this;
+		int64 l = (int64) this;
 		return l.to_string ();
 	}
 }
 
 [CCode (cname = "uint16_t")]
 [IntegerType (rank = 5, width = 16, signed = false)]
-public struct ushort {
+public struct uint16 {
 	public string to_string () {
-		ulong l = (ulong) this;
+		uint64 l = (uint64) this;
 		return l.to_string ();
 	}
 }
 
 [CCode (cname = "int32_t")]
 [IntegerType (rank = 6, width = 32)]
-public struct int {
-	public bool equals (int other) {
+public struct int32 {
+	public bool equals (int32 other) {
 		return (this == other);
 	}
 
-	public int hash () {
+	public uint hash () {
 		return this;
 	}
 
 	public string to_string () {
-		long l = (long) this;
+		int64 l = (int64) this;
 		return l.to_string ();
 	}
 }
 
 [CCode (cname = "uint32_t")]
 [IntegerType (rank = 7, width = 32, signed = false)]
-public struct uint {
+public struct uint32 {
 	public string to_string () {
-		ulong l = (ulong) this;
+		uint64 l = (uint64) this;
 		return l.to_string ();
 	}
 }
 
 [CCode (cname = "intptr_t")]
 [IntegerType (rank = 8)]
-public struct intptr {
+public struct int {
+	public bool equals (int other) {
+		return (this == other);
+	}
+
+	public uint hash () {
+		return this;
+	}
+
 	public string to_string () {
-		long l = (long) this;
+		int64 l = (int64) this;
 		return l.to_string ();
 	}
 }
 
 [CCode (cname = "uintptr_t")]
 [IntegerType (rank = 9, signed = false)]
-public struct uintptr {
+public struct uint {
+	public bool equals (uint other) {
+		return (this == other);
+	}
+
+	public uint hash () {
+		return this;
+	}
+
 	public string to_string () {
-		ulong l = (ulong) this;
+		uint64 l = (uint64) this;
 		return l.to_string ();
 	}
 }
 
 [CCode (cname = "int64_t")]
 [IntegerType (rank = 8, width = 64)]
-public struct long {
+public struct int64 {
 	public string to_string () {
 		int length = 0;
 
-		long val = this;
+		int64 val = this;
 		if (val < 0) {
 			val = -val;
 			length++;
@@ -204,10 +229,10 @@ public struct long {
 
 [CCode (cname = "uint64_t")]
 [IntegerType (rank = 9, width = 64, signed = false)]
-public struct ulong {
+public struct uint64 {
 	public string to_string () {
 		int length;
-		ulong val = this;
+		uint64 val = this;
 
 		if (val < 10000000000) {
 			if (val < 10000) {

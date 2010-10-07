@@ -21,7 +21,7 @@
  */
 
 public /* abstract */ class Dova.Value : any {
-	volatile int ref_count;
+	volatile int32 ref_count;
 
 	protected Value () {
 	}
