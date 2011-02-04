@@ -21,7 +21,7 @@
  */
 
 #ifndef __DOVA_UCONTEXT_X86_64_H__
-#define __DOVA_UCONTEXT_X86_64_H_
+#define __DOVA_UCONTEXT_X86_64_H__
 
 typedef void **_dova_ucontext_t;
 #define ucontext_t _dova_ucontext_t

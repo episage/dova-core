@@ -21,7 +21,7 @@
  */
 
 #ifndef __DOVA_UCONTEXT_POSIX_H__
-#define __DOVA_UCONTEXT_POSIX_H_
+#define __DOVA_UCONTEXT_POSIX_H__
 
 #include <ucontext.h>
 

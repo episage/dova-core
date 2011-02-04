@@ -21,7 +21,7 @@
  */
 
 #ifndef __DOVA_ATOMIC_GCC_H__
-#define __DOVA_ATOMIC_GCC_H_
+#define __DOVA_ATOMIC_GCC_H__
 
 static inline void atomic_int32_store (volatile int32_t *atomic, int32_t desired) {
 	*atomic = desired;

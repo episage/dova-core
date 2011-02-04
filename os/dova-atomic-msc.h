@@ -23,7 +23,7 @@
  */
 
 #ifndef __DOVA_ATOMIC_MSC_H__
-#define __DOVA_ATOMIC_MSC_H_
+#define __DOVA_ATOMIC_MSC_H__
 
 #include <intrin.h>
 

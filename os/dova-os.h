@@ -21,7 +21,7 @@
  */
 
 #ifndef __DOVA_OS_H__
-#define __DOVA_OS_H_
+#define __DOVA_OS_H__
 
 #include <dova-types.h>
 

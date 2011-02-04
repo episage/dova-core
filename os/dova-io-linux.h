@@ -21,7 +21,7 @@
  */
 
 #ifndef __DOVA_IO_LINUX_H__
-#define __DOVA_IO_LINUX_H_
+#define __DOVA_IO_LINUX_H__
 
 #include <arpa/inet.h>
 #include <dlfcn.h>
