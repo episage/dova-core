@@ -1,6 +1,6 @@
 /* list.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2011  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,8 @@
  * Immutable list.
  */
 public class Dova.List<T> : /*Value*/Object {
-	T[] _elements;
-	public int length { get; private set; }
+	internal T[] _elements;
+	public int length { get; internal set; }
 
 	public List (T[] elements) /*: _elements (elements.length)*/ {
 		_elements = new T[length];
@@ -35,7 +35,7 @@ public class Dova.List<T> : /*Value*/Object {
 		}
 	}
 
-	List.clear (int length) /*: length*/ {
+	internal List.clear (int length) /*: length*/ {
 		_elements = new T[length];
 		this.length = length;
 	}
@@ -55,29 +55,6 @@ public class Dova.List<T> : /*Value*/Object {
 		}
 		for (int i = 0; i < list2.length; i++) {
 			result._elements[this.length + i] = list2._elements[i];
-		}
-	}
-
-	public List<T> append (T element) {
-		result = this.concat ([element]);
-	}
-
-	public List<T> set (int index, T element) {
-		result = new List<T>.clear (this.length);
-		for (int i = 0; i < this.length; i++) {
-			if (i == index) {
-				result._elements[i] = element;
-			} else {
-				result._elements[i] = this._elements[i];
-			}
-		}
-	}
-
-	// temporary
-	public List<T> remove_last () {
-		result = new List<T>.clear (this.length - 1);
-		for (int i = 0; i < this.length - 1; i++) {
-			result._elements[i] = this[i];
 		}
 	}
 

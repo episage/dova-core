@@ -31,6 +31,7 @@ lib_LTLIBRARIES = \
 
 libdova_base_la_SOURCES = \
 	array.vala \
+	arraylist.vala \
 	bool.vala \
 	char.vala \
 	char_case_props_data.vala \
@@ -113,7 +114,6 @@ libdova_net_la_VALAFLAGS = --profile dova --nostdpkg $(os_vapis) dova-base-0.1.v
 $(srcdir)/libdova_net_la_vala.stamp: $(srcdir)/dova-base-0.1.vapi $(srcdir)/dova-io-0.1.vapi $(srcdir)/dova-task-0.1.vapi
 
 libdova_model_la_SOURCES = \
-	arraylist.vala \
 	hashmap.vala \
 	hashset.vala \
 	iterable.vala \

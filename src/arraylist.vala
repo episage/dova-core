@@ -28,76 +28,107 @@ namespace Debug {
         }
 }
 
-public class Dova.ArrayList<T> : ListModel<T> {
-	T[] _elements;
-	int _length;
+public class Dova.ArrayList<T> /*: ListModel<T>*/ {
+	List<T> list;
+	bool frozen;
 
 	public ArrayList (List<T>? list = null) {
 		base ();
-		_elements = new T[4];
 		if (list != null) {
-			foreach (var element in (!) list) {
-				append (element);
-			}
+			this.frozen = true;
+			this.list = list;
 		}
 	}
 
-	~ArrayList () {
-		delete _elements;
-	}
-
-	public override int length {
-		get { return _length; }
-	}
-
-	public override void append (T element) {
-		if (_length == _elements.length) {
-			grow_if_needed (1);
+	public List<T> to_list () {
+		frozen = true;
+		if (list == null) {
+			list = [];
 		}
-		_elements[_length++] = element;
+		return list;
 	}
 
-	public override bool contains (T element) {
+	public int length {
+		get { return list.length; }
+	}
+
+	public void append (T element) {
+		grow_if_needed (1);
+		list._elements[list.length] = element;
+		list.length++;
+	}
+
+	public bool contains (T element) {
 		result = false;
 	}
 
-	public override bool remove (T element) {
+	public bool remove (T element) {
+		grow_if_needed (0);
+
 		result = false;
 	}
 
-	public override void clear () {
+	public void clear () {
+		grow_if_needed (0);
 	}
 
-	public override T get (int index) {
-		assert (index >= 0 && index < _length);
+	public T get (int index) {
+		assert (index >= 0 && index < list.length);
 
-		result = _elements[index];
+		result = list._elements[index];
 	}
 
-	public override void set (int index, T element) {
-		assert (index >= 0 && index < _length);
+	public void set (int index, T element) {
+		assert (index >= 0 && index < list.length);
 
-		_elements[index] = element;
+		grow_if_needed (0);
+
+		list._elements[index] = element;
 	}
 
-	public override Dova.Iterator<T> iterator () {
+	public void remove_last () {
+		grow_if_needed (0);
+
+		list._elements[list.length - 1] = null;
+		list.length--;
+	}
+
+	public Dova.Iterator<T> iterator () {
 		result = new Iterator<T> (this);
 	}
-
-	void set_capacity (int value) {
-		assert (value >= _length);
-
-		Array.resize<T> (ref _elements, value);
-	}
-
 
 	void grow_if_needed (int new_count) {
 		assert (new_count >= 0);
 
-		int minimum_length = _length + new_count;
-		if (minimum_length > _elements.length) {
+		if (list == null) {
+			list = new List<T>.clear (new_count > 4 ? new_count : 4);
+			list.length = 0;
+			frozen = false;
+			return;
+		}
+
+		int size = list._elements.length;
+		int minimum_length = list.length + new_count;
+
+		if (minimum_length > size) {
 			// double the capacity unless we add even more items at this time
-			set_capacity (new_count > _elements.length ? minimum_length : 2 * _elements.length);
+			size *= 2;
+			if (minimum_length > size) {
+				size = minimum_length;
+			}
+
+			frozen = true;
+		}
+
+		if (frozen) {
+			var old_list = list;
+			list = new List<T>.clear (size);
+			for (int i = 0; i < old_list.length; i++) {
+				list._elements[i] = old_list._elements[i];
+			}
+			list.length = old_list.length;
+
+			frozen = false;
 		}
 	}
 
