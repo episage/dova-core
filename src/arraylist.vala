@@ -1,6 +1,6 @@
 /* arraylist.vala
  *
- * Copyright (C) 2009-2010  Jürg Billeter
+ * Copyright (C) 2009-2011  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,8 +32,6 @@ public class Dova.ArrayList<T> : ListModel<T> {
 	T[] _elements;
 	int _length;
 
-	public void* data { get { return _elements.data; } }
-
 	public ArrayList (List<T>? list = null) {
 		base ();
 		_elements = new T[4];
@@ -42,6 +40,10 @@ public class Dova.ArrayList<T> : ListModel<T> {
 				append (element);
 			}
 		}
+	}
+
+	~ArrayList () {
+		delete _elements;
 	}
 
 	public override int length {

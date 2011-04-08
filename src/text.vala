@@ -31,9 +31,9 @@ public class Dova.TextReader : Object {
 
 	// this test implementation obviously does not work with non-ASCII
 	public char read () {
-		byte[] buffer = new byte[1];
-		if (this.stream.read (buffer, 0, 1) > 0) {
-			return *((byte*) ((Array<byte>) buffer).data);
+		byte buffer[1];
+		if (this.stream.read (buffer) > 0) {
+			return buffer[0];
 		}
 		return -1;
 	}
@@ -42,10 +42,10 @@ public class Dova.TextReader : Object {
 	// and not allocate new strings on each new byte
 	public string? read_line () {
 		result = "";
-		byte[] buffer = new byte[1];
-		while (this.stream.read (buffer, 0, 1) > 0) {
+		byte buffer[1];
+		while (this.stream.read (buffer) > 0) {
 			if (buffer[0] == '\r') {
-				if (this.stream.read (buffer, 0, 1) == 0) {
+				if (this.stream.read (buffer) == 0) {
 					return;
 				}
 			}
@@ -71,7 +71,7 @@ public class Dova.TextWriter : Object {
 
 	public void write (string s) {
 		byte[] b = s.get_utf8_bytes ();
-		this.stream.write_all (b, 0, b.length);
+		this.stream.write_all (b);
 	}
 
 	public void write_line (string s) {

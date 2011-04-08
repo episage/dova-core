@@ -147,12 +147,9 @@ public class Dova.NetworkStream : Stream {
 		this.fd = fd;
 	}
 
-	public override int read (byte[] b, int offset, int length) {
-		if (length < 0) {
-			length = b.length - offset;
-		}
+	public override int read (byte[] b) {
 		while (true) {
-			int res = (int) OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+			int res = (int) OS.read (this.fd, b, b.length);
 			if (res < 0) {
 				int err = OS.errno;
 				if (err == OS.EINTR) {
@@ -168,12 +165,9 @@ public class Dova.NetworkStream : Stream {
 		}
 	}
 
-	public override int write (byte[] b, int offset, int length) {
-		if (length < 0) {
-			length = b.length - offset;
-		}
+	public override int write (byte[] b) {
 		while (true) {
-			int res = (int) OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+			int res = (int) OS.write (this.fd, b, b.length);
 			if (res < 0) {
 				int err = OS.errno;
 				if (err == OS.EINTR) {

@@ -1,6 +1,6 @@
 /* array.vala
  *
- * Copyright (C) 2009  Jürg Billeter
+ * Copyright (C) 2009-2011  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,56 +20,30 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-public class Dova.Array<T> : Object {
-	public int length { get; private set; }
-	// should be inline allocated
-	public void* data { get; private set; }
-	// T data[];
+public struct Dova.Array {
+	public void* data;
+	public int length;
 
-	public Array (int length) {
-		// FIXME should be inline allocated
-		this.data = OS.calloc (length, typeof (T).value_size);
+	public Array (void* data, int length) {
+		this.data = data;
 		this.length = length;
 	}
 
-	~Array () {
-		for (int i = 0; i < length; i++) {
-			typeof (T).value_copy (data, i, null, 0);
-		}
-		OS.free (data);
+	public static T[] create<T> (int length) {
+		result = (T[]) Array (OS.calloc (length, typeof (T).value_size), length);
 	}
 
 	public static void resize<T> (ref T[] array, int new_length) {
 		int old_length = ((Array) array).length;
-		((Array) array).data = OS.realloc (((Array) array).data, typeof (T).value_size * new_length);
-		((Array) array).length = new_length;
+		array = (T[]) Array (OS.realloc (((Array) array).data, typeof (T).value_size * new_length), new_length);
 		if (new_length > old_length) {
 			OS.memset (((byte*) ((Array) array).data) + typeof (T).value_size * old_length, 0, typeof (T).value_size * (new_length - old_length));
 		}
 	}
+}
 
-	public Dova.Iterator<T> iterator () {
-		return new Iterator<T> ((T[]) this);
-	}
-
-	class Iterator<T> : Dova.Iterator<T> {
-		T[] array;
-		int index;
-
-		public Iterator (T[] array) {
-			this.array = array;
-			this.index = -1;
-		}
-
-		public override bool next () {
-			if (index < array.length) {
-				index++;
-			}
-			return (index < array.length);
-		}
-
-		public override T get () {
-			result = array[index];
-		}
+namespace Dova {
+	public static Array array (void* data, int length) {
+		return Array (data, length);
 	}
 }

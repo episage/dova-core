@@ -27,9 +27,7 @@ public class Dova.List<T> : /*Value*/Object {
 	T[] _elements;
 	public int length { get; private set; }
 
-	public void* data { get { return _elements.data; } }
-
-	public List (int length, T elements[]) /*: _elements (elements.length)*/ {
+	public List (T[] elements) /*: _elements (elements.length)*/ {
 		_elements = new T[length];
 		this.length = length;
 		for (int i = 0; i < length; i++) {
@@ -40,6 +38,10 @@ public class Dova.List<T> : /*Value*/Object {
 	List.clear (int length) /*: length*/ {
 		_elements = new T[length];
 		this.length = length;
+	}
+
+	~List () {
+		delete _elements;
 	}
 
 	public T get (int index) {

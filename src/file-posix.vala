@@ -71,18 +71,12 @@ class Dova.LocalFileStream : FileStream {
 		this.fd = fd;
 	}
 
-	public override int read (byte[] b, int offset, int length) {
-		if (length < 0) {
-			length = b.length - offset;
-		}
-		return (int) OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+	public override int read (byte[] b) {
+		return (int) OS.read (this.fd, b, b.length);
 	}
 
-	public override int write (byte[] b, int offset, int length) {
-		if (length < 0) {
-			length = b.length - offset;
-		}
-		return (int) OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+	public override int write (byte[] b) {
+		return (int) OS.write (this.fd, b, b.length);
 	}
 
 	public override void close () {

@@ -31,8 +31,8 @@ public struct double {
 	}
 
 	public string to_string () {
-		byte[] buffer = new byte[30];
-		OS.snprintf (buffer.data, buffer.length, "%.17g".data, this);
-		return string.create_from_cstring (buffer.data);
+		byte buffer[30];
+		OS.snprintf (buffer, buffer.length, "%.17g".data, this);
+		return string.create_from_cstring (buffer);
 	}
 }

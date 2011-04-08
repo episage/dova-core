@@ -1,6 +1,6 @@
 /* app.vala
  *
- * Copyright (C) 2009-2010  Jürg Billeter
+ * Copyright (C) 2009-2011  Jürg Billeter
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -75,18 +75,12 @@ class Dova.LocalFileStream : FileStream {
 		this.fd = fd;
 	}
 
-	public override int read (byte[] b, int offset, int length) {
-		if (length < 0) {
-			length = b.length - offset;
-		}
-		return OS.read (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+	public override int read (byte[] b) {
+		return OS.read (this.fd, b, b.length);
 	}
 
-	public override int write (byte[] b, int offset, int length) {
-		if (length < 0) {
-			length = b.length - offset;
-		}
-		return OS.write (this.fd, ((byte*) ((Array<byte>) b).data) + offset, length);
+	public override int write (byte[] b) {
+		return OS.write (this.fd, b, b.length);
 	}
 
 	public override void close () {
